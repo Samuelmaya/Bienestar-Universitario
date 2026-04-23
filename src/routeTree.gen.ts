@@ -1,0 +1,295 @@
+
+
+import { Route as rootRouteImport } from './routes/__root'
+import { Route as ReservasRouteImport } from './routes/reservas'
+import { Route as RegistrosRouteImport } from './routes/registros'
+import { Route as RegistroRouteImport } from './routes/registro'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as InventarioRouteImport } from './routes/inventario'
+import { Route as HorariosRouteImport } from './routes/horarios'
+import { Route as DeportesRouteImport } from './routes/deportes'
+import { Route as IndexRouteImport } from './routes/index'
+import { Route as PerfilValoracionMedicaRouteImport } from './routes/perfil.valoracion-medica'
+import { Route as PerfilDatosPersonalesRouteImport } from './routes/perfil.datos-personales'
+import { Route as PerfilDatosFamiliaresRouteImport } from './routes/perfil.datos-familiares'
+import { Route as PerfilDatosAcademicosRouteImport } from './routes/perfil.datos-academicos'
+
+const ReservasRoute = ReservasRouteImport.update({
+  id: '/reservas',
+  path: '/reservas',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RegistrosRoute = RegistrosRouteImport.update({
+  id: '/registros',
+  path: '/registros',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RegistroRoute = RegistroRouteImport.update({
+  id: '/registro',
+  path: '/registro',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InventarioRoute = InventarioRouteImport.update({
+  id: '/inventario',
+  path: '/inventario',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HorariosRoute = HorariosRouteImport.update({
+  id: '/horarios',
+  path: '/horarios',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DeportesRoute = DeportesRouteImport.update({
+  id: '/deportes',
+  path: '/deportes',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PerfilValoracionMedicaRoute = PerfilValoracionMedicaRouteImport.update({
+  id: '/perfil/valoracion-medica',
+  path: '/perfil/valoracion-medica',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PerfilDatosPersonalesRoute = PerfilDatosPersonalesRouteImport.update({
+  id: '/perfil/datos-personales',
+  path: '/perfil/datos-personales',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PerfilDatosFamiliaresRoute = PerfilDatosFamiliaresRouteImport.update({
+  id: '/perfil/datos-familiares',
+  path: '/perfil/datos-familiares',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PerfilDatosAcademicosRoute = PerfilDatosAcademicosRouteImport.update({
+  id: '/perfil/datos-academicos',
+  path: '/perfil/datos-academicos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+
+export interface FileRoutesByFullPath {
+  '/': typeof IndexRoute
+  '/deportes': typeof DeportesRoute
+  '/horarios': typeof HorariosRoute
+  '/inventario': typeof InventarioRoute
+  '/login': typeof LoginRoute
+  '/registro': typeof RegistroRoute
+  '/registros': typeof RegistrosRoute
+  '/reservas': typeof ReservasRoute
+  '/perfil/datos-academicos': typeof PerfilDatosAcademicosRoute
+  '/perfil/datos-familiares': typeof PerfilDatosFamiliaresRoute
+  '/perfil/datos-personales': typeof PerfilDatosPersonalesRoute
+  '/perfil/valoracion-medica': typeof PerfilValoracionMedicaRoute
+}
+export interface FileRoutesByTo {
+  '/': typeof IndexRoute
+  '/deportes': typeof DeportesRoute
+  '/horarios': typeof HorariosRoute
+  '/inventario': typeof InventarioRoute
+  '/login': typeof LoginRoute
+  '/registro': typeof RegistroRoute
+  '/registros': typeof RegistrosRoute
+  '/reservas': typeof ReservasRoute
+  '/perfil/datos-academicos': typeof PerfilDatosAcademicosRoute
+  '/perfil/datos-familiares': typeof PerfilDatosFamiliaresRoute
+  '/perfil/datos-personales': typeof PerfilDatosPersonalesRoute
+  '/perfil/valoracion-medica': typeof PerfilValoracionMedicaRoute
+}
+export interface FileRoutesById {
+  __root__: typeof rootRouteImport
+  '/': typeof IndexRoute
+  '/deportes': typeof DeportesRoute
+  '/horarios': typeof HorariosRoute
+  '/inventario': typeof InventarioRoute
+  '/login': typeof LoginRoute
+  '/registro': typeof RegistroRoute
+  '/registros': typeof RegistrosRoute
+  '/reservas': typeof ReservasRoute
+  '/perfil/datos-academicos': typeof PerfilDatosAcademicosRoute
+  '/perfil/datos-familiares': typeof PerfilDatosFamiliaresRoute
+  '/perfil/datos-personales': typeof PerfilDatosPersonalesRoute
+  '/perfil/valoracion-medica': typeof PerfilValoracionMedicaRoute
+}
+export interface FileRouteTypes {
+  fileRoutesByFullPath: FileRoutesByFullPath
+  fullPaths:
+    | '/'
+    | '/deportes'
+    | '/horarios'
+    | '/inventario'
+    | '/login'
+    | '/registro'
+    | '/registros'
+    | '/reservas'
+    | '/perfil/datos-academicos'
+    | '/perfil/datos-familiares'
+    | '/perfil/datos-personales'
+    | '/perfil/valoracion-medica'
+  fileRoutesByTo: FileRoutesByTo
+  to:
+    | '/'
+    | '/deportes'
+    | '/horarios'
+    | '/inventario'
+    | '/login'
+    | '/registro'
+    | '/registros'
+    | '/reservas'
+    | '/perfil/datos-academicos'
+    | '/perfil/datos-familiares'
+    | '/perfil/datos-personales'
+    | '/perfil/valoracion-medica'
+  id:
+    | '__root__'
+    | '/'
+    | '/deportes'
+    | '/horarios'
+    | '/inventario'
+    | '/login'
+    | '/registro'
+    | '/registros'
+    | '/reservas'
+    | '/perfil/datos-academicos'
+    | '/perfil/datos-familiares'
+    | '/perfil/datos-personales'
+    | '/perfil/valoracion-medica'
+  fileRoutesById: FileRoutesById
+}
+export interface RootRouteChildren {
+  IndexRoute: typeof IndexRoute
+  DeportesRoute: typeof DeportesRoute
+  HorariosRoute: typeof HorariosRoute
+  InventarioRoute: typeof InventarioRoute
+  LoginRoute: typeof LoginRoute
+  RegistroRoute: typeof RegistroRoute
+  RegistrosRoute: typeof RegistrosRoute
+  ReservasRoute: typeof ReservasRoute
+  PerfilDatosAcademicosRoute: typeof PerfilDatosAcademicosRoute
+  PerfilDatosFamiliaresRoute: typeof PerfilDatosFamiliaresRoute
+  PerfilDatosPersonalesRoute: typeof PerfilDatosPersonalesRoute
+  PerfilValoracionMedicaRoute: typeof PerfilValoracionMedicaRoute
+}
+
+declare module '@tanstack/react-router' {
+  interface FileRoutesByPath {
+    '/reservas': {
+      id: '/reservas'
+      path: '/reservas'
+      fullPath: '/reservas'
+      preLoaderRoute: typeof ReservasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/registros': {
+      id: '/registros'
+      path: '/registros'
+      fullPath: '/registros'
+      preLoaderRoute: typeof RegistrosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/registro': {
+      id: '/registro'
+      path: '/registro'
+      fullPath: '/registro'
+      preLoaderRoute: typeof RegistroRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/inventario': {
+      id: '/inventario'
+      path: '/inventario'
+      fullPath: '/inventario'
+      preLoaderRoute: typeof InventarioRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/horarios': {
+      id: '/horarios'
+      path: '/horarios'
+      fullPath: '/horarios'
+      preLoaderRoute: typeof HorariosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/deportes': {
+      id: '/deportes'
+      path: '/deportes'
+      fullPath: '/deportes'
+      preLoaderRoute: typeof DeportesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/perfil/valoracion-medica': {
+      id: '/perfil/valoracion-medica'
+      path: '/perfil/valoracion-medica'
+      fullPath: '/perfil/valoracion-medica'
+      preLoaderRoute: typeof PerfilValoracionMedicaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/perfil/datos-personales': {
+      id: '/perfil/datos-personales'
+      path: '/perfil/datos-personales'
+      fullPath: '/perfil/datos-personales'
+      preLoaderRoute: typeof PerfilDatosPersonalesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/perfil/datos-familiares': {
+      id: '/perfil/datos-familiares'
+      path: '/perfil/datos-familiares'
+      fullPath: '/perfil/datos-familiares'
+      preLoaderRoute: typeof PerfilDatosFamiliaresRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/perfil/datos-academicos': {
+      id: '/perfil/datos-academicos'
+      path: '/perfil/datos-academicos'
+      fullPath: '/perfil/datos-academicos'
+      preLoaderRoute: typeof PerfilDatosAcademicosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+  }
+}
+
+const rootRouteChildren: RootRouteChildren = {
+  IndexRoute: IndexRoute,
+  DeportesRoute: DeportesRoute,
+  HorariosRoute: HorariosRoute,
+  InventarioRoute: InventarioRoute,
+  LoginRoute: LoginRoute,
+  RegistroRoute: RegistroRoute,
+  RegistrosRoute: RegistrosRoute,
+  ReservasRoute: ReservasRoute,
+  PerfilDatosAcademicosRoute: PerfilDatosAcademicosRoute,
+  PerfilDatosFamiliaresRoute: PerfilDatosFamiliaresRoute,
+  PerfilDatosPersonalesRoute: PerfilDatosPersonalesRoute,
+  PerfilValoracionMedicaRoute: PerfilValoracionMedicaRoute,
+}
+export const routeTree = rootRouteImport
+  ._addFileChildren(rootRouteChildren)
+  ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}

@@ -1,0 +1,149 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * UPC Sports Design System
+ * Palette: Verde claro 66-165-66, Verde oscuro 16-123-66, Blanco, Gris claro 211-211-211
+ */
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  --font-display: "Montserrat", "Segoe UI", sans-serif;
+  --font-body: "Inter", system-ui, sans-serif;
+}
+
+:root {
+  --radius: 0.75rem;
+
+  /* Brand */
+  --upc-green-light: oklch(0.685 0.179 142);   /* RGB 66,165,66 */
+  --upc-green-dark: oklch(0.515 0.142 152);    /* RGB 16,123,66 */
+  --upc-white: oklch(1 0 0);
+  --upc-gray: oklch(0.85 0 0);                 /* RGB 211,211,211 */
+
+  --background: var(--upc-white);
+  --foreground: oklch(0.18 0.02 150);
+
+  --card: var(--upc-white);
+  --card-foreground: oklch(0.18 0.02 150);
+
+  --popover: var(--upc-white);
+  --popover-foreground: oklch(0.18 0.02 150);
+
+  --primary: var(--upc-green-dark);
+  --primary-foreground: var(--upc-white);
+
+  --secondary: var(--upc-green-light);
+  --secondary-foreground: var(--upc-white);
+
+  --muted: oklch(0.96 0.005 150);
+  --muted-foreground: oklch(0.45 0.02 150);
+
+  --accent: oklch(0.94 0.04 142);
+  --accent-foreground: var(--upc-green-dark);
+
+  --destructive: oklch(0.6 0.22 27);
+  --destructive-foreground: var(--upc-white);
+
+  --border: var(--upc-gray);
+  --input: var(--upc-gray);
+  --ring: var(--upc-green-light);
+
+  --sidebar: var(--upc-green-dark);
+  --sidebar-foreground: var(--upc-white);
+  --sidebar-primary: var(--upc-green-light);
+  --sidebar-primary-foreground: var(--upc-white);
+  --sidebar-accent: oklch(0.45 0.13 152);
+  --sidebar-accent-foreground: var(--upc-white);
+  --sidebar-border: oklch(0.45 0.13 152);
+  --sidebar-ring: var(--upc-green-light);
+
+  /* Gradients & shadows */
+  --gradient-primary: linear-gradient(135deg, var(--upc-green-dark), var(--upc-green-light));
+  --gradient-hero: linear-gradient(120deg, oklch(0.515 0.142 152 / 0.92), oklch(0.685 0.179 142 / 0.78));
+  --shadow-soft: 0 4px 14px -4px oklch(0.515 0.142 152 / 0.18);
+  --shadow-elegant: 0 18px 40px -18px oklch(0.515 0.142 152 / 0.35);
+  --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dark {
+  --background: oklch(0.16 0.02 150);
+  --foreground: oklch(0.97 0.01 150);
+  --card: oklch(0.22 0.03 150);
+  --card-foreground: oklch(0.97 0.01 150);
+  --popover: oklch(0.22 0.03 150);
+  --popover-foreground: oklch(0.97 0.01 150);
+  --primary: var(--upc-green-light);
+  --primary-foreground: oklch(0.16 0.02 150);
+  --secondary: var(--upc-green-dark);
+  --secondary-foreground: oklch(0.97 0.01 150);
+  --muted: oklch(0.27 0.02 150);
+  --muted-foreground: oklch(0.72 0.02 150);
+  --accent: oklch(0.3 0.05 150);
+  --accent-foreground: oklch(0.97 0.01 150);
+  --destructive: oklch(0.65 0.22 27);
+  --destructive-foreground: oklch(0.97 0 0);
+  --border: oklch(1 0 0 / 12%);
+  --input: oklch(1 0 0 / 18%);
+  --ring: var(--upc-green-light);
+  --sidebar: oklch(0.22 0.03 150);
+  --sidebar-foreground: oklch(0.97 0.01 150);
+  --sidebar-primary: var(--upc-green-light);
+  --sidebar-primary-foreground: oklch(0.16 0.02 150);
+  --sidebar-accent: oklch(0.3 0.05 150);
+  --sidebar-accent-foreground: oklch(0.97 0.01 150);
+  --sidebar-border: oklch(1 0 0 / 12%);
+  --sidebar-ring: var(--upc-green-light);
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    letter-spacing: -0.02em;
+  }
+}
