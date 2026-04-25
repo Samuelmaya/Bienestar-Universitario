@@ -32,7 +32,7 @@ function RegistroPage() {
           <div className="mt-4 rounded-lg bg-accent/60 px-4 py-3 text-sm">
             <p className="font-medium text-foreground">Programa dirigido</p>
             <p className="text-muted-foreground">
-              Educación Física, Recreación y Deportes — Universidad Popular del Cesar.
+              Licenciatura En Educación Física, Recreación y Deportes — Universidad Popular del Cesar.
             </p>
           </div>
 
@@ -54,6 +54,7 @@ function RegistroPage() {
               options={[
                 { value: "M", label: "M — Masculino" },
                 { value: "F", label: "F — Femenino" },
+                { value: "Otros", label: "Otros..." },
               ]}
             />
             <Field label="Lugar de nacimiento" />
