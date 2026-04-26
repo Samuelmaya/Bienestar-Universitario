@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { PageHeader } from "@/components/PageHeader";
-import { MapPin, CalendarCheck, Clock, User, CheckCircle2 } from "lucide-react";
+import { MapPin, CalendarCheck, Clock, CheckCircle2 } from "lucide-react";
 
 export const Route = createFileRoute("/reservas/lugares")({
   head: () => ({ meta: [{ title: "Reservar lugares deportivos — UPC" }] }),
@@ -23,15 +23,16 @@ function ReservasLugaresPage() {
   const [done, setDone] = useState(false);
   const [selected, setSelected] = useState<number | null>(null);
   const [form, setForm] = useState({
+    id_reserva: "",
+    reserva_est: "",
     fecha: "",
     hora: "",
-    nombre: "",
-    cedula: "",
+    estado: "pendiente",
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (selected && form.fecha && form.hora && form.nombre && form.cedula) {
+    if (selected && form.fecha && form.hora && form.reserva_est) {
       setDone(true);
     }
   };
@@ -74,6 +75,30 @@ function ReservasLugaresPage() {
                 ))}
               </div>
             </div>
+            
+            <div>
+              <label className="text-sm font-medium">ID Reserva</label>
+              <input
+                type="text"
+                value={form.id_reserva}
+                onChange={(e) => setForm({ ...form, id_reserva: e.target.value })}
+                placeholder="ID de reserva"
+                className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
+              />
+            </div>
+            
+            <div>
+              <label className="text-sm font-medium">ID Estudiante</label>
+              <input
+                type="text"
+                required
+                value={form.reserva_est}
+                onChange={(e) => setForm({ ...form, reserva_est: e.target.value })}
+                placeholder="ID del estudiante que reserva"
+                className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
+              />
+            </div>
+            
             <div>
               <label className="text-sm font-medium">Fecha</label>
               <input
@@ -84,6 +109,7 @@ function ReservasLugaresPage() {
                 className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
               />
             </div>
+            
             <div>
               <label className="text-sm font-medium">Hora</label>
               <input
@@ -94,32 +120,24 @@ function ReservasLugaresPage() {
                 className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
               />
             </div>
+            
             <div>
-              <label className="text-sm font-medium">Nombre completo</label>
-              <input
-                type="text"
-                required
-                value={form.nombre}
-                onChange={(e) => setForm({ ...form, nombre: e.target.value })}
-                placeholder="Ej: Juan Pérez"
+              <label className="text-sm font-medium">Estado</label>
+              <select
+                value={form.estado}
+                onChange={(e) => setForm({ ...form, estado: e.target.value })}
                 className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
-              />
+              >
+                <option value="pendiente">Pendiente</option>
+                <option value="confirmada">Confirmada</option>
+                <option value="cancelada">Cancelada</option>
+              </select>
             </div>
-            <div>
-              <label className="text-sm font-medium">Cédula</label>
-              <input
-                type="text"
-                required
-                value={form.cedula}
-                onChange={(e) => setForm({ ...form, cedula: e.target.value })}
-                placeholder="Ej: 12345678"
-                className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
-              />
-            </div>
+            
             <div className="md:col-span-2">
               <button
                 type="submit"
-                disabled={!selected || !form.fecha || !form.hora || !form.nombre || !form.cedula}
+                disabled={!selected || !form.fecha || !form.hora || !form.reserva_est}
                 className="w-full inline-flex items-center justify-center gap-2 rounded-md bg-primary py-2.5 font-semibold text-primary-foreground shadow-[var(--shadow-soft)] hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <CalendarCheck className="h-4 w-4" /> Confirmar reserva
@@ -140,11 +158,20 @@ function ReservasLugaresPage() {
               <p className="text-sm text-muted-foreground">
                 {form.fecha} a las {form.hora}
               </p>
+              <p className="text-sm text-muted-foreground">
+                ID Reserva: {form.id_reserva}
+              </p>
+              <p className="text-sm text-muted-foreground">
+                Estudiante: {form.reserva_est}
+              </p>
+              <p className="text-sm text-muted-foreground">
+                Estado: {form.estado}
+              </p>
               <button
                 onClick={() => {
                   setDone(false);
                   setSelected(null);
-                  setForm({ fecha: "", hora: "", nombre: "", cedula: "" });
+                  setForm({ id_reserva: "", reserva_est: "", fecha: "", hora: "", estado: "pendiente" });
                 }}
                 className="mt-3 text-sm text-primary hover:underline"
               >
