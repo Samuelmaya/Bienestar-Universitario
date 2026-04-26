@@ -200,7 +200,7 @@ function AuthenticatedHome() {
         </section>
       </div>
 
-      {(user.role === "admin" || user.role === "profesor") && (
+      {(user.role === "admin" || user.role === "entrenador") && (
         <section className="rounded-2xl border border-border bg-card p-6">
           <div className="flex items-center gap-2 mb-3">
             <ShieldCheck className="h-5 w-5 text-primary" />

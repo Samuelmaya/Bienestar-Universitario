@@ -17,6 +17,7 @@ import { Route as InventarioRouteImport } from './routes/inventario'
 import { Route as HorariosRouteImport } from './routes/horarios'
 import { Route as DeportesRouteImport } from './routes/deportes'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ReservasLugaresRouteImport } from './routes/reservas.lugares'
 import { Route as PerfilValoracionMedicaRouteImport } from './routes/perfil.valoracion-medica'
 import { Route as PerfilDatosPersonalesRouteImport } from './routes/perfil.datos-personales'
 import { Route as PerfilDatosFamiliaresRouteImport } from './routes/perfil.datos-familiares'
@@ -62,6 +63,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ReservasLugaresRoute = ReservasLugaresRouteImport.update({
+  id: '/lugares',
+  path: '/lugares',
+  getParentRoute: () => ReservasRoute,
+} as any)
 const PerfilValoracionMedicaRoute = PerfilValoracionMedicaRouteImport.update({
   id: '/perfil/valoracion-medica',
   path: '/perfil/valoracion-medica',
@@ -91,11 +97,12 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/registro': typeof RegistroRoute
   '/registros': typeof RegistrosRoute
-  '/reservas': typeof ReservasRoute
+  '/reservas': typeof ReservasRouteWithChildren
   '/perfil/datos-academicos': typeof PerfilDatosAcademicosRoute
   '/perfil/datos-familiares': typeof PerfilDatosFamiliaresRoute
   '/perfil/datos-personales': typeof PerfilDatosPersonalesRoute
   '/perfil/valoracion-medica': typeof PerfilValoracionMedicaRoute
+  '/reservas/lugares': typeof ReservasLugaresRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -105,11 +112,12 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/registro': typeof RegistroRoute
   '/registros': typeof RegistrosRoute
-  '/reservas': typeof ReservasRoute
+  '/reservas': typeof ReservasRouteWithChildren
   '/perfil/datos-academicos': typeof PerfilDatosAcademicosRoute
   '/perfil/datos-familiares': typeof PerfilDatosFamiliaresRoute
   '/perfil/datos-personales': typeof PerfilDatosPersonalesRoute
   '/perfil/valoracion-medica': typeof PerfilValoracionMedicaRoute
+  '/reservas/lugares': typeof ReservasLugaresRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -120,11 +128,12 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/registro': typeof RegistroRoute
   '/registros': typeof RegistrosRoute
-  '/reservas': typeof ReservasRoute
+  '/reservas': typeof ReservasRouteWithChildren
   '/perfil/datos-academicos': typeof PerfilDatosAcademicosRoute
   '/perfil/datos-familiares': typeof PerfilDatosFamiliaresRoute
   '/perfil/datos-personales': typeof PerfilDatosPersonalesRoute
   '/perfil/valoracion-medica': typeof PerfilValoracionMedicaRoute
+  '/reservas/lugares': typeof ReservasLugaresRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -141,6 +150,7 @@ export interface FileRouteTypes {
     | '/perfil/datos-familiares'
     | '/perfil/datos-personales'
     | '/perfil/valoracion-medica'
+    | '/reservas/lugares'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -155,6 +165,7 @@ export interface FileRouteTypes {
     | '/perfil/datos-familiares'
     | '/perfil/datos-personales'
     | '/perfil/valoracion-medica'
+    | '/reservas/lugares'
   id:
     | '__root__'
     | '/'
@@ -169,6 +180,7 @@ export interface FileRouteTypes {
     | '/perfil/datos-familiares'
     | '/perfil/datos-personales'
     | '/perfil/valoracion-medica'
+    | '/reservas/lugares'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -179,7 +191,7 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   RegistroRoute: typeof RegistroRoute
   RegistrosRoute: typeof RegistrosRoute
-  ReservasRoute: typeof ReservasRoute
+  ReservasRoute: typeof ReservasRouteWithChildren
   PerfilDatosAcademicosRoute: typeof PerfilDatosAcademicosRoute
   PerfilDatosFamiliaresRoute: typeof PerfilDatosFamiliaresRoute
   PerfilDatosPersonalesRoute: typeof PerfilDatosPersonalesRoute
@@ -244,6 +256,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/reservas/lugares': {
+      id: '/reservas/lugares'
+      path: '/lugares'
+      fullPath: '/reservas/lugares'
+      preLoaderRoute: typeof ReservasLugaresRouteImport
+      parentRoute: typeof ReservasRoute
+    }
     '/perfil/valoracion-medica': {
       id: '/perfil/valoracion-medica'
       path: '/perfil/valoracion-medica'
@@ -275,6 +294,18 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface ReservasRouteChildren {
+  ReservasLugaresRoute: typeof ReservasLugaresRoute
+}
+
+const ReservasRouteChildren: ReservasRouteChildren = {
+  ReservasLugaresRoute: ReservasLugaresRoute,
+}
+
+const ReservasRouteWithChildren = ReservasRoute._addFileChildren(
+  ReservasRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DeportesRoute: DeportesRoute,
@@ -283,7 +314,7 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   RegistroRoute: RegistroRoute,
   RegistrosRoute: RegistrosRoute,
-  ReservasRoute: ReservasRoute,
+  ReservasRoute: ReservasRouteWithChildren,
   PerfilDatosAcademicosRoute: PerfilDatosAcademicosRoute,
   PerfilDatosFamiliaresRoute: PerfilDatosFamiliaresRoute,
   PerfilDatosPersonalesRoute: PerfilDatosPersonalesRoute,

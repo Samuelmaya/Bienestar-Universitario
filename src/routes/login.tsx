@@ -16,7 +16,7 @@ export const Route = createFileRoute("/login")({
 
 function LoginPage() {
   const [show, setShow] = useState(false);
-  const [role, setRole] = useState<Role>("estudiante");
+  const [role, setRole] = useState<Role>("utilero");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -72,7 +72,7 @@ function LoginPage() {
           </p>
 
           <div className="mt-6 grid grid-cols-3 rounded-lg border border-border p-1 bg-muted text-sm">
-            {(["estudiante", "profesor", "admin"] as const).map((r) => (
+            {(["utilero", "entrenador", "admin"] as const).map((r) => (
               <button
                 key={r}
                 type="button"
@@ -141,7 +141,7 @@ function LoginPage() {
               type="submit"
               className="w-full inline-flex items-center justify-center gap-2 rounded-md bg-primary py-2.5 font-semibold text-primary-foreground shadow-[var(--shadow-soft)] hover:opacity-90"
             >
-              <LogIn className="h-4 w-4" /> Ingresar como {role}
+              <LogIn className="h-4 w-4" /> Ingresar
             </button>
           </form>
 

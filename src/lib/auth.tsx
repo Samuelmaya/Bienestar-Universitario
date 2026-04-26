@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 
-export type Role = "estudiante" | "profesor" | "admin";
+export type Role = "utilero" | "admin" | "entrenador";
 
 export type AuthUser = {
   nombre: string;

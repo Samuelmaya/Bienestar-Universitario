@@ -19,6 +19,7 @@ import {
   Users,
   HeartPulse,
   ChevronDown,
+  MapPin,
 } from "lucide-react";
 import {
   Collapsible,
@@ -55,10 +56,9 @@ type NavItem = {
 
 const navItems: NavItem[] = [
   { to: "/", label: "Inicio", icon: Home },
-  { to: "/inventario", label: "Inventario", icon: Package, roles: ["admin", "profesor"] },
-  { to: "/reservas", label: "Reservar", icon: CalendarCheck, requiresAuth: true },
+  { to: "/inventario", label: "Inventario", icon: Package, roles: ["admin", "utilero"] },
   { to: "/deportes", label: "Deportes", icon: Trophy, requiresAuth: true },
-  { to: "/registros", label: "Registros", icon: ClipboardList, roles: ["admin", "profesor"] },
+  { to: "/registros", label: "Registros", icon: ClipboardList, roles: ["admin", "entrenador"] },
   { to: "/horarios", label: "Horarios", icon: Clock, requiresAuth: true },
   { to: "/registro", label: "Registro", icon: UserPlus, publicOnly: true },
 ];
@@ -194,6 +194,48 @@ function PerfilMenu() {
   );
 }
 
+function ReservasMenu() {
+  const location = useLocation();
+  const subItems = [
+    { to: "/reservas", label: "Artículos deportivos", icon: Package },
+    { to: "/reservas/lugares", label: "Lugares deportivos", icon: MapPin },
+  ] as const;
+  const isOnReservas = location.pathname.startsWith("/reservas");
+  const [open, setOpen] = useState(isOnReservas);
+
+  return (
+    <Collapsible open={open} onOpenChange={setOpen} className="group/collapsible">
+      <SidebarMenuItem>
+        <CollapsibleTrigger asChild>
+          <SidebarMenuButton tooltip="Reserva" isActive={isOnReservas}>
+            <CalendarCheck className="h-4 w-4" />
+            <span>Reserva</span>
+            <ChevronDown className="ml-auto h-4 w-4 transition-transform group-data-[state=open]/collapsible:rotate-180 group-data-[collapsible=icon]:hidden" />
+          </SidebarMenuButton>
+        </CollapsibleTrigger>
+        <CollapsibleContent>
+          <SidebarMenuSub>
+            {subItems.map((s) => {
+              const SIcon = s.icon;
+              const active = location.pathname === s.to;
+              return (
+                <SidebarMenuSubItem key={s.to}>
+                  <SidebarMenuSubButton asChild isActive={active}>
+                    <Link to={s.to}>
+                      <SIcon className="h-4 w-4" />
+                      <span>{s.label}</span>
+                    </Link>
+                  </SidebarMenuSubButton>
+                </SidebarMenuSubItem>
+              );
+            })}
+          </SidebarMenuSub>
+        </CollapsibleContent>
+      </SidebarMenuItem>
+    </Collapsible>
+  );
+}
+
 function AuthenticatedTopbar() {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
@@ -232,6 +274,12 @@ function PublicLayout({ children }: { children: React.ReactNode }) {
     return true;
   });
 
+  // Rutas públicas adicionales (reservas)
+  const reservasItems = [
+    { to: "/reservas", label: "Artículos", icon: Package },
+    { to: "/reservas/lugares", label: "Lugares", icon: MapPin },
+  ];
+
   return (
     <div className="min-h-svh flex flex-col bg-background">
       <header className="sticky top-0 z-40 border-b border-border bg-background/85 backdrop-blur supports-[backdrop-filter]:bg-background/70">
@@ -262,6 +310,27 @@ function PublicLayout({ children }: { children: React.ReactNode }) {
                 </Link>
               );
             })}
+            {/* Menú desplegable de Reserva */}
+            <div className="relative group">
+              <button className="px-3 py-2 rounded-md text-sm font-medium text-foreground hover:bg-accent hover:text-accent-foreground transition-colors flex items-center gap-1">
+                Reserva <ChevronDown className="h-3 w-3" />
+              </button>
+              <div className="absolute left-0 top-full mt-1 w-48 rounded-md border border-border bg-card shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
+                {reservasItems.map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <Link
+                      key={item.to}
+                      to={item.to}
+                      className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-accent first:rounded-t-md last:rounded-b-md"
+                    >
+                      <Icon className="h-4 w-4 text-primary" />
+                      {item.label}
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
           </nav>
 
           <div className="flex items-center gap-2 shrink-0">
@@ -298,6 +367,24 @@ function PublicLayout({ children }: { children: React.ReactNode }) {
                   </Link>
                 );
               })}
+              {/* Opciones de reserva en menú móvil */}
+              <div className="border-t border-border pt-2 mt-2">
+                <p className="px-3 py-1 text-xs font-semibold text-muted-foreground uppercase">Reserva</p>
+                {reservasItems.map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <Link
+                      key={item.to}
+                      to={item.to}
+                      onClick={() => setOpen(false)}
+                      className="flex items-center gap-3 rounded-md px-3 py-2 text-sm hover:bg-accent pl-6"
+                    >
+                      <Icon className="h-4 w-4 text-primary" />
+                      {item.label}
+                    </Link>
+                  );
+                })}
+              </div>
               <Link
                 to="/login"
                 onClick={() => setOpen(false)}

@@ -1,21 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { PageHeader } from "@/components/PageHeader";
-import { RequireAuth } from "@/components/RequireAuth";
 import { CalendarCheck, Clock, User, CheckCircle2 } from "lucide-react";
 
 export const Route = createFileRoute("/reservas")({
   head: () => ({ meta: [{ title: "Reservar implementos — UPC" }] }),
-  component: ProtectedReservas,
+  component: ReservasPage,
 });
-
-function ProtectedReservas() {
-  return (
-    <RequireAuth>
-      <ReservasPage />
-    </RequireAuth>
-  );
-}
 
 const articulos = [
   "Balón de fútbol",
