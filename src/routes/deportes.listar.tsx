@@ -15,32 +15,32 @@ const deportes = [
   {
     cod_deporte: 1,
     nom_deporte: "Fútbol",
-    cupo_maximo: 22,
     descripcion: "Deporte de equipo que se juega con un balón y dos equipos de 11 jugadores cada uno.",
+    estado: true,
   },
   {
     cod_deporte: 2,
     nom_deporte: "Baloncesto",
-    cupo_maximo: 10,
     descripcion: "Deporte de equipo donde dos equipos de 5 jugadores compiten para encestar un balón.",
+    estado: true,
   },
   {
     cod_deporte: 3,
     nom_deporte: "Voleibol",
-    cupo_maximo: 12,
     descripcion: "Deporte de equipo que se juega con una red y dos equipos de 6 jugadores.",
+    estado: true,
   },
   {
     cod_deporte: 4,
     nom_deporte: "Tenis",
-    cupo_maximo: 4,
     descripcion: "Deporte individual o de dobles que se juega con raquetas y una pelota.",
+    estado: true,
   },
   {
     cod_deporte: 5,
     nom_deporte: "Natación",
-    cupo_maximo: 20,
     descripcion: "Deporte individual que consiste en nadar en diferentes estilos y distancias.",
+    estado: true,
   },
 ];
 
@@ -109,43 +109,36 @@ function DeportesListarPage() {
                 No se encontró ningún deporte con código: {searchId}
               </p>
             ) : (
-              filteredDeportes.map((deporte) => (
-              <div
-                key={deporte.cod_deporte}
-                className="rounded-lg border border-border p-4 hover:bg-accent/50 transition-colors"
-              >
-                <div className="flex items-start justify-between">
-                  <div className="flex items-start gap-3">
-                    <Trophy className="h-6 w-6 text-primary mt-1" />
-                    <div className="flex-1">
-                      <h3 className="font-semibold text-lg">{deporte.nom_deporte}</h3>
-                      <div className="mt-2 space-y-1 text-sm">
-                        <p><strong>Código:</strong> {deporte.cod_deporte}</p>
-                        <p><strong>Cupo máximo:</strong> {deporte.cupo_maximo} participantes</p>
-                        <p><strong>Descripción:</strong> {deporte.descripcion}</p>
+                filteredDeportes.map((deporte) => (
+                  <div
+                    key={deporte.cod_deporte}
+                    className="rounded-lg border border-border p-4 hover:bg-accent/50 transition-colors"
+                  >
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-start gap-3">
+                        <Trophy className="h-6 w-6 text-primary mt-1" />
+                        <div className="flex-1">
+                          <h3 className="font-semibold text-lg">{deporte.nom_deporte}</h3>
+                          <div className="mt-2 space-y-1 text-sm">
+                            <p><strong>Código:</strong> {deporte.cod_deporte}</p>
+                            <p><strong>Descripción:</strong> {deporte.descripcion}</p>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${deporte.estado ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground'}`}>
+                          {deporte.estado ? 'Activo' : 'Inactivo'}
+                        </span>
                       </div>
                     </div>
                   </div>
-                  <div className="text-right">
-                    <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary">
-                      Activo
-                    </span>
-                  </div>
-                </div>
-              </div>
-            ))
-            )}
+                ))
+              )}
           </div>
-
           <div className="mt-6 p-4 bg-muted/30 rounded-lg">
             <div className="flex items-center justify-between">
               <p className="text-sm text-muted-foreground">
                 Total de deportes: <span className="font-semibold">{filteredDeportes.length}</span>
-              </p>
-              <p className="text-sm text-muted-foreground">
-                Cupo total disponible: <span className="font-semibold">
-                  {filteredDeportes.reduce((total, deporte) => total + deporte.cupo_maximo, 0)} participantes
-                </span>
               </p>
             </div>
           </div>

@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { PageHeader } from "@/components/PageHeader";
 import { RequireAuth } from "@/components/RequireAuth";
-import { Trash2, Search, FolderOpen, AlertTriangle, CheckCircle2 } from "lucide-react";
+import { Trash2, Search, FolderOpen, AlertTriangle, CheckCircle2, AlertCircle } from "lucide-react";
 
 export const Route = createFileRoute("/categorias/eliminar")({
   head: () => ({ meta: [{ title: "Eliminar categoría — UPC" }] }),

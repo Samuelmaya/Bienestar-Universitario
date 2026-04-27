@@ -11,7 +11,7 @@ export const Route = createFileRoute("/registros")({
 
 function ProtectedRegistros() {
   return (
-    <RequireAuth roles={["admin", "profesor"]}>
+    <RequireAuth roles={["admin", "entrenador"]}>
       <RegistrosPage />
     </RequireAuth>
   );

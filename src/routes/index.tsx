@@ -6,12 +6,11 @@ import {
   Clock,
   ArrowRight,
   Activity,
-  Users,
   ShieldCheck,
-  UserCircle,
   ClipboardList,
   Bell,
   Sparkles,
+  Users,
 } from "lucide-react";
 import hero from "@/assets/hero-deportes.jpg";
 import { useAuth } from "@/lib/auth";
@@ -38,12 +37,6 @@ const features = [
     to: "/horarios",
   },
   {
-    icon: CalendarCheck,
-    title: "Reserva de Implementos",
-    desc: "Solicita el préstamo de artículos deportivos en pocos clics.",
-    to: "/reservas",
-  },
-  {
     icon: Package,
     title: "Inventario Deportivo",
     desc: "Control de balones, raquetas, conos y más, disponible para administradores y profesores.",
@@ -65,22 +58,10 @@ function AuthenticatedHome() {
 
   const quickActions = [
     {
-      to: "/reservas",
-      label: "Reservar implemento",
-      desc: "Solicita un préstamo en minutos",
-      icon: CalendarCheck,
-    },
-    {
       to: "/horarios",
       label: "Ver horarios",
       desc: "Consulta entrenamientos y canchas",
       icon: Clock,
-    },
-    {
-      to: "/perfil/datos-personales",
-      label: "Actualizar mi perfil",
-      desc: "Mantén tu información al día",
-      icon: UserCircle,
     },
   ] as const;
 

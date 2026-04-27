@@ -9,7 +9,6 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as ReservasRouteImport } from './routes/reservas'
 import { Route as RegistrosRouteImport } from './routes/registros'
 import { Route as RegistroRouteImport } from './routes/registro'
 import { Route as LoginRouteImport } from './routes/login'
@@ -20,12 +19,11 @@ import { Route as UsuariosEliminarRouteImport } from './routes/usuarios.eliminar
 import { Route as UsuariosCrearRouteImport } from './routes/usuarios.crear'
 import { Route as UsuariosBuscarRouteImport } from './routes/usuarios.buscar'
 import { Route as UsuariosActualizarRouteImport } from './routes/usuarios.actualizar'
-import { Route as ReservasLugaresRouteImport } from './routes/reservas.lugares'
-import { Route as ReservasArticulosRouteImport } from './routes/reservas.articulos'
-import { Route as PerfilValoracionMedicaRouteImport } from './routes/perfil.valoracion-medica'
-import { Route as PerfilDatosPersonalesRouteImport } from './routes/perfil.datos-personales'
-import { Route as PerfilDatosFamiliaresRouteImport } from './routes/perfil.datos-familiares'
-import { Route as PerfilDatosAcademicosRouteImport } from './routes/perfil.datos-academicos'
+import { Route as RolesListarRouteImport } from './routes/roles.listar'
+import { Route as RolesEliminarRouteImport } from './routes/roles.eliminar'
+import { Route as RolesCrearRouteImport } from './routes/roles.crear'
+import { Route as RolesBuscarRouteImport } from './routes/roles.buscar'
+import { Route as RolesActualizarRouteImport } from './routes/roles.actualizar'
 import { Route as DeportesListarRouteImport } from './routes/deportes.listar'
 import { Route as DeportesEliminarRouteImport } from './routes/deportes.eliminar'
 import { Route as DeportesCrearRouteImport } from './routes/deportes.crear'
@@ -37,11 +35,6 @@ import { Route as CategoriasCrearRouteImport } from './routes/categorias.crear'
 import { Route as CategoriasBuscarRouteImport } from './routes/categorias.buscar'
 import { Route as CategoriasActualizarRouteImport } from './routes/categorias.actualizar'
 
-const ReservasRoute = ReservasRouteImport.update({
-  id: '/reservas',
-  path: '/reservas',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const RegistrosRoute = RegistrosRouteImport.update({
   id: '/registros',
   path: '/registros',
@@ -92,34 +85,29 @@ const UsuariosActualizarRoute = UsuariosActualizarRouteImport.update({
   path: '/usuarios/actualizar',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ReservasLugaresRoute = ReservasLugaresRouteImport.update({
-  id: '/lugares',
-  path: '/lugares',
-  getParentRoute: () => ReservasRoute,
-} as any)
-const ReservasArticulosRoute = ReservasArticulosRouteImport.update({
-  id: '/articulos',
-  path: '/articulos',
-  getParentRoute: () => ReservasRoute,
-} as any)
-const PerfilValoracionMedicaRoute = PerfilValoracionMedicaRouteImport.update({
-  id: '/perfil/valoracion-medica',
-  path: '/perfil/valoracion-medica',
+const RolesListarRoute = RolesListarRouteImport.update({
+  id: '/roles/listar',
+  path: '/roles/listar',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PerfilDatosPersonalesRoute = PerfilDatosPersonalesRouteImport.update({
-  id: '/perfil/datos-personales',
-  path: '/perfil/datos-personales',
+const RolesEliminarRoute = RolesEliminarRouteImport.update({
+  id: '/roles/eliminar',
+  path: '/roles/eliminar',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PerfilDatosFamiliaresRoute = PerfilDatosFamiliaresRouteImport.update({
-  id: '/perfil/datos-familiares',
-  path: '/perfil/datos-familiares',
+const RolesCrearRoute = RolesCrearRouteImport.update({
+  id: '/roles/crear',
+  path: '/roles/crear',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PerfilDatosAcademicosRoute = PerfilDatosAcademicosRouteImport.update({
-  id: '/perfil/datos-academicos',
-  path: '/perfil/datos-academicos',
+const RolesBuscarRoute = RolesBuscarRouteImport.update({
+  id: '/roles/buscar',
+  path: '/roles/buscar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RolesActualizarRoute = RolesActualizarRouteImport.update({
+  id: '/roles/actualizar',
+  path: '/roles/actualizar',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DeportesListarRoute = DeportesListarRouteImport.update({
@@ -180,7 +168,6 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/registro': typeof RegistroRoute
   '/registros': typeof RegistrosRoute
-  '/reservas': typeof ReservasRouteWithChildren
   '/categorias/actualizar': typeof CategoriasActualizarRoute
   '/categorias/buscar': typeof CategoriasBuscarRoute
   '/categorias/crear': typeof CategoriasCrearRoute
@@ -191,12 +178,11 @@ export interface FileRoutesByFullPath {
   '/deportes/crear': typeof DeportesCrearRoute
   '/deportes/eliminar': typeof DeportesEliminarRoute
   '/deportes/listar': typeof DeportesListarRoute
-  '/perfil/datos-academicos': typeof PerfilDatosAcademicosRoute
-  '/perfil/datos-familiares': typeof PerfilDatosFamiliaresRoute
-  '/perfil/datos-personales': typeof PerfilDatosPersonalesRoute
-  '/perfil/valoracion-medica': typeof PerfilValoracionMedicaRoute
-  '/reservas/articulos': typeof ReservasArticulosRoute
-  '/reservas/lugares': typeof ReservasLugaresRoute
+  '/roles/actualizar': typeof RolesActualizarRoute
+  '/roles/buscar': typeof RolesBuscarRoute
+  '/roles/crear': typeof RolesCrearRoute
+  '/roles/eliminar': typeof RolesEliminarRoute
+  '/roles/listar': typeof RolesListarRoute
   '/usuarios/actualizar': typeof UsuariosActualizarRoute
   '/usuarios/buscar': typeof UsuariosBuscarRoute
   '/usuarios/crear': typeof UsuariosCrearRoute
@@ -209,7 +195,6 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/registro': typeof RegistroRoute
   '/registros': typeof RegistrosRoute
-  '/reservas': typeof ReservasRouteWithChildren
   '/categorias/actualizar': typeof CategoriasActualizarRoute
   '/categorias/buscar': typeof CategoriasBuscarRoute
   '/categorias/crear': typeof CategoriasCrearRoute
@@ -220,12 +205,11 @@ export interface FileRoutesByTo {
   '/deportes/crear': typeof DeportesCrearRoute
   '/deportes/eliminar': typeof DeportesEliminarRoute
   '/deportes/listar': typeof DeportesListarRoute
-  '/perfil/datos-academicos': typeof PerfilDatosAcademicosRoute
-  '/perfil/datos-familiares': typeof PerfilDatosFamiliaresRoute
-  '/perfil/datos-personales': typeof PerfilDatosPersonalesRoute
-  '/perfil/valoracion-medica': typeof PerfilValoracionMedicaRoute
-  '/reservas/articulos': typeof ReservasArticulosRoute
-  '/reservas/lugares': typeof ReservasLugaresRoute
+  '/roles/actualizar': typeof RolesActualizarRoute
+  '/roles/buscar': typeof RolesBuscarRoute
+  '/roles/crear': typeof RolesCrearRoute
+  '/roles/eliminar': typeof RolesEliminarRoute
+  '/roles/listar': typeof RolesListarRoute
   '/usuarios/actualizar': typeof UsuariosActualizarRoute
   '/usuarios/buscar': typeof UsuariosBuscarRoute
   '/usuarios/crear': typeof UsuariosCrearRoute
@@ -239,7 +223,6 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/registro': typeof RegistroRoute
   '/registros': typeof RegistrosRoute
-  '/reservas': typeof ReservasRouteWithChildren
   '/categorias/actualizar': typeof CategoriasActualizarRoute
   '/categorias/buscar': typeof CategoriasBuscarRoute
   '/categorias/crear': typeof CategoriasCrearRoute
@@ -250,12 +233,11 @@ export interface FileRoutesById {
   '/deportes/crear': typeof DeportesCrearRoute
   '/deportes/eliminar': typeof DeportesEliminarRoute
   '/deportes/listar': typeof DeportesListarRoute
-  '/perfil/datos-academicos': typeof PerfilDatosAcademicosRoute
-  '/perfil/datos-familiares': typeof PerfilDatosFamiliaresRoute
-  '/perfil/datos-personales': typeof PerfilDatosPersonalesRoute
-  '/perfil/valoracion-medica': typeof PerfilValoracionMedicaRoute
-  '/reservas/articulos': typeof ReservasArticulosRoute
-  '/reservas/lugares': typeof ReservasLugaresRoute
+  '/roles/actualizar': typeof RolesActualizarRoute
+  '/roles/buscar': typeof RolesBuscarRoute
+  '/roles/crear': typeof RolesCrearRoute
+  '/roles/eliminar': typeof RolesEliminarRoute
+  '/roles/listar': typeof RolesListarRoute
   '/usuarios/actualizar': typeof UsuariosActualizarRoute
   '/usuarios/buscar': typeof UsuariosBuscarRoute
   '/usuarios/crear': typeof UsuariosCrearRoute
@@ -270,7 +252,6 @@ export interface FileRouteTypes {
     | '/login'
     | '/registro'
     | '/registros'
-    | '/reservas'
     | '/categorias/actualizar'
     | '/categorias/buscar'
     | '/categorias/crear'
@@ -281,12 +262,11 @@ export interface FileRouteTypes {
     | '/deportes/crear'
     | '/deportes/eliminar'
     | '/deportes/listar'
-    | '/perfil/datos-academicos'
-    | '/perfil/datos-familiares'
-    | '/perfil/datos-personales'
-    | '/perfil/valoracion-medica'
-    | '/reservas/articulos'
-    | '/reservas/lugares'
+    | '/roles/actualizar'
+    | '/roles/buscar'
+    | '/roles/crear'
+    | '/roles/eliminar'
+    | '/roles/listar'
     | '/usuarios/actualizar'
     | '/usuarios/buscar'
     | '/usuarios/crear'
@@ -299,7 +279,6 @@ export interface FileRouteTypes {
     | '/login'
     | '/registro'
     | '/registros'
-    | '/reservas'
     | '/categorias/actualizar'
     | '/categorias/buscar'
     | '/categorias/crear'
@@ -310,12 +289,11 @@ export interface FileRouteTypes {
     | '/deportes/crear'
     | '/deportes/eliminar'
     | '/deportes/listar'
-    | '/perfil/datos-academicos'
-    | '/perfil/datos-familiares'
-    | '/perfil/datos-personales'
-    | '/perfil/valoracion-medica'
-    | '/reservas/articulos'
-    | '/reservas/lugares'
+    | '/roles/actualizar'
+    | '/roles/buscar'
+    | '/roles/crear'
+    | '/roles/eliminar'
+    | '/roles/listar'
     | '/usuarios/actualizar'
     | '/usuarios/buscar'
     | '/usuarios/crear'
@@ -328,7 +306,6 @@ export interface FileRouteTypes {
     | '/login'
     | '/registro'
     | '/registros'
-    | '/reservas'
     | '/categorias/actualizar'
     | '/categorias/buscar'
     | '/categorias/crear'
@@ -339,12 +316,11 @@ export interface FileRouteTypes {
     | '/deportes/crear'
     | '/deportes/eliminar'
     | '/deportes/listar'
-    | '/perfil/datos-academicos'
-    | '/perfil/datos-familiares'
-    | '/perfil/datos-personales'
-    | '/perfil/valoracion-medica'
-    | '/reservas/articulos'
-    | '/reservas/lugares'
+    | '/roles/actualizar'
+    | '/roles/buscar'
+    | '/roles/crear'
+    | '/roles/eliminar'
+    | '/roles/listar'
     | '/usuarios/actualizar'
     | '/usuarios/buscar'
     | '/usuarios/crear'
@@ -358,7 +334,6 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   RegistroRoute: typeof RegistroRoute
   RegistrosRoute: typeof RegistrosRoute
-  ReservasRoute: typeof ReservasRouteWithChildren
   CategoriasActualizarRoute: typeof CategoriasActualizarRoute
   CategoriasBuscarRoute: typeof CategoriasBuscarRoute
   CategoriasCrearRoute: typeof CategoriasCrearRoute
@@ -369,10 +344,11 @@ export interface RootRouteChildren {
   DeportesCrearRoute: typeof DeportesCrearRoute
   DeportesEliminarRoute: typeof DeportesEliminarRoute
   DeportesListarRoute: typeof DeportesListarRoute
-  PerfilDatosAcademicosRoute: typeof PerfilDatosAcademicosRoute
-  PerfilDatosFamiliaresRoute: typeof PerfilDatosFamiliaresRoute
-  PerfilDatosPersonalesRoute: typeof PerfilDatosPersonalesRoute
-  PerfilValoracionMedicaRoute: typeof PerfilValoracionMedicaRoute
+  RolesActualizarRoute: typeof RolesActualizarRoute
+  RolesBuscarRoute: typeof RolesBuscarRoute
+  RolesCrearRoute: typeof RolesCrearRoute
+  RolesEliminarRoute: typeof RolesEliminarRoute
+  RolesListarRoute: typeof RolesListarRoute
   UsuariosActualizarRoute: typeof UsuariosActualizarRoute
   UsuariosBuscarRoute: typeof UsuariosBuscarRoute
   UsuariosCrearRoute: typeof UsuariosCrearRoute
@@ -381,13 +357,6 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/reservas': {
-      id: '/reservas'
-      path: '/reservas'
-      fullPath: '/reservas'
-      preLoaderRoute: typeof ReservasRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/registros': {
       id: '/registros'
       path: '/registros'
@@ -458,46 +427,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UsuariosActualizarRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/reservas/lugares': {
-      id: '/reservas/lugares'
-      path: '/lugares'
-      fullPath: '/reservas/lugares'
-      preLoaderRoute: typeof ReservasLugaresRouteImport
-      parentRoute: typeof ReservasRoute
-    }
-    '/reservas/articulos': {
-      id: '/reservas/articulos'
-      path: '/articulos'
-      fullPath: '/reservas/articulos'
-      preLoaderRoute: typeof ReservasArticulosRouteImport
-      parentRoute: typeof ReservasRoute
-    }
-    '/perfil/valoracion-medica': {
-      id: '/perfil/valoracion-medica'
-      path: '/perfil/valoracion-medica'
-      fullPath: '/perfil/valoracion-medica'
-      preLoaderRoute: typeof PerfilValoracionMedicaRouteImport
+    '/roles/listar': {
+      id: '/roles/listar'
+      path: '/roles/listar'
+      fullPath: '/roles/listar'
+      preLoaderRoute: typeof RolesListarRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/perfil/datos-personales': {
-      id: '/perfil/datos-personales'
-      path: '/perfil/datos-personales'
-      fullPath: '/perfil/datos-personales'
-      preLoaderRoute: typeof PerfilDatosPersonalesRouteImport
+    '/roles/eliminar': {
+      id: '/roles/eliminar'
+      path: '/roles/eliminar'
+      fullPath: '/roles/eliminar'
+      preLoaderRoute: typeof RolesEliminarRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/perfil/datos-familiares': {
-      id: '/perfil/datos-familiares'
-      path: '/perfil/datos-familiares'
-      fullPath: '/perfil/datos-familiares'
-      preLoaderRoute: typeof PerfilDatosFamiliaresRouteImport
+    '/roles/crear': {
+      id: '/roles/crear'
+      path: '/roles/crear'
+      fullPath: '/roles/crear'
+      preLoaderRoute: typeof RolesCrearRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/perfil/datos-academicos': {
-      id: '/perfil/datos-academicos'
-      path: '/perfil/datos-academicos'
-      fullPath: '/perfil/datos-academicos'
-      preLoaderRoute: typeof PerfilDatosAcademicosRouteImport
+    '/roles/buscar': {
+      id: '/roles/buscar'
+      path: '/roles/buscar'
+      fullPath: '/roles/buscar'
+      preLoaderRoute: typeof RolesBuscarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/roles/actualizar': {
+      id: '/roles/actualizar'
+      path: '/roles/actualizar'
+      fullPath: '/roles/actualizar'
+      preLoaderRoute: typeof RolesActualizarRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/deportes/listar': {
@@ -573,20 +535,6 @@ declare module '@tanstack/react-router' {
   }
 }
 
-interface ReservasRouteChildren {
-  ReservasArticulosRoute: typeof ReservasArticulosRoute
-  ReservasLugaresRoute: typeof ReservasLugaresRoute
-}
-
-const ReservasRouteChildren: ReservasRouteChildren = {
-  ReservasArticulosRoute: ReservasArticulosRoute,
-  ReservasLugaresRoute: ReservasLugaresRoute,
-}
-
-const ReservasRouteWithChildren = ReservasRoute._addFileChildren(
-  ReservasRouteChildren,
-)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   HorariosRoute: HorariosRoute,
@@ -594,7 +542,6 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   RegistroRoute: RegistroRoute,
   RegistrosRoute: RegistrosRoute,
-  ReservasRoute: ReservasRouteWithChildren,
   CategoriasActualizarRoute: CategoriasActualizarRoute,
   CategoriasBuscarRoute: CategoriasBuscarRoute,
   CategoriasCrearRoute: CategoriasCrearRoute,
@@ -605,10 +552,11 @@ const rootRouteChildren: RootRouteChildren = {
   DeportesCrearRoute: DeportesCrearRoute,
   DeportesEliminarRoute: DeportesEliminarRoute,
   DeportesListarRoute: DeportesListarRoute,
-  PerfilDatosAcademicosRoute: PerfilDatosAcademicosRoute,
-  PerfilDatosFamiliaresRoute: PerfilDatosFamiliaresRoute,
-  PerfilDatosPersonalesRoute: PerfilDatosPersonalesRoute,
-  PerfilValoracionMedicaRoute: PerfilValoracionMedicaRoute,
+  RolesActualizarRoute: RolesActualizarRoute,
+  RolesBuscarRoute: RolesBuscarRoute,
+  RolesCrearRoute: RolesCrearRoute,
+  RolesEliminarRoute: RolesEliminarRoute,
+  RolesListarRoute: RolesListarRoute,
   UsuariosActualizarRoute: UsuariosActualizarRoute,
   UsuariosBuscarRoute: UsuariosBuscarRoute,
   UsuariosCrearRoute: UsuariosCrearRoute,

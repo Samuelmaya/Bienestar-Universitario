@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { PageHeader } from "@/components/PageHeader";
-import { Trash2, Search, Trophy, AlertTriangle, CheckCircle2 } from "lucide-react";
+import { Trash2, Search, Trophy, AlertTriangle, CheckCircle2, AlertCircle } from "lucide-react";
 
 export const Route = createFileRoute("/deportes/eliminar")({
   head: () => ({ meta: [{ title: "Eliminar deporte — UPC" }] }),

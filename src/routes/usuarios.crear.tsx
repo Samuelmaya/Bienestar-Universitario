@@ -127,8 +127,8 @@ function CrearUsuarioPage() {
                 className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
               >
                 <option value={0}>Administrador</option>
-                <option value={1}>Estudiante</option>
-                <option value={2}>Profesor</option>
+                <option value={1}>Utilero</option>
+                <option value={2}>Entrenador</option>
                 <option value={3}>Personal</option>
               </select>
             </div>
@@ -174,7 +174,7 @@ function CrearUsuarioPage() {
               </p>
               <p className="text-sm text-muted-foreground">{form.email}</p>
               <p className="text-sm text-muted-foreground">
-                Rol: {form.role_id === 0 ? "Administrador" : form.role_id === 1 ? "Estudiante" : form.role_id === 2 ? "Profesor" : "Personal"}
+                Rol: {form.role_id === 0 ? "Administrador" : form.role_id === 1 ? "Utilero" : form.role_id === 2 ? "Entrenador" : "Personal"}
               </p>
               <p className="text-sm text-muted-foreground">
                 Estado: {form.activo ? "Activo" : "Inactivo"}

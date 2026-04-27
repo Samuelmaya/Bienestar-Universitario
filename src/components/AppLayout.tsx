@@ -13,11 +13,6 @@ import {
   LogOut,
   Menu,
   X,
-  UserCircle,
-  IdCard,
-  GraduationCap,
-  Users,
-  HeartPulse,
   ChevronDown,
   MapPin,
   Search,
@@ -25,6 +20,8 @@ import {
   Edit,
   FolderOpen,
   List,
+  Shield,
+  Users,
 } from "lucide-react";
 import {
   Collapsible,
@@ -136,9 +133,9 @@ function AuthenticatedSidebar() {
                 );
               })}
               {user.role === "admin" && <UsuariosMenu />}
+              {user.role === "admin" && <RolesMenu />}
               {(user.role === "admin" || user.role === "utilero") && <CategoriasMenu />}
               {(user.role === "admin" || user.role === "utilero" || user.role === "entrenador") && <DeportesMenu />}
-              <PerfilMenu />
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
@@ -155,50 +152,6 @@ function AuthenticatedSidebar() {
         </div>
       </SidebarFooter>
     </Sidebar>
-  );
-}
-
-function PerfilMenu() {
-  const location = useLocation();
-  const subItems = [
-    { to: "/perfil/datos-personales", label: "Datos personales", icon: IdCard },
-    { to: "/perfil/datos-academicos", label: "Datos académicos", icon: GraduationCap },
-    { to: "/perfil/datos-familiares", label: "Datos familiares", icon: Users },
-    { to: "/perfil/valoracion-medica", label: "Valoración médica", icon: HeartPulse },
-  ] as const;
-  const isOnPerfil = location.pathname.startsWith("/perfil");
-  const [open, setOpen] = useState(isOnPerfil);
-
-  return (
-    <Collapsible open={open} onOpenChange={setOpen} className="group/collapsible">
-      <SidebarMenuItem>
-        <CollapsibleTrigger asChild>
-          <SidebarMenuButton tooltip="Perfil" isActive={isOnPerfil}>
-            <UserCircle className="h-4 w-4" />
-            <span>Perfil</span>
-            <ChevronDown className="ml-auto h-4 w-4 transition-transform group-data-[state=open]/collapsible:rotate-180 group-data-[collapsible=icon]:hidden" />
-          </SidebarMenuButton>
-        </CollapsibleTrigger>
-        <CollapsibleContent>
-          <SidebarMenuSub>
-            {subItems.map((s) => {
-              const SIcon = s.icon;
-              const active = location.pathname === s.to;
-              return (
-                <SidebarMenuSubItem key={s.to}>
-                  <SidebarMenuSubButton asChild isActive={active}>
-                    <Link to={s.to}>
-                      <SIcon className="h-4 w-4" />
-                      <span>{s.label}</span>
-                    </Link>
-                  </SidebarMenuSubButton>
-                </SidebarMenuSubItem>
-              );
-            })}
-          </SidebarMenuSub>
-        </CollapsibleContent>
-      </SidebarMenuItem>
-    </Collapsible>
   );
 }
 
@@ -226,6 +179,51 @@ function UsuariosMenu() {
         <CollapsibleContent>
           <SidebarMenuSub>
             {usuariosItems.map((s) => {
+              const SIcon = s.icon;
+              const active = location.pathname === s.to;
+              return (
+                <SidebarMenuSubItem key={s.to}>
+                  <SidebarMenuSubButton asChild isActive={active}>
+                    <Link to={s.to}>
+                      <SIcon className="h-4 w-4" />
+                      <span>{s.label}</span>
+                    </Link>
+                  </SidebarMenuSubButton>
+                </SidebarMenuSubItem>
+              );
+            })}
+          </SidebarMenuSub>
+        </CollapsibleContent>
+      </SidebarMenuItem>
+    </Collapsible>
+  );
+}
+
+function RolesMenu() {
+  const location = useLocation();
+  const rolesItems = [
+    { to: "/roles/crear", label: "Crear rol", icon: UserPlus },
+    { to: "/roles/buscar", label: "Buscar por ID", icon: Search },
+    { to: "/roles/listar", label: "Listar todos", icon: List },
+    { to: "/roles/actualizar", label: "Actualizar", icon: Edit },
+    { to: "/roles/eliminar", label: "Eliminar", icon: Trash2 },
+  ] as const;
+  const isOnRoles = location.pathname.startsWith("/roles");
+  const [open, setOpen] = useState(isOnRoles);
+
+  return (
+    <Collapsible open={open} onOpenChange={setOpen} className="group/collapsible">
+      <SidebarMenuItem>
+        <CollapsibleTrigger asChild>
+          <SidebarMenuButton tooltip="Roles" isActive={isOnRoles}>
+            <Shield className="h-4 w-4" />
+            <span>Roles</span>
+            <ChevronDown className="ml-auto h-4 w-4 transition-transform group-data-[state=open]/collapsible:rotate-180 group-data-[collapsible=icon]:hidden" />
+          </SidebarMenuButton>
+        </CollapsibleTrigger>
+        <CollapsibleContent>
+          <SidebarMenuSub>
+            {rolesItems.map((s) => {
               const SIcon = s.icon;
               const active = location.pathname === s.to;
               return (
@@ -373,13 +371,7 @@ function PublicLayout({ children }: { children: React.ReactNode }) {
     return true;
   });
 
-  // Rutas públicas adicionales (reservas)
-  const reservasItems = [
-    { to: "/reservas", label: "Artículos", icon: Package },
-    { to: "/reservas/lugares", label: "Lugares", icon: MapPin },
-  ];
-
-  
+   
   return (
     <div className="min-h-svh flex flex-col bg-background">
       <header className="sticky top-0 z-40 border-b border-border bg-background/85 backdrop-blur supports-[backdrop-filter]:bg-background/70">
@@ -410,27 +402,6 @@ function PublicLayout({ children }: { children: React.ReactNode }) {
                 </Link>
               );
             })}
-            {/* Menú desplegable de Reservas */}
-            <div className="relative group">
-              <button className="px-3 py-2 rounded-md text-sm font-medium text-foreground hover:bg-accent hover:text-accent-foreground transition-colors flex items-center gap-1">
-                Reservas <ChevronDown className="h-3 w-3" />
-              </button>
-              <div className="absolute left-0 top-full mt-1 w-48 rounded-md border border-border bg-card shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
-                {reservasItems.map((item) => {
-                  const Icon = item.icon;
-                  return (
-                    <Link
-                      key={item.to}
-                      to={item.to}
-                      className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-accent first:rounded-t-md last:rounded-b-md"
-                    >
-                      <Icon className="h-4 w-4 text-primary" />
-                      {item.label}
-                    </Link>
-                  );
-                })}
-              </div>
-            </div>
           </nav>
 
           <div className="flex items-center gap-2 shrink-0">
@@ -467,24 +438,6 @@ function PublicLayout({ children }: { children: React.ReactNode }) {
                   </Link>
                 );
               })}
-              {/* Opciones de reservas en menú móvil */}
-              <div className="border-t border-border pt-2 mt-2">
-                <p className="px-3 py-1 text-xs font-semibold text-muted-foreground uppercase">Reservas</p>
-                {reservasItems.map((item) => {
-                  const Icon = item.icon;
-                  return (
-                    <Link
-                      key={item.to}
-                      to={item.to}
-                      onClick={() => setOpen(false)}
-                      className="flex items-center gap-3 rounded-md px-3 py-2 text-sm hover:bg-accent pl-6"
-                    >
-                      <Icon className="h-4 w-4 text-primary" />
-                      {item.label}
-                    </Link>
-                  );
-                })}
-              </div>
               <Link
                 to="/login"
                 onClick={() => setOpen(false)}
