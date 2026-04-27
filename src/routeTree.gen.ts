@@ -9,23 +9,39 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ReservasRouteImport } from './routes/reservas'
 import { Route as RegistrosRouteImport } from './routes/registros'
 import { Route as RegistroRouteImport } from './routes/registro'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as InventarioRouteImport } from './routes/inventario'
 import { Route as HorariosRouteImport } from './routes/horarios'
-import { Route as DeportesRouteImport } from './routes/deportes'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as UsuariosEliminarRouteImport } from './routes/usuarios.eliminar'
 import { Route as UsuariosCrearRouteImport } from './routes/usuarios.crear'
 import { Route as UsuariosBuscarRouteImport } from './routes/usuarios.buscar'
 import { Route as UsuariosActualizarRouteImport } from './routes/usuarios.actualizar'
 import { Route as ReservasLugaresRouteImport } from './routes/reservas.lugares'
+import { Route as ReservasArticulosRouteImport } from './routes/reservas.articulos'
 import { Route as PerfilValoracionMedicaRouteImport } from './routes/perfil.valoracion-medica'
 import { Route as PerfilDatosPersonalesRouteImport } from './routes/perfil.datos-personales'
 import { Route as PerfilDatosFamiliaresRouteImport } from './routes/perfil.datos-familiares'
 import { Route as PerfilDatosAcademicosRouteImport } from './routes/perfil.datos-academicos'
+import { Route as DeportesListarRouteImport } from './routes/deportes.listar'
+import { Route as DeportesEliminarRouteImport } from './routes/deportes.eliminar'
+import { Route as DeportesCrearRouteImport } from './routes/deportes.crear'
+import { Route as DeportesBuscarRouteImport } from './routes/deportes.buscar'
+import { Route as DeportesActualizarRouteImport } from './routes/deportes.actualizar'
+import { Route as CategoriasListarRouteImport } from './routes/categorias.listar'
+import { Route as CategoriasEliminarRouteImport } from './routes/categorias.eliminar'
+import { Route as CategoriasCrearRouteImport } from './routes/categorias.crear'
+import { Route as CategoriasBuscarRouteImport } from './routes/categorias.buscar'
+import { Route as CategoriasActualizarRouteImport } from './routes/categorias.actualizar'
 
+const ReservasRoute = ReservasRouteImport.update({
+  id: '/reservas',
+  path: '/reservas',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RegistrosRoute = RegistrosRouteImport.update({
   id: '/registros',
   path: '/registros',
@@ -49,11 +65,6 @@ const InventarioRoute = InventarioRouteImport.update({
 const HorariosRoute = HorariosRouteImport.update({
   id: '/horarios',
   path: '/horarios',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DeportesRoute = DeportesRouteImport.update({
-  id: '/deportes',
-  path: '/deportes',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -82,9 +93,14 @@ const UsuariosActualizarRoute = UsuariosActualizarRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const ReservasLugaresRoute = ReservasLugaresRouteImport.update({
-  id: '/reservas/lugares',
-  path: '/reservas/lugares',
-  getParentRoute: () => rootRouteImport,
+  id: '/lugares',
+  path: '/lugares',
+  getParentRoute: () => ReservasRoute,
+} as any)
+const ReservasArticulosRoute = ReservasArticulosRouteImport.update({
+  id: '/articulos',
+  path: '/articulos',
+  getParentRoute: () => ReservasRoute,
 } as any)
 const PerfilValoracionMedicaRoute = PerfilValoracionMedicaRouteImport.update({
   id: '/perfil/valoracion-medica',
@@ -106,19 +122,80 @@ const PerfilDatosAcademicosRoute = PerfilDatosAcademicosRouteImport.update({
   path: '/perfil/datos-academicos',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DeportesListarRoute = DeportesListarRouteImport.update({
+  id: '/deportes/listar',
+  path: '/deportes/listar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DeportesEliminarRoute = DeportesEliminarRouteImport.update({
+  id: '/deportes/eliminar',
+  path: '/deportes/eliminar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DeportesCrearRoute = DeportesCrearRouteImport.update({
+  id: '/deportes/crear',
+  path: '/deportes/crear',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DeportesBuscarRoute = DeportesBuscarRouteImport.update({
+  id: '/deportes/buscar',
+  path: '/deportes/buscar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DeportesActualizarRoute = DeportesActualizarRouteImport.update({
+  id: '/deportes/actualizar',
+  path: '/deportes/actualizar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CategoriasListarRoute = CategoriasListarRouteImport.update({
+  id: '/categorias/listar',
+  path: '/categorias/listar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CategoriasEliminarRoute = CategoriasEliminarRouteImport.update({
+  id: '/categorias/eliminar',
+  path: '/categorias/eliminar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CategoriasCrearRoute = CategoriasCrearRouteImport.update({
+  id: '/categorias/crear',
+  path: '/categorias/crear',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CategoriasBuscarRoute = CategoriasBuscarRouteImport.update({
+  id: '/categorias/buscar',
+  path: '/categorias/buscar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CategoriasActualizarRoute = CategoriasActualizarRouteImport.update({
+  id: '/categorias/actualizar',
+  path: '/categorias/actualizar',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/deportes': typeof DeportesRoute
   '/horarios': typeof HorariosRoute
   '/inventario': typeof InventarioRoute
   '/login': typeof LoginRoute
   '/registro': typeof RegistroRoute
   '/registros': typeof RegistrosRoute
+  '/reservas': typeof ReservasRouteWithChildren
+  '/categorias/actualizar': typeof CategoriasActualizarRoute
+  '/categorias/buscar': typeof CategoriasBuscarRoute
+  '/categorias/crear': typeof CategoriasCrearRoute
+  '/categorias/eliminar': typeof CategoriasEliminarRoute
+  '/categorias/listar': typeof CategoriasListarRoute
+  '/deportes/actualizar': typeof DeportesActualizarRoute
+  '/deportes/buscar': typeof DeportesBuscarRoute
+  '/deportes/crear': typeof DeportesCrearRoute
+  '/deportes/eliminar': typeof DeportesEliminarRoute
+  '/deportes/listar': typeof DeportesListarRoute
   '/perfil/datos-academicos': typeof PerfilDatosAcademicosRoute
   '/perfil/datos-familiares': typeof PerfilDatosFamiliaresRoute
   '/perfil/datos-personales': typeof PerfilDatosPersonalesRoute
   '/perfil/valoracion-medica': typeof PerfilValoracionMedicaRoute
+  '/reservas/articulos': typeof ReservasArticulosRoute
   '/reservas/lugares': typeof ReservasLugaresRoute
   '/usuarios/actualizar': typeof UsuariosActualizarRoute
   '/usuarios/buscar': typeof UsuariosBuscarRoute
@@ -127,16 +204,27 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/deportes': typeof DeportesRoute
   '/horarios': typeof HorariosRoute
   '/inventario': typeof InventarioRoute
   '/login': typeof LoginRoute
   '/registro': typeof RegistroRoute
   '/registros': typeof RegistrosRoute
+  '/reservas': typeof ReservasRouteWithChildren
+  '/categorias/actualizar': typeof CategoriasActualizarRoute
+  '/categorias/buscar': typeof CategoriasBuscarRoute
+  '/categorias/crear': typeof CategoriasCrearRoute
+  '/categorias/eliminar': typeof CategoriasEliminarRoute
+  '/categorias/listar': typeof CategoriasListarRoute
+  '/deportes/actualizar': typeof DeportesActualizarRoute
+  '/deportes/buscar': typeof DeportesBuscarRoute
+  '/deportes/crear': typeof DeportesCrearRoute
+  '/deportes/eliminar': typeof DeportesEliminarRoute
+  '/deportes/listar': typeof DeportesListarRoute
   '/perfil/datos-academicos': typeof PerfilDatosAcademicosRoute
   '/perfil/datos-familiares': typeof PerfilDatosFamiliaresRoute
   '/perfil/datos-personales': typeof PerfilDatosPersonalesRoute
   '/perfil/valoracion-medica': typeof PerfilValoracionMedicaRoute
+  '/reservas/articulos': typeof ReservasArticulosRoute
   '/reservas/lugares': typeof ReservasLugaresRoute
   '/usuarios/actualizar': typeof UsuariosActualizarRoute
   '/usuarios/buscar': typeof UsuariosBuscarRoute
@@ -146,16 +234,27 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/deportes': typeof DeportesRoute
   '/horarios': typeof HorariosRoute
   '/inventario': typeof InventarioRoute
   '/login': typeof LoginRoute
   '/registro': typeof RegistroRoute
   '/registros': typeof RegistrosRoute
+  '/reservas': typeof ReservasRouteWithChildren
+  '/categorias/actualizar': typeof CategoriasActualizarRoute
+  '/categorias/buscar': typeof CategoriasBuscarRoute
+  '/categorias/crear': typeof CategoriasCrearRoute
+  '/categorias/eliminar': typeof CategoriasEliminarRoute
+  '/categorias/listar': typeof CategoriasListarRoute
+  '/deportes/actualizar': typeof DeportesActualizarRoute
+  '/deportes/buscar': typeof DeportesBuscarRoute
+  '/deportes/crear': typeof DeportesCrearRoute
+  '/deportes/eliminar': typeof DeportesEliminarRoute
+  '/deportes/listar': typeof DeportesListarRoute
   '/perfil/datos-academicos': typeof PerfilDatosAcademicosRoute
   '/perfil/datos-familiares': typeof PerfilDatosFamiliaresRoute
   '/perfil/datos-personales': typeof PerfilDatosPersonalesRoute
   '/perfil/valoracion-medica': typeof PerfilValoracionMedicaRoute
+  '/reservas/articulos': typeof ReservasArticulosRoute
   '/reservas/lugares': typeof ReservasLugaresRoute
   '/usuarios/actualizar': typeof UsuariosActualizarRoute
   '/usuarios/buscar': typeof UsuariosBuscarRoute
@@ -166,16 +265,27 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/deportes'
     | '/horarios'
     | '/inventario'
     | '/login'
     | '/registro'
     | '/registros'
+    | '/reservas'
+    | '/categorias/actualizar'
+    | '/categorias/buscar'
+    | '/categorias/crear'
+    | '/categorias/eliminar'
+    | '/categorias/listar'
+    | '/deportes/actualizar'
+    | '/deportes/buscar'
+    | '/deportes/crear'
+    | '/deportes/eliminar'
+    | '/deportes/listar'
     | '/perfil/datos-academicos'
     | '/perfil/datos-familiares'
     | '/perfil/datos-personales'
     | '/perfil/valoracion-medica'
+    | '/reservas/articulos'
     | '/reservas/lugares'
     | '/usuarios/actualizar'
     | '/usuarios/buscar'
@@ -184,16 +294,27 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/deportes'
     | '/horarios'
     | '/inventario'
     | '/login'
     | '/registro'
     | '/registros'
+    | '/reservas'
+    | '/categorias/actualizar'
+    | '/categorias/buscar'
+    | '/categorias/crear'
+    | '/categorias/eliminar'
+    | '/categorias/listar'
+    | '/deportes/actualizar'
+    | '/deportes/buscar'
+    | '/deportes/crear'
+    | '/deportes/eliminar'
+    | '/deportes/listar'
     | '/perfil/datos-academicos'
     | '/perfil/datos-familiares'
     | '/perfil/datos-personales'
     | '/perfil/valoracion-medica'
+    | '/reservas/articulos'
     | '/reservas/lugares'
     | '/usuarios/actualizar'
     | '/usuarios/buscar'
@@ -202,16 +323,27 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
-    | '/deportes'
     | '/horarios'
     | '/inventario'
     | '/login'
     | '/registro'
     | '/registros'
+    | '/reservas'
+    | '/categorias/actualizar'
+    | '/categorias/buscar'
+    | '/categorias/crear'
+    | '/categorias/eliminar'
+    | '/categorias/listar'
+    | '/deportes/actualizar'
+    | '/deportes/buscar'
+    | '/deportes/crear'
+    | '/deportes/eliminar'
+    | '/deportes/listar'
     | '/perfil/datos-academicos'
     | '/perfil/datos-familiares'
     | '/perfil/datos-personales'
     | '/perfil/valoracion-medica'
+    | '/reservas/articulos'
     | '/reservas/lugares'
     | '/usuarios/actualizar'
     | '/usuarios/buscar'
@@ -221,17 +353,26 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  DeportesRoute: typeof DeportesRoute
   HorariosRoute: typeof HorariosRoute
   InventarioRoute: typeof InventarioRoute
   LoginRoute: typeof LoginRoute
   RegistroRoute: typeof RegistroRoute
   RegistrosRoute: typeof RegistrosRoute
+  ReservasRoute: typeof ReservasRouteWithChildren
+  CategoriasActualizarRoute: typeof CategoriasActualizarRoute
+  CategoriasBuscarRoute: typeof CategoriasBuscarRoute
+  CategoriasCrearRoute: typeof CategoriasCrearRoute
+  CategoriasEliminarRoute: typeof CategoriasEliminarRoute
+  CategoriasListarRoute: typeof CategoriasListarRoute
+  DeportesActualizarRoute: typeof DeportesActualizarRoute
+  DeportesBuscarRoute: typeof DeportesBuscarRoute
+  DeportesCrearRoute: typeof DeportesCrearRoute
+  DeportesEliminarRoute: typeof DeportesEliminarRoute
+  DeportesListarRoute: typeof DeportesListarRoute
   PerfilDatosAcademicosRoute: typeof PerfilDatosAcademicosRoute
   PerfilDatosFamiliaresRoute: typeof PerfilDatosFamiliaresRoute
   PerfilDatosPersonalesRoute: typeof PerfilDatosPersonalesRoute
   PerfilValoracionMedicaRoute: typeof PerfilValoracionMedicaRoute
-  ReservasLugaresRoute: typeof ReservasLugaresRoute
   UsuariosActualizarRoute: typeof UsuariosActualizarRoute
   UsuariosBuscarRoute: typeof UsuariosBuscarRoute
   UsuariosCrearRoute: typeof UsuariosCrearRoute
@@ -240,6 +381,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/reservas': {
+      id: '/reservas'
+      path: '/reservas'
+      fullPath: '/reservas'
+      preLoaderRoute: typeof ReservasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/registros': {
       id: '/registros'
       path: '/registros'
@@ -273,13 +421,6 @@ declare module '@tanstack/react-router' {
       path: '/horarios'
       fullPath: '/horarios'
       preLoaderRoute: typeof HorariosRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/deportes': {
-      id: '/deportes'
-      path: '/deportes'
-      fullPath: '/deportes'
-      preLoaderRoute: typeof DeportesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -319,10 +460,17 @@ declare module '@tanstack/react-router' {
     }
     '/reservas/lugares': {
       id: '/reservas/lugares'
-      path: '/reservas/lugares'
+      path: '/lugares'
       fullPath: '/reservas/lugares'
       preLoaderRoute: typeof ReservasLugaresRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof ReservasRoute
+    }
+    '/reservas/articulos': {
+      id: '/reservas/articulos'
+      path: '/articulos'
+      fullPath: '/reservas/articulos'
+      preLoaderRoute: typeof ReservasArticulosRouteImport
+      parentRoute: typeof ReservasRoute
     }
     '/perfil/valoracion-medica': {
       id: '/perfil/valoracion-medica'
@@ -352,22 +500,115 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PerfilDatosAcademicosRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/deportes/listar': {
+      id: '/deportes/listar'
+      path: '/deportes/listar'
+      fullPath: '/deportes/listar'
+      preLoaderRoute: typeof DeportesListarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/deportes/eliminar': {
+      id: '/deportes/eliminar'
+      path: '/deportes/eliminar'
+      fullPath: '/deportes/eliminar'
+      preLoaderRoute: typeof DeportesEliminarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/deportes/crear': {
+      id: '/deportes/crear'
+      path: '/deportes/crear'
+      fullPath: '/deportes/crear'
+      preLoaderRoute: typeof DeportesCrearRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/deportes/buscar': {
+      id: '/deportes/buscar'
+      path: '/deportes/buscar'
+      fullPath: '/deportes/buscar'
+      preLoaderRoute: typeof DeportesBuscarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/deportes/actualizar': {
+      id: '/deportes/actualizar'
+      path: '/deportes/actualizar'
+      fullPath: '/deportes/actualizar'
+      preLoaderRoute: typeof DeportesActualizarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/categorias/listar': {
+      id: '/categorias/listar'
+      path: '/categorias/listar'
+      fullPath: '/categorias/listar'
+      preLoaderRoute: typeof CategoriasListarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/categorias/eliminar': {
+      id: '/categorias/eliminar'
+      path: '/categorias/eliminar'
+      fullPath: '/categorias/eliminar'
+      preLoaderRoute: typeof CategoriasEliminarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/categorias/crear': {
+      id: '/categorias/crear'
+      path: '/categorias/crear'
+      fullPath: '/categorias/crear'
+      preLoaderRoute: typeof CategoriasCrearRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/categorias/buscar': {
+      id: '/categorias/buscar'
+      path: '/categorias/buscar'
+      fullPath: '/categorias/buscar'
+      preLoaderRoute: typeof CategoriasBuscarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/categorias/actualizar': {
+      id: '/categorias/actualizar'
+      path: '/categorias/actualizar'
+      fullPath: '/categorias/actualizar'
+      preLoaderRoute: typeof CategoriasActualizarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
+interface ReservasRouteChildren {
+  ReservasArticulosRoute: typeof ReservasArticulosRoute
+  ReservasLugaresRoute: typeof ReservasLugaresRoute
+}
+
+const ReservasRouteChildren: ReservasRouteChildren = {
+  ReservasArticulosRoute: ReservasArticulosRoute,
+  ReservasLugaresRoute: ReservasLugaresRoute,
+}
+
+const ReservasRouteWithChildren = ReservasRoute._addFileChildren(
+  ReservasRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  DeportesRoute: DeportesRoute,
   HorariosRoute: HorariosRoute,
   InventarioRoute: InventarioRoute,
   LoginRoute: LoginRoute,
   RegistroRoute: RegistroRoute,
   RegistrosRoute: RegistrosRoute,
+  ReservasRoute: ReservasRouteWithChildren,
+  CategoriasActualizarRoute: CategoriasActualizarRoute,
+  CategoriasBuscarRoute: CategoriasBuscarRoute,
+  CategoriasCrearRoute: CategoriasCrearRoute,
+  CategoriasEliminarRoute: CategoriasEliminarRoute,
+  CategoriasListarRoute: CategoriasListarRoute,
+  DeportesActualizarRoute: DeportesActualizarRoute,
+  DeportesBuscarRoute: DeportesBuscarRoute,
+  DeportesCrearRoute: DeportesCrearRoute,
+  DeportesEliminarRoute: DeportesEliminarRoute,
+  DeportesListarRoute: DeportesListarRoute,
   PerfilDatosAcademicosRoute: PerfilDatosAcademicosRoute,
   PerfilDatosFamiliaresRoute: PerfilDatosFamiliaresRoute,
   PerfilDatosPersonalesRoute: PerfilDatosPersonalesRoute,
   PerfilValoracionMedicaRoute: PerfilValoracionMedicaRoute,
-  ReservasLugaresRoute: ReservasLugaresRoute,
   UsuariosActualizarRoute: UsuariosActualizarRoute,
   UsuariosBuscarRoute: UsuariosBuscarRoute,
   UsuariosCrearRoute: UsuariosCrearRoute,

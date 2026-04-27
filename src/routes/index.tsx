@@ -71,12 +71,6 @@ function AuthenticatedHome() {
       icon: CalendarCheck,
     },
     {
-      to: "/deportes",
-      label: "Inscribirme a un deporte",
-      desc: "Explora las disciplinas activas",
-      icon: Trophy,
-    },
-    {
       to: "/horarios",
       label: "Ver horarios",
       desc: "Consulta entrenamientos y canchas",

@@ -23,6 +23,8 @@ import {
   Search,
   Trash2,
   Edit,
+  FolderOpen,
+  List,
 } from "lucide-react";
 import {
   Collapsible,
@@ -60,7 +62,7 @@ type NavItem = {
 const navItems: NavItem[] = [
   { to: "/", label: "Inicio", icon: Home },
   { to: "/inventario", label: "Inventario", icon: Package, roles: ["admin", "utilero"] },
-  { to: "/deportes", label: "Deportes", icon: Trophy, requiresAuth: true },
+
   { to: "/registros", label: "Registros", icon: ClipboardList, roles: ["admin", "entrenador"] },
   { to: "/horarios", label: "Horarios", icon: Clock, requiresAuth: true },
   { to: "/registro", label: "Registro", icon: UserPlus, publicOnly: true },
@@ -134,6 +136,8 @@ function AuthenticatedSidebar() {
                 );
               })}
               {user.role === "admin" && <UsuariosMenu />}
+              {(user.role === "admin" || user.role === "utilero") && <CategoriasMenu />}
+              {(user.role === "admin" || user.role === "utilero" || user.role === "entrenador") && <DeportesMenu />}
               <PerfilMenu />
             </SidebarMenu>
           </SidebarGroupContent>
@@ -222,6 +226,95 @@ function UsuariosMenu() {
         <CollapsibleContent>
           <SidebarMenuSub>
             {usuariosItems.map((s) => {
+              const SIcon = s.icon;
+              const active = location.pathname === s.to;
+              return (
+                <SidebarMenuSubItem key={s.to}>
+                  <SidebarMenuSubButton asChild isActive={active}>
+                    <Link to={s.to}>
+                      <SIcon className="h-4 w-4" />
+                      <span>{s.label}</span>
+                    </Link>
+                  </SidebarMenuSubButton>
+                </SidebarMenuSubItem>
+              );
+            })}
+          </SidebarMenuSub>
+        </CollapsibleContent>
+      </SidebarMenuItem>
+    </Collapsible>
+  );
+}
+
+function CategoriasMenu() {
+  const location = useLocation();
+  const categoriasItems = [
+    { to: "/categorias/crear", label: "Crear categoría", icon: UserPlus },
+    { to: "/categorias/buscar", label: "Buscar por ID", icon: Search },
+    { to: "/categorias/listar", label: "Listar todas", icon: List },
+    { to: "/categorias/actualizar", label: "Actualizar", icon: Edit },
+    { to: "/categorias/eliminar", label: "Eliminar", icon: Trash2 },
+  ] as const;
+  const isOnCategorias = location.pathname.startsWith("/categorias");
+  const [open, setOpen] = useState(isOnCategorias);
+
+  return (
+    <Collapsible open={open} onOpenChange={setOpen} className="group/collapsible">
+      <SidebarMenuItem>
+        <CollapsibleTrigger asChild>
+          <SidebarMenuButton tooltip="Categorías" isActive={isOnCategorias}>
+            <FolderOpen className="h-4 w-4" />
+            <span>Categorías</span>
+            <ChevronDown className="ml-auto h-4 w-4 transition-transform group-data-[state=open]/collapsible:rotate-180 group-data-[collapsible=icon]:hidden" />
+          </SidebarMenuButton>
+        </CollapsibleTrigger>
+        <CollapsibleContent>
+          <SidebarMenuSub>
+            {categoriasItems.map((s) => {
+              const SIcon = s.icon;
+              const active = location.pathname === s.to;
+              return (
+                <SidebarMenuSubItem key={s.to}>
+                  <SidebarMenuSubButton asChild isActive={active}>
+                    <Link to={s.to}>
+                      <SIcon className="h-4 w-4" />
+                      <span>{s.label}</span>
+                    </Link>
+                  </SidebarMenuSubButton>
+                </SidebarMenuSubItem>
+              );
+            })}
+          </SidebarMenuSub>
+        </CollapsibleContent>
+      </SidebarMenuItem>
+    </Collapsible>
+  );
+}
+
+function DeportesMenu() {
+  const location = useLocation();
+  const deportesItems = [
+    { to: "/deportes/crear", label: "Crear deporte", icon: UserPlus },
+    { to: "/deportes/listar", label: "Listar todos", icon: List },
+    { to: "/deportes/actualizar", label: "Actualizar", icon: Edit },
+    { to: "/deportes/eliminar", label: "Eliminar", icon: Trash2 },
+  ] as const;
+  const isOnDeportes = location.pathname.startsWith("/deportes");
+  const [open, setOpen] = useState(isOnDeportes);
+
+  return (
+    <Collapsible open={open} onOpenChange={setOpen} className="group/collapsible">
+      <SidebarMenuItem>
+        <CollapsibleTrigger asChild>
+          <SidebarMenuButton tooltip="Deportes" isActive={isOnDeportes}>
+            <Trophy className="h-4 w-4" />
+            <span>Deportes</span>
+            <ChevronDown className="ml-auto h-4 w-4 transition-transform group-data-[state=open]/collapsible:rotate-180 group-data-[collapsible=icon]:hidden" />
+          </SidebarMenuButton>
+        </CollapsibleTrigger>
+        <CollapsibleContent>
+          <SidebarMenuSub>
+            {deportesItems.map((s) => {
               const SIcon = s.icon;
               const active = location.pathname === s.to;
               return (
