@@ -157,10 +157,12 @@ export const categoriesApi = {
 // API de Equipos Deportivos
 export interface Articulo {
   id_articulo: number;
-  nom_articulo: string;
-  descripcion: string;
+  nombre: string;
   cantidad: number;
+  dañados: number;
   estado: string;
+  id_categoria: number;
+  observaciones: string;
 }
 
 export const articlesApi = {
@@ -168,7 +170,7 @@ export const articlesApi = {
 
   get: (id_articulo: number) => request<Articulo>(`/sports-equipment/${id_articulo}`),
 
-  create: (data: { nom_articulo: string; descripcion: string; cantidad: number }) =>
+  create: (data: { nombre: string; cantidad: number; dañados: number; estado: string; id_categoria: number; observaciones: string }) =>
     request<Articulo>("/sports-equipment", {
       method: "POST",
       body: JSON.stringify(data),
@@ -176,7 +178,7 @@ export const articlesApi = {
 
   update: (
     id_articulo: number,
-    data: Partial<{ nom_articulo: string; descripcion: string; cantidad: number; estado: string }>,
+    data: Partial<{ nombre: string; cantidad: number; dañados: number; estado: string; id_categoria: number; observaciones: string }>,
   ) =>
     request<Articulo>(`/sports-equipment/${id_articulo}`, {
       method: "PATCH",
