@@ -1,4 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { authApi, type TokenResponse } from "./api";
 
 export type Role = "utilero" | "admin" | "entrenador";
 
@@ -6,17 +7,19 @@ export type AuthUser = {
   nombre: string;
   email: string;
   role: Role;
+  user_id?: number;
 };
 
 type AuthContextValue = {
   user: AuthUser | null;
   isAuthenticated: boolean;
-  login: (data: { email: string; role: Role }) => void;
+  login: (data: { email: string; password: string }) => Promise<void>;
   logout: () => void;
 };
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 const STORAGE_KEY = "upc.auth.user";
+const TOKEN_KEY = "auth_token";
 
 function nombreFromEmail(email: string) {
   const base = email.split("@")[0] ?? "Usuario";
@@ -42,24 +45,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setHydrated(true);
   }, []);
 
-  const login = useCallback((data: { email: string; role: Role }) => {
+  const login = useCallback(async (data: { email: string; password: string }) => {
+    // Login desconectado del backend - modo local sin backend
+    // Simula un login exitoso sin llamar a la API
+    
+    const nombre = nombreFromEmail(data.email);
+    
     const u: AuthUser = {
       email: data.email,
-      role: data.role,
-      nombre: nombreFromEmail(data.email),
+      role: "admin", // Asignamos un rol por defecto para pruebas
+      nombre,
     };
+    
     setUser(u);
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(u));
-    } catch {
-      // ignore
-    }
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(u));
   }, []);
 
   const logout = useCallback(() => {
     setUser(null);
     try {
       localStorage.removeItem(STORAGE_KEY);
+      localStorage.removeItem(TOKEN_KEY);
     } catch {
       // ignore
     }

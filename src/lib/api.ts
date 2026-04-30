@@ -1,4 +1,5 @@
-const API_BASE = "https://backend-deportes.onrender.com";
+// Backend desconectado - URL vacía para desarrollo local sin backend
+const API_BASE = "";
 
 const getToken = () => localStorage.getItem("auth_token");
 
@@ -173,7 +174,10 @@ export const articlesApi = {
       body: JSON.stringify(data),
     }),
 
-  update: (id_articulo: number, data: Partial<{ nom_articulo: string; descripcion: string; cantidad: number; estado: string }>) =>
+  update: (
+    id_articulo: number,
+    data: Partial<{ nom_articulo: string; descripcion: string; cantidad: number; estado: string }>,
+  ) =>
     request<Articulo>(`/sports-equipment/${id_articulo}`, {
       method: "PATCH",
       body: JSON.stringify(data),

@@ -98,7 +98,7 @@ function AuthenticatedHome() {
             <Sparkles className="h-3.5 w-3.5" /> Panel personal
           </span>
           <h1 className="mt-3 text-3xl md:text-4xl font-bold leading-tight">
-            {greeting}, {user.nombre.split(" ")[0]} 
+            {greeting}, {user.nombre.split(" ")[0]}
           </h1>
           <p className="mt-2 max-w-2xl text-sm md:text-base opacity-95">
             Bienvenido a tu espacio de Bienestar Deportivo UPC. Desde aquí puedes gestionar tus

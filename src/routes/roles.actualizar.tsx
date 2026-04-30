@@ -34,19 +34,19 @@ function RolesActualizarPage() {
     }
 
     setSearching(true);
-      try {
-        const roleId = parseInt(searchId);
-        // const foundRole = await rolesApi.get(roleId); // No conectado aún al backend
-        // Simulación para pruebas
-        const foundRole = { id: roleId, nombre: "Rol de prueba", descripcion: "Descripción de prueba", creado_en: new Date().toISOString() } as Role;
-        setRole(foundRole);
-        setNombre(foundRole.nombre);
-        setDescripcion(foundRole.descripcion);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : `No se encontró ningún rol con ID: ${searchId}`);
-      } finally {
-        setSearching(false);
-      }
+    try {
+      const roleId = parseInt(searchId);
+      const foundRole = await rolesApi.get(roleId);
+      setRole(foundRole);
+      setNombre(foundRole.nombre);
+      setDescripcion(foundRole.descripcion);
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : `No se encontró ningún rol con ID: ${searchId}`,
+      );
+    } finally {
+      setSearching(false);
+    }
   };
 
   const handleUpdate = async (e: React.FormEvent) => {
@@ -60,32 +60,31 @@ function RolesActualizarPage() {
 
     setLoading(true);
     setError("");
-      try {
-        // await rolesApi.update(role.id, { nombre, descripcion }); // No conectado aún al backend
-        setSuccess(true);
-        setTimeout(() => {
-          navigate({ to: "/roles/listar" });
-        }, 2000);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Error al actualizar el rol");
-      } finally {
-        setLoading(false);
-      }
-    };
+    try {
+      await rolesApi.update(role.id, { nombre, descripcion });
+      setSuccess(true);
+      setTimeout(() => {
+        navigate({ to: "/roles/listar" });
+      }, 2000);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Error al actualizar el rol");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <>
-      <PageHeader
-        title="Actualizar Rol"
-        subtitle="Modifica los datos de un rol existente."
-      />
+      <PageHeader title="Actualizar Rol" subtitle="Modifica los datos de un rol existente." />
 
       <section className="container mx-auto px-4 py-10">
         <div className="rounded-2xl border border-border bg-card p-6 shadow-[var(--shadow-soft)] max-w-2xl mx-auto">
           {success ? (
             <div className="text-center py-8">
               <CheckCircle2 className="h-16 w-16 text-green-500 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-green-600">¡Rol actualizado exitosamente!</h3>
+              <h3 className="text-xl font-semibold text-green-600">
+                ¡Rol actualizado exitosamente!
+              </h3>
               <p className="text-muted-foreground mt-2">Redirigiendo a la lista de roles...</p>
             </div>
           ) : !role ? (
@@ -126,8 +125,12 @@ function RolesActualizarPage() {
               </div>
 
               <div className="mb-4 p-3 bg-muted/50 rounded-lg">
-                <p className="text-sm"><strong>ID:</strong> {role.id}</p>
-                <p className="text-sm"><strong>Creado en:</strong> {new Date(role.creado_en).toLocaleString()}</p>
+                <p className="text-sm">
+                  <strong>ID:</strong> {role.id}
+                </p>
+                <p className="text-sm">
+                  <strong>Creado en:</strong> {new Date(role.creado_en).toLocaleString()}
+                </p>
               </div>
 
               <form onSubmit={handleUpdate} className="space-y-4">
@@ -155,19 +158,13 @@ function RolesActualizarPage() {
                   />
                 </div>
 
-                {error && (
-                  <p className="text-sm text-destructive">{error}</p>
-                )}
+                {error && <p className="text-sm text-destructive">{error}</p>}
 
                 <div className="flex gap-2 pt-4">
                   <Button type="submit" disabled={loading}>
                     {loading ? "Actualizando..." : "Actualizar rol"}
                   </Button>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => setRole(null)}
-                  >
+                  <Button type="button" variant="outline" onClick={() => setRole(null)}>
                     Buscar otro
                   </Button>
                 </div>

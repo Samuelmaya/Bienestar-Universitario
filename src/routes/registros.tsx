@@ -18,13 +18,62 @@ function ProtectedRegistros() {
 }
 
 type Estado = "Aprobada" | "Pendiente" | "Devuelta" | "Rechazada";
-const data: { id: string; usuario: string; rol: string; articulo: string; fecha: string; estado: Estado }[] = [
-  { id: "RES-1042", usuario: "Luisa Fernández", rol: "Estudiante", articulo: "Balón de fútbol", fecha: "2025-04-22", estado: "Aprobada" },
-  { id: "RES-1041", usuario: "Carlos Mendoza", rol: "Profesor", articulo: "Conos x10", fecha: "2025-04-22", estado: "Devuelta" },
-  { id: "RES-1040", usuario: "Andrés Polo", rol: "Estudiante", articulo: "Raqueta de tenis", fecha: "2025-04-21", estado: "Pendiente" },
-  { id: "RES-1039", usuario: "Daniela Ríos", rol: "Estudiante", articulo: "Balón baloncesto", fecha: "2025-04-21", estado: "Devuelta" },
-  { id: "RES-1038", usuario: "Iván Caballero", rol: "Profesor", articulo: "Guantes de boxeo", fecha: "2025-04-20", estado: "Aprobada" },
-  { id: "RES-1037", usuario: "María Gómez", rol: "Estudiante", articulo: "Red voleibol", fecha: "2025-04-19", estado: "Rechazada" },
+const data: {
+  id: string;
+  usuario: string;
+  rol: string;
+  articulo: string;
+  fecha: string;
+  estado: Estado;
+}[] = [
+  {
+    id: "RES-1042",
+    usuario: "Luisa Fernández",
+    rol: "Estudiante",
+    articulo: "Balón de fútbol",
+    fecha: "2025-04-22",
+    estado: "Aprobada",
+  },
+  {
+    id: "RES-1041",
+    usuario: "Carlos Mendoza",
+    rol: "Profesor",
+    articulo: "Conos x10",
+    fecha: "2025-04-22",
+    estado: "Devuelta",
+  },
+  {
+    id: "RES-1040",
+    usuario: "Andrés Polo",
+    rol: "Estudiante",
+    articulo: "Raqueta de tenis",
+    fecha: "2025-04-21",
+    estado: "Pendiente",
+  },
+  {
+    id: "RES-1039",
+    usuario: "Daniela Ríos",
+    rol: "Estudiante",
+    articulo: "Balón baloncesto",
+    fecha: "2025-04-21",
+    estado: "Devuelta",
+  },
+  {
+    id: "RES-1038",
+    usuario: "Iván Caballero",
+    rol: "Profesor",
+    articulo: "Guantes de boxeo",
+    fecha: "2025-04-20",
+    estado: "Aprobada",
+  },
+  {
+    id: "RES-1037",
+    usuario: "María Gómez",
+    rol: "Estudiante",
+    articulo: "Red voleibol",
+    fecha: "2025-04-19",
+    estado: "Rechazada",
+  },
 ];
 
 const colores: Record<Estado, string> = {
@@ -110,7 +159,9 @@ function RegistrosPage() {
                     <td className="px-4 py-3">{r.articulo}</td>
                     <td className="px-4 py-3 text-muted-foreground">{r.fecha}</td>
                     <td className="px-4 py-3">
-                      <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${colores[r.estado]}`}>
+                      <span
+                        className={`rounded-full px-2.5 py-1 text-xs font-semibold ${colores[r.estado]}`}
+                      >
                         {r.estado}
                       </span>
                     </td>

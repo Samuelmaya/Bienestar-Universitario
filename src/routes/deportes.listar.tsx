@@ -1,62 +1,78 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { PageHeader } from "@/components/PageHeader";
-import { List, Trophy, Search } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Search, Trash2, Edit, List, AlertCircle, CheckCircle2 } from "lucide-react";
+import { sportsApi, type Sport } from "@/lib/api";
 
 export const Route = createFileRoute("/deportes/listar")({
-  head: () => ({ meta: [{ title: "Listar deportes — UPC" }] }),
+  head: () => ({ meta: [{ title: "Listar Deportes — UPC" }] }),
   component: DeportesListarPage,
 });
 
-// Datos de ejemplo
-const deportes = [
-  {
-    cod_deporte: 1,
-    nom_deporte: "Fútbol",
-    descripcion: "Deporte de equipo que se juega con un balón y dos equipos de 11 jugadores cada uno.",
-    estado: true,
-  },
-  {
-    cod_deporte: 2,
-    nom_deporte: "Baloncesto",
-    descripcion: "Deporte de equipo donde dos equipos de 5 jugadores compiten para encestar un balón.",
-    estado: true,
-  },
-  {
-    cod_deporte: 3,
-    nom_deporte: "Voleibol",
-    descripcion: "Deporte de equipo que se juega con una red y dos equipos de 6 jugadores.",
-    estado: true,
-  },
-  {
-    cod_deporte: 4,
-    nom_deporte: "Tenis",
-    descripcion: "Deporte individual o de dobles que se juega con raquetas y una pelota.",
-    estado: true,
-  },
-  {
-    cod_deporte: 5,
-    nom_deporte: "Natación",
-    descripcion: "Deporte individual que consiste en nadar en diferentes estilos y distancias.",
-    estado: true,
-  },
-];
-
 function DeportesListarPage() {
+  const [deportes, setDeportes] = useState<Sport[]>([]);
+  const [filteredDeportes, setFilteredDeportes] = useState<Sport[]>([]);
   const [searchId, setSearchId] = useState("");
-  const [filteredDeportes, setFilteredDeportes] = useState(deportes);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [searchError, setSearchError] = useState("");
+  const [foundDeporte, setFoundDeporte] = useState<Sport | null>(null);
+  const [deletingId, setDeletingId] = useState<number | null>(null);
 
-  const handleSearch = (e: React.FormEvent) => {
+  useEffect(() => {
+    loadDeportes();
+  }, []);
+
+  const loadDeportes = async () => {
+    try {
+      const data = await sportsApi.list();
+      setDeportes(data);
+      setFilteredDeportes(data);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Error al cargar deportes");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSearchError("");
+    setFoundDeporte(null);
+
     if (!searchId.trim()) {
       setFilteredDeportes(deportes);
       return;
     }
-    const sportId = parseInt(searchId);
-    const filtered = deportes.filter((s) => s.cod_deporte === sportId);
-    setFilteredDeportes(filtered);
+
+    try {
+      const id = parseInt(searchId);
+      const deporte = await sportsApi.get(id);
+      setFoundDeporte(deporte);
+      setFilteredDeportes([deporte]);
+    } catch (err) {
+      setSearchError(
+        err instanceof Error ? err.message : `No se encontró deporte con ID: ${searchId}`,
+      );
+      setFilteredDeportes([]);
+    }
+  };
+
+  const handleDelete = async (id: number) => {
+    if (!window.confirm("¿Estás seguro de eliminar este deporte?")) return;
+    try {
+      setDeletingId(id);
+      await sportsApi.delete(id);
+      await loadDeportes();
+      setFoundDeporte(null);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Error al eliminar deporte");
+    } finally {
+      setDeletingId(null);
+    }
   };
 
   return (
@@ -67,82 +83,88 @@ function DeportesListarPage() {
       />
 
       <section className="container mx-auto px-4 py-10">
-        <div className="rounded-2xl border border-border bg-card p-6 shadow-[var(--shadow-soft)]">
-          <div className="flex items-center gap-2 mb-6">
-            <List className="h-5 w-5 text-primary" />
-            <h2 className="text-xl font-semibold">Todos los Deportes</h2>
-          </div>
-
-          {/* Buscar por código */}
-          <form onSubmit={handleSearch} className="flex gap-2 mb-6">
-            <div className="relative flex-1 max-w-sm">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                type="number"
-                placeholder="Buscar por código..."
-                value={searchId}
-                onChange={(e) => {
-                  setSearchId(e.target.value);
-                  if (!e.target.value.trim()) {
-                    setFilteredDeportes(deportes);
-                  }
-                }}
-                className="pl-9"
-              />
+        <Card className="rounded-2xl border border-border bg-card shadow-[var(--shadow-soft)]">
+          <CardHeader>
+            <div className="flex items-center gap-2 mb-4">
+              <List className="h-5 w-5 text-primary" />
+              <CardTitle className="text-xl font-semibold">Todos los Deportes</CardTitle>
             </div>
-            <Button type="submit" variant="secondary">
-              Buscar
-            </Button>
-            {searchId && (
-              <Button type="button" variant="outline" onClick={() => {
-                setSearchId("");
-                setFilteredDeportes(deportes);
-              }}>
-                Limpiar
-              </Button>
-            )}
-          </form>
 
-          <div className="grid gap-4">
-            {filteredDeportes.length === 0 ? (
-              <p className="text-center text-muted-foreground py-4">
-                No se encontró ningún deporte con código: {searchId}
-              </p>
+            <form onSubmit={handleSearch} className="flex gap-2 mb-4">
+              <div className="relative flex-1 max-w-sm">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  type="number"
+                  placeholder="Buscar por código..."
+                  value={searchId}
+                  onChange={(e) => setSearchId(e.target.value)}
+                  className="pl-9"
+                />
+              </div>
+              <Button type="submit">Buscar</Button>
+            </form>
+
+            {searchError && (
+              <div className="mb-4 rounded-lg bg-destructive/15 p-3 flex items-center gap-2 text-sm text-destructive">
+                <AlertCircle className="h-4 w-4" />
+                {searchError}
+              </div>
+            )}
+
+            {foundDeporte && (
+              <div className="mb-4 rounded-lg border border-border bg-accent/50 p-4">
+                <p className="font-semibold">{foundDeporte.nom_deporte}</p>
+                <p className="text-sm text-muted-foreground">{foundDeporte.descripcion}</p>
+              </div>
+            )}
+          </CardHeader>
+
+          <CardContent>
+            {loading ? (
+              <p className="text-center py-8 text-muted-foreground">Cargando deportes...</p>
+            ) : error ? (
+              <div className="rounded-lg bg-destructive/15 p-4 text-center text-destructive">
+                {error}
+              </div>
+            ) : filteredDeportes.length === 0 ? (
+              <p className="text-center py-8 text-muted-foreground">No se encontraron deportes.</p>
             ) : (
-                filteredDeportes.map((deporte) => (
+              <div className="space-y-3">
+                {filteredDeportes.map((dep) => (
                   <div
-                    key={deporte.cod_deporte}
-                    className="rounded-lg border border-border p-4 hover:bg-accent/50 transition-colors"
+                    key={dep.cod_deporte}
+                    className="flex items-center justify-between rounded-lg border border-border p-4 hover:bg-accent/50 transition"
                   >
-                    <div className="flex items-start justify-between">
-                      <div className="flex items-start gap-3">
-                        <Trophy className="h-6 w-6 text-primary mt-1" />
-                        <div className="flex-1">
-                          <h3 className="font-semibold text-lg">{deporte.nom_deporte}</h3>
-                          <div className="mt-2 space-y-1 text-sm">
-                            <p><strong>Código:</strong> {deporte.cod_deporte}</p>
-                            <p><strong>Descripción:</strong> {deporte.descripcion}</p>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${deporte.estado ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground'}`}>
-                          {deporte.estado ? 'Activo' : 'Inactivo'}
-                        </span>
-                      </div>
+                    <div>
+                      <p className="font-semibold">{dep.nom_deporte}</p>
+                      <p className="text-sm text-muted-foreground">{dep.descripcion}</p>
+                      <p className="text-xs text-muted-foreground">
+                        Código: {dep.cod_deporte} | Estado: {dep.estado ? "Activo" : "Inactivo"}
+                      </p>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button variant="outline" size="icon" disabled>
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="destructive"
+                        size="icon"
+                        onClick={() => handleDelete(dep.cod_deporte)}
+                        disabled={deletingId === dep.cod_deporte}
+                      >
+                        {deletingId === dep.cod_deporte ? (
+                          <span className="animate-spin">↻</span>
+                        ) : (
+                          <Trash2 className="h-4 w-4" />
+                        )}
+                      </Button>
                     </div>
                   </div>
-                ))
-              )}
-          </div>
-          <div className="mt-6 p-4 bg-muted/30 rounded-lg">
-            <div className="flex items-center justify-between">
-              <p className="text-sm text-muted-foreground">
-                Total de deportes: <span className="font-semibold">{filteredDeportes.length}</span>
-              </p>
-            </div>
-          </div>
-        </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
       </section>
     </>
   );

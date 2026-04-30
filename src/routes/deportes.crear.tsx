@@ -1,7 +1,12 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { PageHeader } from "@/components/PageHeader";
 import { Trophy, CheckCircle2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { sportsApi } from "@/lib/api";
 
 export const Route = createFileRoute("/deportes/crear")({
   head: () => ({ meta: [{ title: "Crear deporte — UPC" }] }),
@@ -9,132 +14,106 @@ export const Route = createFileRoute("/deportes/crear")({
 });
 
 function DeportesCrearPage() {
+  const navigate = useNavigate();
   const [done, setDone] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const [form, setForm] = useState({
-    cod_deporte: "",
     nom_deporte: "",
-    cupo_maximo: "",
     descripcion: "",
+    categoria: "",
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (form.cod_deporte && form.nom_deporte && form.cupo_maximo && form.descripcion) {
+    if (!form.nom_deporte || !form.descripcion) {
+      setError("Por favor completa los campos requeridos");
+      return;
+    }
+    setLoading(true);
+    setError("");
+    try {
+      await sportsApi.create({
+        nom_deporte: form.nom_deporte,
+        descripcion: form.descripcion,
+        categoria: form.categoria ? parseInt(form.categoria) : undefined,
+      });
       setDone(true);
+      setTimeout(() => {
+        navigate({ to: "/deportes/listar" });
+      }, 1500);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Error al crear deporte");
+    } finally {
+      setLoading(false);
     }
   };
 
+  if (done) {
+    return (
+      <div className="min-h-svh flex items-center justify-center bg-background p-4">
+        <Card className="w-full max-w-md text-center">
+          <CardHeader>
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-green-100 mb-4">
+              <CheckCircle2 className="h-8 w-8 text-green-600" />
+            </div>
+            <CardTitle className="text-2xl">¡Deporte creado!</CardTitle>
+          </CardHeader>
+        </Card>
+      </div>
+    );
+  }
+
   return (
     <>
-      <PageHeader
-        title="Crear Deporte"
-        subtitle="Registra un nuevo deporte en el sistema."
-      />
-
-      <section className="container mx-auto px-4 py-10 grid gap-8 lg:grid-cols-3">
-        <form
-          onSubmit={handleSubmit}
-          className="lg:col-span-2 rounded-2xl border border-border bg-card p-6 shadow-[var(--shadow-soft)]"
-        >
-          <h2 className="text-xl font-semibold flex items-center gap-2">
-            <Trophy className="h-5 w-5 text-primary" /> Datos del deporte
-          </h2>
-          <div className="mt-6 grid gap-4 md:grid-cols-2">
-            <div>
-              <label className="text-sm font-medium">Código Deporte</label>
-              <input
-                type="number"
-                required
-                value={form.cod_deporte}
-                onChange={(e) => setForm({ ...form, cod_deporte: e.target.value })}
-                placeholder="Ingresa el código del deporte"
-                className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
-              />
-            </div>
-
-            <div>
-              <label className="text-sm font-medium">Nombre Deporte</label>
-              <input
-                type="text"
-                required
-                value={form.nom_deporte}
-                onChange={(e) => setForm({ ...form, nom_deporte: e.target.value })}
-                placeholder="Ingresa el nombre del deporte"
-                className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
-              />
-            </div>
-
-            <div>
-              <label className="text-sm font-medium">Cupo Máximo</label>
-              <input
-                type="number"
-                required
-                value={form.cupo_maximo}
-                onChange={(e) => setForm({ ...form, cupo_maximo: e.target.value })}
-                placeholder="Ingresa el cupo máximo"
-                className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
-              />
-            </div>
-
-            <div className="md:col-span-2">
-              <label className="text-sm font-medium">Descripción</label>
-              <textarea
-                required
-                value={form.descripcion}
-                onChange={(e) => setForm({ ...form, descripcion: e.target.value })}
-                placeholder="Ingresa una descripción del deporte"
-                rows={4}
-                className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring resize-none"
-              />
-            </div>
-
-            <div className="md:col-span-2">
-              <button
-                type="submit"
-                disabled={!form.cod_deporte || !form.nom_deporte || !form.cupo_maximo || !form.descripcion}
-                className="w-full inline-flex items-center justify-center gap-2 rounded-md bg-primary py-2.5 font-semibold text-primary-foreground shadow-[var(--shadow-soft)] hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <Trophy className="h-4 w-4" /> Crear deporte
-              </button>
-            </div>
-          </div>
-        </form>
-
-        <div className="rounded-2xl border border-border bg-card p-6 shadow-[var(--shadow-soft)]">
-          <h2 className="text-lg font-semibold flex items-center gap-2">
-            <CheckCircle2 className="h-5 w-5 text-primary" /> Confirmación
-          </h2>
-          {done ? (
-            <div className="mt-4 rounded-lg bg-secondary/15 p-4 text-center">
-              <CheckCircle2 className="mx-auto h-10 w-10 text-secondary" />
-              <p className="mt-2 font-semibold">Deporte creado exitosamente</p>
-              <div className="mt-3 text-sm text-left space-y-1">
-                <p><strong>Código:</strong> {form.cod_deporte}</p>
-                <p><strong>Nombre:</strong> {form.nom_deporte}</p>
-                <p><strong>Cupo máximo:</strong> {form.cupo_maximo}</p>
-                <p><strong>Descripción:</strong> {form.descripcion}</p>
+      <PageHeader title="Crear Deporte" subtitle="Registra un nuevo deporte en el sistema." />
+      <section className="container mx-auto px-4 py-10">
+        <Card className="rounded-2xl border border-border bg-card p-6 shadow-[var(--shadow-soft)] max-w-2xl mx-auto">
+          <CardHeader>
+            <CardTitle className="text-xl font-semibold flex items-center gap-2">
+              <Trophy className="h-5 w-5 text-primary" /> Nuevo Deporte
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              {error && (
+                <div className="rounded-lg bg-destructive/15 p-3 text-sm text-destructive">
+                  {error}
+                </div>
+              )}
+              <div className="grid gap-2">
+                <Label>Nombre del deporte</Label>
+                <Input
+                  value={form.nom_deporte}
+                  onChange={(e) => setForm({ ...form, nom_deporte: e.target.value })}
+                  placeholder="Fútbol, Baloncesto..."
+                  required
+                />
               </div>
-              <button
-                onClick={() => {
-                  setDone(false);
-                  setForm({
-                    cod_deporte: "",
-                    nom_deporte: "",
-                    cupo_maximo: "",
-                    descripcion: "",
-                  });
-                }}
-                className="mt-3 text-sm text-primary hover:underline"
-              >
-                Crear otro deporte
-              </button>
-            </div>
-          ) : (
-            <p className="mt-4 text-sm text-muted-foreground">
-              Completa el formulario para crear un nuevo deporte en el sistema.
-            </p>
-          )}
-        </div>
+              <div className="grid gap-2">
+                <Label>Descripción</Label>
+                <Input
+                  value={form.descripcion}
+                  onChange={(e) => setForm({ ...form, descripcion: e.target.value })}
+                  placeholder="Breve descripción"
+                  required
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label>Categoría (opcional)</Label>
+                <Input
+                  type="number"
+                  value={form.categoria}
+                  onChange={(e) => setForm({ ...form, categoria: e.target.value })}
+                  placeholder="ID de categoría"
+                />
+              </div>
+              <Button type="submit" disabled={loading} className="w-full">
+                {loading ? "Creando..." : "Crear Deporte"}
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
       </section>
     </>
   );

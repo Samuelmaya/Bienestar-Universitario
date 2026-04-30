@@ -2,7 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState, type FormEvent } from "react";
 import { LogIn, Mail, Lock, GraduationCap, Eye, EyeOff } from "lucide-react";
 import logo from "@/assets/logo-upc.png";
-import { useAuth, type Role } from "@/lib/auth";
+import { useAuth } from "@/lib/auth";
 
 type Search = { redirect?: string };
 
@@ -16,23 +16,33 @@ export const Route = createFileRoute("/login")({
 
 function LoginPage() {
   const [show, setShow] = useState(false);
-  const [role, setRole] = useState<Role>("utilero");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
   const search = Route.useSearch();
 
-  const onSubmit = (e: FormEvent) => {
+  const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!email || !password) {
       setError("Ingresa tu correo y contraseña.");
       return;
     }
-    login({ email, role });
-    const target = search.redirect && search.redirect !== "/login" ? search.redirect : "/";
-    navigate({ to: target });
+    setLoading(true);
+    setError("");
+    try {
+      await login({ email, password });
+      const target = search.redirect && search.redirect !== "/login" ? search.redirect : "/";
+      navigate({ to: target });
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Error al iniciar sesión. Verifica tus credenciales.",
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -41,15 +51,11 @@ function LoginPage() {
         <div className="absolute -top-20 -right-20 h-80 w-80 rounded-full bg-white/10 blur-2xl" />
         <div className="absolute bottom-1/3 -left-10 h-60 w-60 rounded-full bg-white/10 blur-2xl" />
         <div className="relative max-w-md">
-          <img
-            src={logo}
-            alt="UPC"
-            className="h-16 w-auto bg-white rounded-lg p-2 shadow-lg"
-          />
+          <img src={logo} alt="UPC" className="h-16 w-auto bg-white rounded-lg p-2 shadow-lg" />
           <h2 className="mt-8 text-4xl font-bold">Bienestar Deportivo UPC</h2>
           <p className="mt-3 opacity-90">
-            Accede a tu cuenta para reservar implementos, inscribirte a disciplinas y consultar
-            tus horarios deportivos.
+            Accede a tu cuenta para reservar implementos, inscribirte a disciplinas y consultar tus
+            horarios deportivos.
           </p>
           <div className="mt-8 grid grid-cols-3 gap-3 text-center text-xs">
             {["Reservas", "Inventario", "Horarios"].map((t) => (
@@ -71,21 +77,6 @@ function LoginPage() {
             Ingresa tus credenciales institucionales.
           </p>
 
-          <div className="mt-6 grid grid-cols-3 rounded-lg border border-border p-1 bg-muted text-sm">
-            {(["utilero", "entrenador", "admin"] as const).map((r) => (
-              <button
-                key={r}
-                type="button"
-                onClick={() => setRole(r)}
-                className={`capitalize rounded-md py-2 font-medium transition ${
-                  role === r ? "bg-primary text-primary-foreground" : "text-muted-foreground"
-                }`}
-              >
-                {r}
-              </button>
-            ))}
-          </div>
-
           <form className="mt-6 space-y-4" onSubmit={onSubmit}>
             <div>
               <label className="text-sm font-medium">Correo institucional</label>
@@ -98,6 +89,7 @@ function LoginPage() {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="usuario@unicesar.edu.co"
                   className="w-full rounded-md border border-input bg-background pl-9 pr-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-ring"
+                  disabled={loading}
                 />
               </div>
             </div>
@@ -112,6 +104,7 @@ function LoginPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
                   className="w-full rounded-md border border-input bg-background pl-9 pr-10 py-2.5 text-sm outline-none focus:ring-2 focus:ring-ring"
+                  disabled={loading}
                 />
                 <button
                   type="button"
@@ -123,9 +116,7 @@ function LoginPage() {
               </div>
             </div>
 
-            {error && (
-              <p className="text-sm text-destructive">{error}</p>
-            )}
+            {error && <p className="text-sm text-destructive">{error}</p>}
 
             <div className="flex items-center justify-between text-sm">
               <label className="flex items-center gap-2">
@@ -139,9 +130,10 @@ function LoginPage() {
 
             <button
               type="submit"
-              className="w-full inline-flex items-center justify-center gap-2 rounded-md bg-primary py-2.5 font-semibold text-primary-foreground shadow-[var(--shadow-soft)] hover:opacity-90"
+              disabled={loading}
+              className="w-full inline-flex items-center justify-center gap-2 rounded-md bg-primary py-2.5 font-semibold text-primary-foreground shadow-[var(--shadow-soft)] hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <LogIn className="h-4 w-4" /> Ingresar
+              <LogIn className="h-4 w-4" /> {loading ? "Ingresando..." : "Ingresar"}
             </button>
           </form>
 

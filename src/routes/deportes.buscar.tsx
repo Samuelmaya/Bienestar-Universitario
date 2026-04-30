@@ -2,52 +2,20 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { PageHeader } from "@/components/PageHeader";
 import { Search, Trophy, AlertCircle } from "lucide-react";
+import { sportsApi, type Sport } from "@/lib/api";
 
 export const Route = createFileRoute("/deportes/buscar")({
   head: () => ({ meta: [{ title: "Buscar deporte — UPC" }] }),
   component: DeportesBuscarPage,
 });
 
-// Datos de ejemplo
-const deportes = [
-  {
-    cod_deporte: 1,
-    nom_deporte: "Fútbol",
-    cupo_maximo: 22,
-    descripcion: "Deporte de equipo que se juega con un balón y dos equipos de 11 jugadores cada uno.",
-  },
-  {
-    cod_deporte: 2,
-    nom_deporte: "Baloncesto",
-    cupo_maximo: 10,
-    descripcion: "Deporte de equipo donde dos equipos de 5 jugadores compiten para encestar un balón.",
-  },
-  {
-    cod_deporte: 3,
-    nom_deporte: "Voleibol",
-    cupo_maximo: 12,
-    descripcion: "Deporte de equipo que se juega con una red y dos equipos de 6 jugadores.",
-  },
-  {
-    cod_deporte: 4,
-    nom_deporte: "Tenis",
-    cupo_maximo: 4,
-    descripcion: "Deporte individual o de dobles que se juega con raquetas y una pelota.",
-  },
-  {
-    cod_deporte: 5,
-    nom_deporte: "Natación",
-    cupo_maximo: 20,
-    descripcion: "Deporte individual que consiste en nadar en diferentes estilos y distancias.",
-  },
-];
-
 function DeportesBuscarPage() {
   const [searchId, setSearchId] = useState("");
-  const [foundSport, setFoundSport] = useState<typeof deportes[0] | null>(null);
+  const [foundSport, setFoundSport] = useState<Sport | null>(null);
   const [searchError, setSearchError] = useState("");
+  const [searching, setSearching] = useState(false);
 
-  const handleSearch = (e: React.FormEvent) => {
+  const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
     setSearchError("");
     setFoundSport(null);
@@ -57,22 +25,25 @@ function DeportesBuscarPage() {
       return;
     }
 
-    const sportId = parseInt(searchId);
-    const sport = deportes.find((s) => s.cod_deporte === sportId);
-
-    if (sport) {
+    setSearching(true);
+    try {
+      const sportId = parseInt(searchId);
+      const sport = await sportsApi.get(sportId);
       setFoundSport(sport);
-    } else {
-      setSearchError(`No se encontró ningún deporte con código: ${searchId}`);
+    } catch (err) {
+      setSearchError(
+        err instanceof Error
+          ? err.message
+          : `No se encontró ningún deporte con código: ${searchId}`,
+      );
+    } finally {
+      setSearching(false);
     }
   };
 
   return (
     <>
-      <PageHeader
-        title="Buscar Deporte"
-        subtitle="Busca deportes por su código en el sistema."
-      />
+      <PageHeader title="Buscar Deporte" subtitle="Busca deportes por su código en el sistema." />
 
       <section className="container mx-auto px-4 py-10">
         <div className="rounded-2xl border border-border bg-card p-6 shadow-[var(--shadow-soft)]">
@@ -86,12 +57,14 @@ function DeportesBuscarPage() {
               onChange={(e) => setSearchId(e.target.value)}
               placeholder="Ingresa el código del deporte"
               className="flex-1 rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
+              min="1"
             />
             <button
               type="submit"
+              disabled={searching}
               className="inline-flex items-center justify-center gap-2 rounded-md bg-primary px-6 py-2 font-semibold text-primary-foreground shadow-[var(--shadow-soft)] hover:opacity-90"
             >
-              <Search className="h-4 w-4" /> Buscar
+              <Search className="h-4 w-4" /> {searching ? "Buscando..." : "Buscar"}
             </button>
           </form>
 
@@ -123,28 +96,21 @@ function DeportesBuscarPage() {
                   <span>{foundSport.nom_deporte}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="font-medium">Cupo Máximo:</span>
-                  <span>{foundSport.cupo_maximo} participantes</span>
+                  <span className="font-medium">Categoría:</span>
+                  <span>{foundSport.categoria || "Sin categoría"}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="font-medium">Estado:</span>
+                  <span
+                    className={`px-2 py-1 rounded-full text-xs ${foundSport.estado ? "bg-secondary/15 text-secondary" : "bg-destructive/15 text-destructive"}`}
+                  >
+                    {foundSport.estado ? "Activo" : "Inactivo"}
+                  </span>
                 </div>
                 <div>
                   <span className="font-medium">Descripción:</span>
                   <p className="mt-1 text-muted-foreground">{foundSport.descripcion}</p>
                 </div>
-              </div>
-            </div>
-          )}
-
-          {/* Información de deportes disponibles */}
-          {!foundSport && !searchError && (
-            <div className="rounded-lg border border-border p-4">
-              <h3 className="font-semibold mb-3">Deportes disponibles</h3>
-              <div className="grid gap-2 text-sm">
-                {deportes.map((sport) => (
-                  <div key={sport.cod_deporte} className="flex justify-between p-2 bg-muted/30 rounded">
-                    <span>Código: {sport.cod_deporte}</span>
-                    <span>{sport.nom_deporte}</span>
-                  </div>
-                ))}
               </div>
             </div>
           )}

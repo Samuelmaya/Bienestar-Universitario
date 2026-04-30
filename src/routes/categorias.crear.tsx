@@ -29,10 +29,7 @@ function CrearCategoriaPage() {
 
   return (
     <>
-      <PageHeader
-        title="Crear Categoría"
-        subtitle="Registra una nueva categoría en el sistema."
-      />
+      <PageHeader title="Crear Categoría" subtitle="Registra una nueva categoría en el sistema." />
 
       <section className="container mx-auto px-4 py-10 grid gap-8 lg:grid-cols-3">
         <form
@@ -87,12 +84,8 @@ function CrearCategoriaPage() {
             <div className="mt-4 rounded-lg bg-secondary/15 p-4 text-center">
               <CheckCircle2 className="mx-auto h-10 w-10 text-secondary" />
               <p className="mt-2 font-semibold">Categoría creada exitosamente</p>
-              <p className="text-sm text-muted-foreground">
-                ID: {form.id_categoria}
-              </p>
-              <p className="text-sm text-muted-foreground">
-                Nombre: {form.nombre}
-              </p>
+              <p className="text-sm text-muted-foreground">ID: {form.id_categoria}</p>
+              <p className="text-sm text-muted-foreground">Nombre: {form.nombre}</p>
               <button
                 onClick={() => {
                   setDone(false);

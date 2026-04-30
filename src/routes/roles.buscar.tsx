@@ -28,25 +28,22 @@ function RolesBuscarPage() {
     }
 
     setLoading(true);
-      try {
-        const roleId = parseInt(searchId);
-        // const role = await rolesApi.get(roleId); // No conectado aún al backend
-        // Simulación de rol encontrado para pruebas
-        const role = { id: roleId, nombre: "Rol de prueba", descripcion: "Descripción de prueba", creado_en: new Date().toISOString() } as Role;
-        setFoundRole(role);
-      } catch (err) {
-        setSearchError(err instanceof Error ? err.message : `No se encontró ningún rol con ID: ${searchId}`);
-      } finally {
-        setLoading(false);
-      }
+    try {
+      const roleId = parseInt(searchId);
+      const role = await rolesApi.get(roleId);
+      setFoundRole(role);
+    } catch (err) {
+      setSearchError(
+        err instanceof Error ? err.message : `No se encontró ningún rol con ID: ${searchId}`,
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <>
-      <PageHeader
-        title="Buscar Rol"
-        subtitle="Busca roles por su ID en el sistema."
-      />
+      <PageHeader title="Buscar Rol" subtitle="Busca roles por su ID en el sistema." />
 
       <section className="container mx-auto px-4 py-10">
         <div className="rounded-2xl border border-border bg-card p-6 shadow-[var(--shadow-soft)]">
@@ -84,9 +81,15 @@ function RolesBuscarPage() {
                 <div className="flex-1">
                   <h3 className="font-semibold text-xl">{foundRole.nombre}</h3>
                   <div className="mt-3 space-y-2 text-sm">
-                    <p><strong>ID:</strong> {foundRole.id}</p>
-                    <p><strong>Descripción:</strong> {foundRole.descripcion}</p>
-                    <p><strong>Creado en:</strong> {new Date(foundRole.creado_en).toLocaleString()}</p>
+                    <p>
+                      <strong>ID:</strong> {foundRole.id}
+                    </p>
+                    <p>
+                      <strong>Descripción:</strong> {foundRole.descripcion}
+                    </p>
+                    <p>
+                      <strong>Creado en:</strong> {new Date(foundRole.creado_en).toLocaleString()}
+                    </p>
                   </div>
                 </div>
               </div>

@@ -34,13 +34,13 @@ function RolesEliminarPage() {
     setSearching(true);
     try {
       const roleId = parseInt(searchId);
-      // const foundRole = await rolesApi.get(roleId); // No conectado aún al backend
-      // Simulación para pruebas
-      const foundRole = { id: roleId, nombre: "Rol de prueba", descripcion: "Descripción de prueba", creado_en: new Date().toISOString() } as Role;
+      const foundRole = await rolesApi.get(roleId);
       setRole(foundRole);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : `No se encontró ningún rol con ID: ${searchId}`);
-      } finally {
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : `No se encontró ningún rol con ID: ${searchId}`,
+      );
+    } finally {
       setSearching(false);
     }
   };
@@ -51,7 +51,7 @@ function RolesEliminarPage() {
     setLoading(true);
     setError("");
     try {
-      // await rolesApi.delete(role.id); // No conectado aún al backend
+      await rolesApi.delete(role.id);
       setSuccess(true);
       setTimeout(() => {
         navigate({ to: "/roles/listar" });
@@ -65,10 +65,7 @@ function RolesEliminarPage() {
 
   return (
     <>
-      <PageHeader
-        title="Eliminar Rol"
-        subtitle="Elimina un rol del sistema."
-      />
+      <PageHeader title="Eliminar Rol" subtitle="Elimina un rol del sistema." />
 
       <section className="container mx-auto px-4 py-10">
         <div className="rounded-2xl border border-border bg-card p-6 shadow-[var(--shadow-soft)] max-w-2xl mx-auto">
@@ -120,30 +117,35 @@ function RolesEliminarPage() {
                   <AlertTriangle className="h-5 w-5 text-destructive mt-0.5" />
                   <div>
                     <p className="font-medium">¿Estás seguro de eliminar este rol?</p>
-                    <p className="text-sm text-muted-foreground mt-1">Esta acción no se puede deshacer.</p>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Esta acción no se puede deshacer.
+                    </p>
                   </div>
                 </div>
               </div>
 
               <div className="mb-6 p-4 bg-muted/50 rounded-lg space-y-2">
-                <p className="text-sm"><strong>ID:</strong> {role.id}</p>
-                <p className="text-sm"><strong>Nombre:</strong> {role.nombre}</p>
-                <p className="text-sm"><strong>Descripción:</strong> {role.descripcion}</p>
-                <p className="text-sm"><strong>Creado en:</strong> {new Date(role.creado_en).toLocaleString()}</p>
+                <p className="text-sm">
+                  <strong>ID:</strong> {role.id}
+                </p>
+                <p className="text-sm">
+                  <strong>Nombre:</strong> {role.nombre}
+                </p>
+                <p className="text-sm">
+                  <strong>Descripción:</strong> {role.descripcion}
+                </p>
+                <p className="text-sm">
+                  <strong>Creado en:</strong> {new Date(role.creado_en).toLocaleString()}
+                </p>
               </div>
 
-              {error && (
-                <p className="text-sm text-destructive mb-4">{error}</p>
-              )}
+              {error && <p className="text-sm text-destructive mb-4">{error}</p>}
 
               <div className="flex gap-2">
                 <Button variant="destructive" onClick={handleDelete} disabled={loading}>
                   {loading ? "Eliminando..." : "Eliminar rol"}
                 </Button>
-                <Button
-                  variant="outline"
-                  onClick={() => setRole(null)}
-                >
+                <Button variant="outline" onClick={() => setRole(null)}>
                   Cancelar
                 </Button>
               </div>

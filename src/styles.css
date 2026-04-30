@@ -95,7 +95,11 @@
   --sidebar-ring: var(--upc-green-light);
 
   --gradient-primary: linear-gradient(135deg, var(--upc-green-dark), var(--upc-green-light));
-  --gradient-hero: linear-gradient(120deg, oklch(0.515 0.142 152 / 0.92), oklch(0.685 0.179 142 / 0.78));
+  --gradient-hero: linear-gradient(
+    120deg,
+    oklch(0.515 0.142 152 / 0.92),
+    oklch(0.685 0.179 142 / 0.78)
+  );
   --shadow-soft: 0 4px 14px -4px oklch(0.515 0.142 152 / 0.18);
   --shadow-elegant: 0 18px 40px -18px oklch(0.515 0.142 152 / 0.35);
   --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -146,7 +150,10 @@
     -webkit-font-smoothing: antialiased;
     overflow: auto;
   }
-  h1, h2, h3, h4 {
+  h1,
+  h2,
+  h3,
+  h4 {
     font-family: var(--font-display);
     letter-spacing: -0.02em;
   }

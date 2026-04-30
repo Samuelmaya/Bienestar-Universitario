@@ -25,13 +25,7 @@ function RolesListarPage() {
   const loadRoles = async () => {
     try {
       setLoading(true);
-      // const data = await rolesApi.list(); // No conectado aún al backend
-      // Datos simulados para pruebas
-      const data: Role[] = [
-        { id: 1, nombre: "Administrador", descripcion: "Acceso total al sistema", creado_en: new Date().toISOString() },
-        { id: 2, nombre: "Entrenador", descripcion: "Gestiona horarios y reservas", creado_en: new Date().toISOString() },
-        { id: 3, nombre: "Utilero", descripcion: "Gestiona inventario y artículos", creado_en: new Date().toISOString() }
-      ];
+      const data = await rolesApi.list();
       setRoles(data);
       setFilteredRoles(data);
     } catch (err) {
@@ -87,22 +81,22 @@ function RolesListarPage() {
               Buscar
             </Button>
             {searchId && (
-              <Button type="button" variant="outline" onClick={() => {
-                setSearchId("");
-                setFilteredRoles(roles);
-              }}>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => {
+                  setSearchId("");
+                  setFilteredRoles(roles);
+                }}
+              >
                 Limpiar
               </Button>
             )}
           </form>
 
-          {loading && (
-            <p className="text-center text-muted-foreground py-8">Cargando roles...</p>
-          )}
+          {loading && <p className="text-center text-muted-foreground py-8">Cargando roles...</p>}
 
-          {error && (
-            <p className="text-center text-destructive py-4">{error}</p>
-          )}
+          {error && <p className="text-center text-destructive py-4">{error}</p>}
 
           {!loading && !error && (
             <div className="grid gap-4">
@@ -122,9 +116,15 @@ function RolesListarPage() {
                         <div className="flex-1">
                           <h3 className="font-semibold text-lg">{rol.nombre}</h3>
                           <div className="mt-2 space-y-1 text-sm">
-                            <p><strong>ID:</strong> {rol.id}</p>
-                            <p><strong>Descripción:</strong> {rol.descripcion}</p>
-                            <p><strong>Creado en:</strong> {new Date(rol.creado_en).toLocaleString()}</p>
+                            <p>
+                              <strong>ID:</strong> {rol.id}
+                            </p>
+                            <p>
+                              <strong>Descripción:</strong> {rol.descripcion}
+                            </p>
+                            <p>
+                              <strong>Creado en:</strong> {new Date(rol.creado_en).toLocaleString()}
+                            </p>
                           </div>
                         </div>
                       </div>

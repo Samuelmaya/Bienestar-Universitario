@@ -35,10 +35,7 @@ function CrearUsuarioPage() {
 
   return (
     <>
-      <PageHeader
-        title="Crear Usuario"
-        subtitle="Registra un nuevo usuario en el sistema."
-      />
+      <PageHeader title="Crear Usuario" subtitle="Registra un nuevo usuario en el sistema." />
 
       <section className="container mx-auto px-4 py-10 grid gap-8 lg:grid-cols-3">
         <form
@@ -152,7 +149,9 @@ function CrearUsuarioPage() {
             <div className="md:col-span-2">
               <button
                 type="submit"
-                disabled={!form.primer_nombre || !form.primer_apellido || !form.email || !form.contrasena}
+                disabled={
+                  !form.primer_nombre || !form.primer_apellido || !form.email || !form.contrasena
+                }
                 className="w-full inline-flex items-center justify-center gap-2 rounded-md bg-primary py-2.5 font-semibold text-primary-foreground shadow-[var(--shadow-soft)] hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <UserPlus className="h-4 w-4" /> Crear usuario
@@ -174,7 +173,14 @@ function CrearUsuarioPage() {
               </p>
               <p className="text-sm text-muted-foreground">{form.email}</p>
               <p className="text-sm text-muted-foreground">
-                Rol: {form.role_id === 0 ? "Administrador" : form.role_id === 1 ? "Utilero" : form.role_id === 2 ? "Entrenador" : "Personal"}
+                Rol:{" "}
+                {form.role_id === 0
+                  ? "Administrador"
+                  : form.role_id === 1
+                    ? "Utilero"
+                    : form.role_id === 2
+                      ? "Entrenador"
+                      : "Personal"}
               </p>
               <p className="text-sm text-muted-foreground">
                 Estado: {form.activo ? "Activo" : "Inactivo"}

@@ -3,6 +3,7 @@ import { useState } from "react";
 import { PageHeader } from "@/components/PageHeader";
 import { RequireAuth } from "@/components/RequireAuth";
 import { Search, FolderOpen, AlertCircle } from "lucide-react";
+import { categoriesApi, type Category } from "@/lib/api";
 
 export const Route = createFileRoute("/categorias/buscar")({
   head: () => ({ meta: [{ title: "Buscar categoría — UPC" }] }),
@@ -13,36 +14,13 @@ export const Route = createFileRoute("/categorias/buscar")({
   ),
 });
 
-// Datos de ejemplo
-const categoriasEjemplo = [
-  {
-    id_categoria: 1,
-    nombre: "Fútbol",
-  },
-  {
-    id_categoria: 2,
-    nombre: "Baloncesto",
-  },
-  {
-    id_categoria: 3,
-    nombre: "Voleibol",
-  },
-  {
-    id_categoria: 4,
-    nombre: "Tenis",
-  },
-  {
-    id_categoria: 5,
-    nombre: "Natación",
-  },
-];
-
 function BuscarCategoriaPage() {
   const [searchId, setSearchId] = useState("");
-  const [foundCategory, setFoundCategory] = useState<typeof categoriasEjemplo[0] | null>(null);
+  const [foundCategory, setFoundCategory] = useState<Category | null>(null);
   const [searchError, setSearchError] = useState("");
+  const [searching, setSearching] = useState(false);
 
-  const handleSearch = (e: React.FormEvent) => {
+  const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
     setSearchError("");
     setFoundCategory(null);
@@ -52,22 +30,23 @@ function BuscarCategoriaPage() {
       return;
     }
 
-    const categoryId = parseInt(searchId);
-    const category = categoriasEjemplo.find((c) => c.id_categoria === categoryId);
-
-    if (category) {
+    setSearching(true);
+    try {
+      const categoryId = parseInt(searchId);
+      const category = await categoriesApi.get(categoryId);
       setFoundCategory(category);
-    } else {
-      setSearchError(`No se encontró ninguna categoría con ID: ${searchId}`);
+    } catch (err) {
+      setSearchError(
+        err instanceof Error ? err.message : `No se encontró ninguna categoría con ID: ${searchId}`,
+      );
+    } finally {
+      setSearching(false);
     }
   };
 
   return (
     <>
-      <PageHeader
-        title="Buscar Categoría"
-        subtitle="Busca categorías por su ID en el sistema."
-      />
+      <PageHeader title="Buscar Categoría" subtitle="Busca categorías por su ID en el sistema." />
 
       <section className="container mx-auto px-4 py-10">
         <div className="rounded-2xl border border-border bg-card p-6 shadow-[var(--shadow-soft)]">
@@ -81,12 +60,14 @@ function BuscarCategoriaPage() {
               onChange={(e) => setSearchId(e.target.value)}
               placeholder="Ingresa el ID de la categoría"
               className="flex-1 rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
+              min="1"
             />
             <button
               type="submit"
+              disabled={searching}
               className="inline-flex items-center justify-center gap-2 rounded-md bg-primary px-6 py-2 font-semibold text-primary-foreground shadow-[var(--shadow-soft)] hover:opacity-90"
             >
-              <Search className="h-4 w-4" /> Buscar
+              <Search className="h-4 w-4" /> {searching ? "Buscando..." : "Buscar"}
             </button>
           </form>
 
@@ -104,7 +85,7 @@ function BuscarCategoriaPage() {
               <div className="flex items-center gap-3 mb-4">
                 <FolderOpen className="h-8 w-8 text-primary" />
                 <div>
-                  <h3 className="font-semibold text-lg">{foundCategory.nombre}</h3>
+                  <h3 className="font-semibold text-lg">{foundCategory.nom_categoria}</h3>
                   <p className="text-sm text-muted-foreground">ID: {foundCategory.id_categoria}</p>
                 </div>
               </div>
@@ -115,23 +96,14 @@ function BuscarCategoriaPage() {
                 </div>
                 <div className="flex justify-between">
                   <span className="font-medium">Nombre:</span>
-                  <span>{foundCategory.nombre}</span>
+                  <span>{foundCategory.nom_categoria}</span>
                 </div>
-              </div>
-            </div>
-          )}
-
-          {/* Información de categorías disponibles */}
-          {!foundCategory && !searchError && (
-            <div className="rounded-lg border border-border p-4">
-              <h3 className="font-semibold mb-3">Categorías disponibles</h3>
-              <div className="grid gap-2 text-sm">
-                {categoriasEjemplo.map((category) => (
-                  <div key={category.id_categoria} className="flex justify-between p-2 bg-muted/30 rounded">
-                    <span>ID: {category.id_categoria}</span>
-                    <span>{category.nombre}</span>
+                {foundCategory.descripcion && (
+                  <div>
+                    <span className="font-medium">Descripción:</span>
+                    <p className="mt-1 text-muted-foreground">{foundCategory.descripcion}</p>
                   </div>
-                ))}
+                )}
               </div>
             </div>
           )}

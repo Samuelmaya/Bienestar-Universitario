@@ -23,11 +23,7 @@ import {
   Shield,
   Users,
 } from "lucide-react";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { SidebarMenuSub, SidebarMenuSubButton, SidebarMenuSubItem } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
 import { useAuth, type Role } from "@/lib/auth";
@@ -58,6 +54,7 @@ type NavItem = {
 
 const navItems: NavItem[] = [
   { to: "/", label: "Inicio", icon: Home },
+  { to: "/dashboard", label: "Dashboard", icon: Trophy, roles: ["admin", "entrenador"] },
   { to: "/inventario", label: "Inventario", icon: Package, roles: ["admin", "utilero"] },
 
   { to: "/registros", label: "Registros", icon: ClipboardList, roles: ["admin", "entrenador"] },
@@ -135,7 +132,9 @@ function AuthenticatedSidebar() {
               {user.role === "admin" && <UsuariosMenu />}
               {user.role === "admin" && <RolesMenu />}
               {(user.role === "admin" || user.role === "utilero") && <CategoriasMenu />}
-              {(user.role === "admin" || user.role === "utilero" || user.role === "entrenador") && <DeportesMenu />}
+              {(user.role === "admin" || user.role === "utilero" || user.role === "entrenador") && (
+                <DeportesMenu />
+              )}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
@@ -371,7 +370,6 @@ function PublicLayout({ children }: { children: React.ReactNode }) {
     return true;
   });
 
-   
   return (
     <div className="min-h-svh flex flex-col bg-background">
       <header className="sticky top-0 z-40 border-b border-border bg-background/85 backdrop-blur supports-[backdrop-filter]:bg-background/70">

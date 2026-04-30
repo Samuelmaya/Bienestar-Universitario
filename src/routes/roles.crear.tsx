@@ -30,7 +30,7 @@ function RolesCrearPage() {
     setLoading(true);
     setError("");
     try {
-      // await rolesApi.create({ nombre, descripcion }); // No conectado aún al backend
+      await rolesApi.create({ nombre, descripcion });
       setSuccess(true);
       setTimeout(() => {
         navigate({ to: "/roles/listar" });
@@ -44,10 +44,7 @@ function RolesCrearPage() {
 
   return (
     <>
-      <PageHeader
-        title="Crear Rol"
-        subtitle="Registra un nuevo rol en el sistema."
-      />
+      <PageHeader title="Crear Rol" subtitle="Registra un nuevo rol en el sistema." />
 
       <section className="container mx-auto px-4 py-10">
         <div className="rounded-2xl border border-border bg-card p-6 shadow-[var(--shadow-soft)] max-w-2xl mx-auto">
@@ -89,9 +86,7 @@ function RolesCrearPage() {
                   />
                 </div>
 
-                {error && (
-                  <p className="text-sm text-destructive">{error}</p>
-                )}
+                {error && <p className="text-sm text-destructive">{error}</p>}
 
                 <div className="flex gap-2 pt-4">
                   <Button type="submit" disabled={loading}>

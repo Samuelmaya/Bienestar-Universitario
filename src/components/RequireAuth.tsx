@@ -43,8 +43,8 @@ export function RequireAuth({ children, roles }: Props) {
           </div>
           <h2 className="mt-4 text-xl font-bold">Permiso insuficiente</h2>
           <p className="mt-2 text-sm text-muted-foreground">
-            Tu rol <span className="font-semibold capitalize">{user.role}</span> no tiene acceso a esta
-            sección. Sólo disponible para: {roles.join(", ")}.
+            Tu rol <span className="font-semibold capitalize">{user.role}</span> no tiene acceso a
+            esta sección. Sólo disponible para: {roles.join(", ")}.
           </p>
           <Link
             to="/"
