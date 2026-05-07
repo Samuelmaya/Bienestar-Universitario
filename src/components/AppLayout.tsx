@@ -92,11 +92,7 @@ function AuthenticatedSidebar() {
   const location = useLocation();
   if (!user) return null;
 
-  const items = navItems.filter((item) => {
-    if (item.publicOnly) return false;
-    if (item.roles) return item.roles.includes(user.role);
-    return true;
-  });
+  const items = navItems.filter((item) => !item.publicOnly);
 
   return (
     <Sidebar collapsible="icon">
@@ -128,12 +124,10 @@ function AuthenticatedSidebar() {
                   </SidebarMenuItem>
                 );
               })}
-              {user.role === "admin" && <UsuariosMenu />}
-              {user.role === "admin" && <RolesMenu />}
-              {(user.role === "admin" || user.role === "utilero") && <CategoriasMenu />}
-              {(user.role === "admin" || user.role === "utilero" || user.role === "entrenador") && (
-                <DeportesMenu />
-              )}
+              <UsuariosMenu />
+              <RolesMenu />
+              <CategoriasMenu />
+              <DeportesMenu />
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
