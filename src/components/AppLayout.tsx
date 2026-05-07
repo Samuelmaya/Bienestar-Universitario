@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import logo from "@/assets/logo-upc.png";
 import {
   Home,
@@ -7,7 +7,6 @@ import {
   CalendarCheck,
   Trophy,
   ClipboardList,
-  UserPlus,
   Clock,
   LogIn,
   LogOut,
@@ -27,6 +26,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { SidebarMenuSub, SidebarMenuSubButton, SidebarMenuSubItem } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
 import { useAuth, type Role } from "@/lib/auth";
+import { LoginModal } from "@/components/LoginModal";
 import {
   Sidebar,
   SidebarContent,
@@ -59,7 +59,6 @@ const navItems: NavItem[] = [
 
   { to: "/registros", label: "Registros", icon: ClipboardList, roles: ["admin", "entrenador"] },
   { to: "/horarios", label: "Horarios", icon: Clock, requiresAuth: true },
-  { to: "/registro", label: "Registro", icon: UserPlus, publicOnly: true },
 ];
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
@@ -157,7 +156,7 @@ function AuthenticatedSidebar() {
 function UsuariosMenu() {
   const location = useLocation();
   const usuariosItems = [
-    { to: "/usuarios/crear", label: "Crear usuario", icon: UserPlus },
+    { to: "/usuarios/crear", label: "Crear usuario", icon: Users },
     { to: "/usuarios/buscar", label: "Buscar usuarios", icon: Search },
     { to: "/usuarios/eliminar", label: "Eliminar usuario", icon: Trash2 },
     { to: "/usuarios/actualizar", label: "Actualizar usuario", icon: Edit },
@@ -201,7 +200,7 @@ function UsuariosMenu() {
 function RolesMenu() {
   const location = useLocation();
   const rolesItems = [
-    { to: "/roles/crear", label: "Crear rol", icon: UserPlus },
+    { to: "/roles/crear", label: "Crear rol", icon: Shield },
     { to: "/roles/buscar", label: "Buscar por ID", icon: Search },
     { to: "/roles/listar", label: "Listar todos", icon: List },
     { to: "/roles/actualizar", label: "Actualizar", icon: Edit },
@@ -246,7 +245,7 @@ function RolesMenu() {
 function CategoriasMenu() {
   const location = useLocation();
   const categoriasItems = [
-    { to: "/categorias/crear", label: "Crear categoría", icon: UserPlus },
+    { to: "/categorias/crear", label: "Crear categoría", icon: FolderOpen },
     { to: "/categorias/buscar", label: "Buscar por ID", icon: Search },
     { to: "/categorias/listar", label: "Listar todas", icon: List },
     { to: "/categorias/actualizar", label: "Actualizar", icon: Edit },
@@ -291,7 +290,7 @@ function CategoriasMenu() {
 function DeportesMenu() {
   const location = useLocation();
   const deportesItems = [
-    { to: "/deportes/crear", label: "Crear deporte", icon: UserPlus },
+    { to: "/deportes/crear", label: "Crear deporte", icon: Trophy },
     { to: "/deportes/listar", label: "Listar todos", icon: List },
     { to: "/deportes/actualizar", label: "Actualizar", icon: Edit },
     { to: "/deportes/eliminar", label: "Eliminar", icon: Trash2 },
@@ -363,6 +362,9 @@ function AuthenticatedTopbar() {
 function PublicLayout({ children }: { children: React.ReactNode }) {
   const location = useLocation();
   const [open, setOpen] = useState(false);
+  const [loginOpen, setLoginOpen] = useState(false);
+  const loginTriggerRef = useRef<HTMLButtonElement | null>(null);
+  const [loginTriggerEl, setLoginTriggerEl] = useState<HTMLElement | null>(null);
 
   const visibleItems = navItems.filter((item) => {
     if (item.publicOnly) return true;
@@ -403,12 +405,17 @@ function PublicLayout({ children }: { children: React.ReactNode }) {
           </nav>
 
           <div className="flex items-center gap-2 shrink-0">
-            <Link
-              to="/login"
+            <button
+              ref={loginTriggerRef}
+              type="button"
+              onClick={() => {
+                setLoginTriggerEl(loginTriggerRef.current);
+                setLoginOpen(true);
+              }}
               className="hidden sm:inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-sm transition hover:opacity-90"
             >
               <LogIn className="h-4 w-4" /> Ingresar
-            </Link>
+            </button>
             <button
               onClick={() => setOpen((v) => !v)}
               className="lg:hidden inline-flex items-center justify-center rounded-md p-2 text-foreground hover:bg-accent"
@@ -436,13 +443,17 @@ function PublicLayout({ children }: { children: React.ReactNode }) {
                   </Link>
                 );
               })}
-              <Link
-                to="/login"
-                onClick={() => setOpen(false)}
+              <button
+                type="button"
+                onClick={() => {
+                  setOpen(false);
+                  setLoginTriggerEl(null);
+                  setLoginOpen(true);
+                }}
                 className="mt-2 inline-flex items-center justify-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground"
               >
                 <LogIn className="h-4 w-4" /> Ingresar
-              </Link>
+              </button>
             </nav>
           </div>
         )}
@@ -450,6 +461,9 @@ function PublicLayout({ children }: { children: React.ReactNode }) {
 
       <main className="flex-1 min-w-0">{children}</main>
       <SiteFooter />
+      {loginOpen && (
+        <LoginModal triggerElement={loginTriggerEl} onClose={() => setLoginOpen(false)} />
+      )}
     </div>
   );
 }

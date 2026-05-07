@@ -1,7 +1,8 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { authApi, type TokenResponse } from "./api";
+import { authApi } from "./api";
+import { clearToken, getToken, setToken } from "@/services/auth.service";
 
-export type Role = "utilero" | "admin" | "entrenador";
+export type Role = "utilero" | "admin" | "entrenador" | "string";
 
 export type AuthUser = {
   nombre: string;
@@ -13,14 +14,12 @@ export type AuthUser = {
 type AuthContextValue = {
   user: AuthUser | null;
   isAuthenticated: boolean;
-  login: (data: { email: string; password: string }) => Promise<void>;
+  login: (data: { email: string; contrasena: string }) => Promise<void>;
   logout: () => void;
 };
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 const STORAGE_KEY = "upc.auth.user";
-const TOKEN_KEY = "auth_token";
-
 function nombreFromEmail(email: string) {
   const base = email.split("@")[0] ?? "Usuario";
   return base
@@ -37,26 +36,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     try {
+      const token = getToken();
       const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) setUser(JSON.parse(raw));
+      if (token && raw) setUser(JSON.parse(raw));
     } catch {
       // ignore
     }
     setHydrated(true);
   }, []);
 
-  const login = useCallback(async (data: { email: string; password: string }) => {
-    // Login desconectado del backend - modo local sin backend
-    // Simula un login exitoso sin llamar a la API
-    
-    const nombre = nombreFromEmail(data.email);
-    
+  const login = useCallback(async (data: { email: string; contrasena: string }) => {
+    const response = await authApi.login({ email: data.email, contrasena: data.contrasena });
+    setToken(response.access_token);
+
     const u: AuthUser = {
       email: data.email,
-      role: "admin", // Asignamos un rol por defecto para pruebas
-      nombre,
+      role: response.rol as Role,
+      nombre: nombreFromEmail(data.email),
     };
-    
+
     setUser(u);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(u));
   }, []);
@@ -65,7 +63,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setUser(null);
     try {
       localStorage.removeItem(STORAGE_KEY);
-      localStorage.removeItem(TOKEN_KEY);
+      clearToken();
     } catch {
       // ignore
     }

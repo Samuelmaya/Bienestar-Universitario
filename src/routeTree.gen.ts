@@ -10,7 +10,6 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as RegistrosRouteImport } from './routes/registros'
-import { Route as RegistroRouteImport } from './routes/registro'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as InventarioRouteImport } from './routes/inventario'
 import { Route as HorariosRouteImport } from './routes/horarios'
@@ -39,11 +38,6 @@ import { Route as CategoriasActualizarRouteImport } from './routes/categorias.ac
 const RegistrosRoute = RegistrosRouteImport.update({
   id: '/registros',
   path: '/registros',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RegistroRoute = RegistroRouteImport.update({
-  id: '/registro',
-  path: '/registro',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -173,7 +167,6 @@ export interface FileRoutesByFullPath {
   '/horarios': typeof HorariosRoute
   '/inventario': typeof InventarioRoute
   '/login': typeof LoginRoute
-  '/registro': typeof RegistroRoute
   '/registros': typeof RegistrosRoute
   '/categorias/actualizar': typeof CategoriasActualizarRoute
   '/categorias/buscar': typeof CategoriasBuscarRoute
@@ -201,7 +194,6 @@ export interface FileRoutesByTo {
   '/horarios': typeof HorariosRoute
   '/inventario': typeof InventarioRoute
   '/login': typeof LoginRoute
-  '/registro': typeof RegistroRoute
   '/registros': typeof RegistrosRoute
   '/categorias/actualizar': typeof CategoriasActualizarRoute
   '/categorias/buscar': typeof CategoriasBuscarRoute
@@ -230,7 +222,6 @@ export interface FileRoutesById {
   '/horarios': typeof HorariosRoute
   '/inventario': typeof InventarioRoute
   '/login': typeof LoginRoute
-  '/registro': typeof RegistroRoute
   '/registros': typeof RegistrosRoute
   '/categorias/actualizar': typeof CategoriasActualizarRoute
   '/categorias/buscar': typeof CategoriasBuscarRoute
@@ -260,7 +251,6 @@ export interface FileRouteTypes {
     | '/horarios'
     | '/inventario'
     | '/login'
-    | '/registro'
     | '/registros'
     | '/categorias/actualizar'
     | '/categorias/buscar'
@@ -288,7 +278,6 @@ export interface FileRouteTypes {
     | '/horarios'
     | '/inventario'
     | '/login'
-    | '/registro'
     | '/registros'
     | '/categorias/actualizar'
     | '/categorias/buscar'
@@ -316,7 +305,6 @@ export interface FileRouteTypes {
     | '/horarios'
     | '/inventario'
     | '/login'
-    | '/registro'
     | '/registros'
     | '/categorias/actualizar'
     | '/categorias/buscar'
@@ -345,7 +333,6 @@ export interface RootRouteChildren {
   HorariosRoute: typeof HorariosRoute
   InventarioRoute: typeof InventarioRoute
   LoginRoute: typeof LoginRoute
-  RegistroRoute: typeof RegistroRoute
   RegistrosRoute: typeof RegistrosRoute
   CategoriasActualizarRoute: typeof CategoriasActualizarRoute
   CategoriasBuscarRoute: typeof CategoriasBuscarRoute
@@ -375,13 +362,6 @@ declare module '@tanstack/react-router' {
       path: '/registros'
       fullPath: '/registros'
       preLoaderRoute: typeof RegistrosRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/registro': {
-      id: '/registro'
-      path: '/registro'
-      fullPath: '/registro'
-      preLoaderRoute: typeof RegistroRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -561,7 +541,6 @@ const rootRouteChildren: RootRouteChildren = {
   HorariosRoute: HorariosRoute,
   InventarioRoute: InventarioRoute,
   LoginRoute: LoginRoute,
-  RegistroRoute: RegistroRoute,
   RegistrosRoute: RegistrosRoute,
   CategoriasActualizarRoute: CategoriasActualizarRoute,
   CategoriasBuscarRoute: CategoriasBuscarRoute,

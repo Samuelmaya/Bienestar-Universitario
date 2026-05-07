@@ -1,6 +1,8 @@
 import { Link, useLocation } from "@tanstack/react-router";
-import { Lock, LogIn, ShieldAlert } from "lucide-react";
+import { Lock, ShieldAlert } from "lucide-react";
+import { useRef, useState } from "react";
 import { useAuth, type Role } from "@/lib/auth";
+import { LoginModal } from "@/components/LoginModal";
 
 type Props = {
   children: React.ReactNode;
@@ -10,6 +12,8 @@ type Props = {
 export function RequireAuth({ children, roles }: Props) {
   const { isAuthenticated, user } = useAuth();
   const location = useLocation();
+  const [loginOpen, setLoginOpen] = useState(false);
+  const triggerRef = useRef<HTMLButtonElement | null>(null);
 
   if (!isAuthenticated || !user) {
     return (
@@ -22,13 +26,17 @@ export function RequireAuth({ children, roles }: Props) {
           <p className="mt-2 text-sm text-muted-foreground">
             Debes iniciar sesión para acceder a esta sección del sistema.
           </p>
-          <Link
-            to="/login"
-            search={{ redirect: location.pathname }}
+          <button
+            ref={triggerRef}
+            type="button"
+            onClick={() => setLoginOpen(true)}
             className="mt-6 inline-flex items-center justify-center gap-2 rounded-md bg-primary px-5 py-2.5 font-semibold text-primary-foreground shadow-[var(--shadow-soft)] hover:opacity-90"
           >
-            <LogIn className="h-4 w-4" /> Iniciar sesión
-          </Link>
+            Iniciar sesión
+          </button>
+          {loginOpen && (
+            <LoginModal triggerElement={triggerRef.current} onClose={() => setLoginOpen(false)} />
+          )}
         </div>
       </div>
     );

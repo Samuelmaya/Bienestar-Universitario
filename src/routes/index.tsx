@@ -14,6 +14,8 @@ import {
 } from "lucide-react";
 import hero from "@/assets/hero-deportes.jpg";
 import { useAuth } from "@/lib/auth";
+import { useRef, useState } from "react";
+import { LoginModal } from "@/components/LoginModal";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -206,6 +208,10 @@ function AuthenticatedHome() {
 }
 
 function PublicHome() {
+  const { user } = useAuth();
+  const [loginOpen, setLoginOpen] = useState(false);
+  const triggerRef = useRef<HTMLButtonElement | null>(null);
+
   return (
     <>
       <section className="relative overflow-hidden">
@@ -225,22 +231,18 @@ function PublicHome() {
             Vive la pasión del deporte universitario
           </h1>
           <p className="mt-4 max-w-2xl text-lg opacity-95">
-            Reserva implementos, inscríbete a disciplinas y mantente al día con los horarios del
-            área de Bienestar Deportivo de la UPC.
+            Reserva implementos, inscribete a disciplinas y mantente al dia con los horarios del
+            area de Bienestar Deportivo de la UPC.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
-            <Link
-              to="/registro"
-              className="inline-flex items-center gap-2 rounded-md bg-white px-5 py-3 font-semibold text-primary shadow-[var(--shadow-elegant)] transition hover:scale-[1.02]"
-            >
-              Regístrate <ArrowRight className="h-4 w-4" />
-            </Link>
-            <Link
-              to="/login"
+            <button
+              ref={triggerRef}
+              type="button"
+              onClick={() => setLoginOpen(true)}
               className="inline-flex items-center gap-2 rounded-md border border-white/40 bg-white/10 px-5 py-3 font-semibold text-white backdrop-blur transition hover:bg-white/20"
             >
-              Iniciar sesión
-            </Link>
+              Iniciar sesion
+            </button>
           </div>
         </div>
       </section>
@@ -296,6 +298,9 @@ function PublicHome() {
           ))}
         </div>
       </section>
+      {loginOpen && (
+        <LoginModal triggerElement={triggerRef.current} onClose={() => setLoginOpen(false)} />
+      )}
     </>
   );
 }

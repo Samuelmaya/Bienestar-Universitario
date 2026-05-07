@@ -1,21 +1,14 @@
-// Backend desconectado - URL vacía para desarrollo local sin backend
-const API_BASE = "";
+import { environment } from "@/shared/environments/environment";
+import { authFetch } from "@/services/auth.interceptor";
+import type { LoginRequest, LoginResponse } from "@/shared/dtos/auth.dto";
 
-const getToken = () => localStorage.getItem("auth_token");
-
-const headers = () => {
-  const token = getToken();
-  return {
-    "Content-Type": "application/json",
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
-  };
-};
+const API_BASE = environment.apiUrl;
 
 async function request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
-  const response = await fetch(`${API_BASE}${endpoint}`, {
+  const response = await authFetch(`${API_BASE}${endpoint}`, {
     ...options,
     headers: {
-      ...headers(),
+      "Content-Type": "application/json",
       ...options.headers,
     },
   });
@@ -74,20 +67,10 @@ export const sportsApi = {
     }),
 };
 
-// API de Autenticación
-export interface LoginRequest {
-  email: string;
-  password: string;
-}
-
-export interface TokenResponse {
-  access_token: string;
-  token_type: string;
-}
-
+// API de Autenticacion
 export const authApi = {
   login: (data: LoginRequest) =>
-    request<TokenResponse>("/auth/login", {
+    request<LoginResponse>("/auth/login", {
       method: "POST",
       body: JSON.stringify(data),
     }),
@@ -170,7 +153,14 @@ export const articlesApi = {
 
   get: (id_articulo: number) => request<Articulo>(`/sports-equipment/${id_articulo}`),
 
-  create: (data: { nombre: string; cantidad: number; dañados: number; estado: string; id_categoria: number; observaciones: string }) =>
+  create: (data: {
+    nombre: string;
+    cantidad: number;
+    dañados: number;
+    estado: string;
+    id_categoria: number;
+    observaciones: string;
+  }) =>
     request<Articulo>("/sports-equipment", {
       method: "POST",
       body: JSON.stringify(data),
@@ -178,7 +168,14 @@ export const articlesApi = {
 
   update: (
     id_articulo: number,
-    data: Partial<{ nombre: string; cantidad: number; dañados: number; estado: string; id_categoria: number; observaciones: string }>,
+    data: Partial<{
+      nombre: string;
+      cantidad: number;
+      dañados: number;
+      estado: string;
+      id_categoria: number;
+      observaciones: string;
+    }>,
   ) =>
     request<Articulo>(`/sports-equipment/${id_articulo}`, {
       method: "PATCH",
