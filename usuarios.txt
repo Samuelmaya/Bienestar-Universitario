@@ -1,2 +1,4 @@
 admin: diegoandresariza54@gmail.com 123456789
 utilero: test@testing.com 123456789
+
+borre el registro pq los estudiantes deben registrarse desde el administrador, no cualquier persona
