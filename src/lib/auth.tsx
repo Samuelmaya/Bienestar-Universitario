@@ -1,8 +1,8 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { authApi } from "./api";
-import { clearToken, getToken, setToken } from "@/services/auth.service";
+import { clearToken, getToken, setToken, refreshToken } from "@/services/auth.service";
 
-export type Role = "utilero" | "admin" | "entrenador" | "string";
+export type Role = "administrador" | "utilero" | "entrenador" | string;
 
 export type AuthUser = {
   nombre: string;
@@ -20,6 +20,11 @@ type AuthContextValue = {
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 const STORAGE_KEY = "upc.auth.user";
+
+function buildNombre(primerNombre: string, primerApellido: string): string {
+  return `${primerNombre} ${primerApellido}`.trim() || "Usuario";
+}
+
 function nombreFromEmail(email: string) {
   const base = email.split("@")[0] ?? "Usuario";
   return base
@@ -34,15 +39,34 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [hydrated, setHydrated] = useState(false);
 
+  // Al montar: si hay token guardado, intentar refresh para validarlo
   useEffect(() => {
-    try {
-      const token = getToken();
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (token && raw) setUser(JSON.parse(raw));
-    } catch {
-      // ignore
+    const token = getToken();
+    if (!token) {
+      setHydrated(true);
+      return;
     }
-    setHydrated(true);
+
+    refreshToken(token)
+      .then((res) => {
+        // Token válido: actualizar token y datos del usuario
+        setToken(res.access_token);
+        const u: AuthUser = {
+          email: res.usuario.email,
+          role: res.rol.toLowerCase() as Role,
+          nombre: buildNombre(res.usuario.primer_nombre, res.usuario.primer_apellido),
+          user_id: res.usuario.id,
+        };
+        setUser(u);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(u));
+      })
+      .catch(() => {
+        // Token inválido o expirado: limpiar todo
+        clearToken();
+        localStorage.removeItem(STORAGE_KEY);
+        setUser(null);
+      })
+      .finally(() => setHydrated(true));
   }, []);
 
   const login = useCallback(async (data: { email: string; contrasena: string }) => {
@@ -51,7 +75,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const u: AuthUser = {
       email: data.email,
-      role: response.rol as Role,
+      role: (response.rol as string).toLowerCase() as Role,
       nombre: nombreFromEmail(data.email),
     };
 

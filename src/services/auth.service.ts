@@ -1,5 +1,5 @@
 import { environment } from "@/shared/environments/environment";
-import type { ApiErrorResponse, LoginRequest, LoginResponse } from "@/shared/dtos/auth.dto";
+import type { ApiErrorResponse, LoginRequest, LoginResponse, RefreshResponse } from "@/shared/dtos/auth.dto";
 
 const TOKEN_KEY = "auth_token";
 
@@ -24,6 +24,25 @@ export async function loginRequest(data: LoginRequest): Promise<LoginResponse> {
 
   const payload = (await response.json()) as LoginResponse;
   return payload;
+}
+
+/**
+ * Refresca el token JWT actual.
+ * POST /auth/refresh
+ * Si falla (401/403), el token es inválido o expirado.
+ */
+export async function refreshToken(token: string): Promise<RefreshResponse> {
+  const response = await fetch(`${environment.apiUrl}/auth/refresh`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ token }),
+  });
+
+  if (!response.ok) {
+    throw new Error(`refresh_failed_${response.status}`);
+  }
+
+  return (await response.json()) as RefreshResponse;
 }
 
 export function setToken(token: string) {

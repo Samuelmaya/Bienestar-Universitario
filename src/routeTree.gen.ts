@@ -10,34 +10,27 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as RegistrosRouteImport } from './routes/registros'
+import { Route as PeticionesRouteImport } from './routes/peticiones'
+import { Route as PanelRouteImport } from './routes/panel'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as InventarioRouteImport } from './routes/inventario'
 import { Route as HorariosRouteImport } from './routes/horarios'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as UsuariosEliminarRouteImport } from './routes/usuarios.eliminar'
-import { Route as UsuariosCrearRouteImport } from './routes/usuarios.crear'
-import { Route as UsuariosBuscarRouteImport } from './routes/usuarios.buscar'
-import { Route as UsuariosActualizarRouteImport } from './routes/usuarios.actualizar'
-import { Route as RolesListarRouteImport } from './routes/roles.listar'
-import { Route as RolesEliminarRouteImport } from './routes/roles.eliminar'
-import { Route as RolesCrearRouteImport } from './routes/roles.crear'
-import { Route as RolesBuscarRouteImport } from './routes/roles.buscar'
-import { Route as RolesActualizarRouteImport } from './routes/roles.actualizar'
-import { Route as DeportesListarRouteImport } from './routes/deportes.listar'
-import { Route as DeportesEliminarRouteImport } from './routes/deportes.eliminar'
-import { Route as DeportesCrearRouteImport } from './routes/deportes.crear'
-import { Route as DeportesBuscarRouteImport } from './routes/deportes.buscar'
-import { Route as DeportesActualizarRouteImport } from './routes/deportes.actualizar'
-import { Route as CategoriasListarRouteImport } from './routes/categorias.listar'
-import { Route as CategoriasEliminarRouteImport } from './routes/categorias.eliminar'
-import { Route as CategoriasCrearRouteImport } from './routes/categorias.crear'
-import { Route as CategoriasBuscarRouteImport } from './routes/categorias.buscar'
-import { Route as CategoriasActualizarRouteImport } from './routes/categorias.actualizar'
 
 const RegistrosRoute = RegistrosRouteImport.update({
   id: '/registros',
   path: '/registros',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PeticionesRoute = PeticionesRouteImport.update({
+  id: '/peticiones',
+  path: '/peticiones',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PanelRoute = PanelRouteImport.update({
+  id: '/panel',
+  path: '/panel',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -65,101 +58,6 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const UsuariosEliminarRoute = UsuariosEliminarRouteImport.update({
-  id: '/usuarios/eliminar',
-  path: '/usuarios/eliminar',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const UsuariosCrearRoute = UsuariosCrearRouteImport.update({
-  id: '/usuarios/crear',
-  path: '/usuarios/crear',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const UsuariosBuscarRoute = UsuariosBuscarRouteImport.update({
-  id: '/usuarios/buscar',
-  path: '/usuarios/buscar',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const UsuariosActualizarRoute = UsuariosActualizarRouteImport.update({
-  id: '/usuarios/actualizar',
-  path: '/usuarios/actualizar',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RolesListarRoute = RolesListarRouteImport.update({
-  id: '/roles/listar',
-  path: '/roles/listar',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RolesEliminarRoute = RolesEliminarRouteImport.update({
-  id: '/roles/eliminar',
-  path: '/roles/eliminar',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RolesCrearRoute = RolesCrearRouteImport.update({
-  id: '/roles/crear',
-  path: '/roles/crear',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RolesBuscarRoute = RolesBuscarRouteImport.update({
-  id: '/roles/buscar',
-  path: '/roles/buscar',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RolesActualizarRoute = RolesActualizarRouteImport.update({
-  id: '/roles/actualizar',
-  path: '/roles/actualizar',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DeportesListarRoute = DeportesListarRouteImport.update({
-  id: '/deportes/listar',
-  path: '/deportes/listar',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DeportesEliminarRoute = DeportesEliminarRouteImport.update({
-  id: '/deportes/eliminar',
-  path: '/deportes/eliminar',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DeportesCrearRoute = DeportesCrearRouteImport.update({
-  id: '/deportes/crear',
-  path: '/deportes/crear',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DeportesBuscarRoute = DeportesBuscarRouteImport.update({
-  id: '/deportes/buscar',
-  path: '/deportes/buscar',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DeportesActualizarRoute = DeportesActualizarRouteImport.update({
-  id: '/deportes/actualizar',
-  path: '/deportes/actualizar',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CategoriasListarRoute = CategoriasListarRouteImport.update({
-  id: '/categorias/listar',
-  path: '/categorias/listar',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CategoriasEliminarRoute = CategoriasEliminarRouteImport.update({
-  id: '/categorias/eliminar',
-  path: '/categorias/eliminar',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CategoriasCrearRoute = CategoriasCrearRouteImport.update({
-  id: '/categorias/crear',
-  path: '/categorias/crear',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CategoriasBuscarRoute = CategoriasBuscarRouteImport.update({
-  id: '/categorias/buscar',
-  path: '/categorias/buscar',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CategoriasActualizarRoute = CategoriasActualizarRouteImport.update({
-  id: '/categorias/actualizar',
-  path: '/categorias/actualizar',
-  getParentRoute: () => rootRouteImport,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -167,26 +65,9 @@ export interface FileRoutesByFullPath {
   '/horarios': typeof HorariosRoute
   '/inventario': typeof InventarioRoute
   '/login': typeof LoginRoute
+  '/panel': typeof PanelRoute
+  '/peticiones': typeof PeticionesRoute
   '/registros': typeof RegistrosRoute
-  '/categorias/actualizar': typeof CategoriasActualizarRoute
-  '/categorias/buscar': typeof CategoriasBuscarRoute
-  '/categorias/crear': typeof CategoriasCrearRoute
-  '/categorias/eliminar': typeof CategoriasEliminarRoute
-  '/categorias/listar': typeof CategoriasListarRoute
-  '/deportes/actualizar': typeof DeportesActualizarRoute
-  '/deportes/buscar': typeof DeportesBuscarRoute
-  '/deportes/crear': typeof DeportesCrearRoute
-  '/deportes/eliminar': typeof DeportesEliminarRoute
-  '/deportes/listar': typeof DeportesListarRoute
-  '/roles/actualizar': typeof RolesActualizarRoute
-  '/roles/buscar': typeof RolesBuscarRoute
-  '/roles/crear': typeof RolesCrearRoute
-  '/roles/eliminar': typeof RolesEliminarRoute
-  '/roles/listar': typeof RolesListarRoute
-  '/usuarios/actualizar': typeof UsuariosActualizarRoute
-  '/usuarios/buscar': typeof UsuariosBuscarRoute
-  '/usuarios/crear': typeof UsuariosCrearRoute
-  '/usuarios/eliminar': typeof UsuariosEliminarRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -194,26 +75,9 @@ export interface FileRoutesByTo {
   '/horarios': typeof HorariosRoute
   '/inventario': typeof InventarioRoute
   '/login': typeof LoginRoute
+  '/panel': typeof PanelRoute
+  '/peticiones': typeof PeticionesRoute
   '/registros': typeof RegistrosRoute
-  '/categorias/actualizar': typeof CategoriasActualizarRoute
-  '/categorias/buscar': typeof CategoriasBuscarRoute
-  '/categorias/crear': typeof CategoriasCrearRoute
-  '/categorias/eliminar': typeof CategoriasEliminarRoute
-  '/categorias/listar': typeof CategoriasListarRoute
-  '/deportes/actualizar': typeof DeportesActualizarRoute
-  '/deportes/buscar': typeof DeportesBuscarRoute
-  '/deportes/crear': typeof DeportesCrearRoute
-  '/deportes/eliminar': typeof DeportesEliminarRoute
-  '/deportes/listar': typeof DeportesListarRoute
-  '/roles/actualizar': typeof RolesActualizarRoute
-  '/roles/buscar': typeof RolesBuscarRoute
-  '/roles/crear': typeof RolesCrearRoute
-  '/roles/eliminar': typeof RolesEliminarRoute
-  '/roles/listar': typeof RolesListarRoute
-  '/usuarios/actualizar': typeof UsuariosActualizarRoute
-  '/usuarios/buscar': typeof UsuariosBuscarRoute
-  '/usuarios/crear': typeof UsuariosCrearRoute
-  '/usuarios/eliminar': typeof UsuariosEliminarRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -222,26 +86,9 @@ export interface FileRoutesById {
   '/horarios': typeof HorariosRoute
   '/inventario': typeof InventarioRoute
   '/login': typeof LoginRoute
+  '/panel': typeof PanelRoute
+  '/peticiones': typeof PeticionesRoute
   '/registros': typeof RegistrosRoute
-  '/categorias/actualizar': typeof CategoriasActualizarRoute
-  '/categorias/buscar': typeof CategoriasBuscarRoute
-  '/categorias/crear': typeof CategoriasCrearRoute
-  '/categorias/eliminar': typeof CategoriasEliminarRoute
-  '/categorias/listar': typeof CategoriasListarRoute
-  '/deportes/actualizar': typeof DeportesActualizarRoute
-  '/deportes/buscar': typeof DeportesBuscarRoute
-  '/deportes/crear': typeof DeportesCrearRoute
-  '/deportes/eliminar': typeof DeportesEliminarRoute
-  '/deportes/listar': typeof DeportesListarRoute
-  '/roles/actualizar': typeof RolesActualizarRoute
-  '/roles/buscar': typeof RolesBuscarRoute
-  '/roles/crear': typeof RolesCrearRoute
-  '/roles/eliminar': typeof RolesEliminarRoute
-  '/roles/listar': typeof RolesListarRoute
-  '/usuarios/actualizar': typeof UsuariosActualizarRoute
-  '/usuarios/buscar': typeof UsuariosBuscarRoute
-  '/usuarios/crear': typeof UsuariosCrearRoute
-  '/usuarios/eliminar': typeof UsuariosEliminarRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -251,26 +98,9 @@ export interface FileRouteTypes {
     | '/horarios'
     | '/inventario'
     | '/login'
+    | '/panel'
+    | '/peticiones'
     | '/registros'
-    | '/categorias/actualizar'
-    | '/categorias/buscar'
-    | '/categorias/crear'
-    | '/categorias/eliminar'
-    | '/categorias/listar'
-    | '/deportes/actualizar'
-    | '/deportes/buscar'
-    | '/deportes/crear'
-    | '/deportes/eliminar'
-    | '/deportes/listar'
-    | '/roles/actualizar'
-    | '/roles/buscar'
-    | '/roles/crear'
-    | '/roles/eliminar'
-    | '/roles/listar'
-    | '/usuarios/actualizar'
-    | '/usuarios/buscar'
-    | '/usuarios/crear'
-    | '/usuarios/eliminar'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -278,26 +108,9 @@ export interface FileRouteTypes {
     | '/horarios'
     | '/inventario'
     | '/login'
+    | '/panel'
+    | '/peticiones'
     | '/registros'
-    | '/categorias/actualizar'
-    | '/categorias/buscar'
-    | '/categorias/crear'
-    | '/categorias/eliminar'
-    | '/categorias/listar'
-    | '/deportes/actualizar'
-    | '/deportes/buscar'
-    | '/deportes/crear'
-    | '/deportes/eliminar'
-    | '/deportes/listar'
-    | '/roles/actualizar'
-    | '/roles/buscar'
-    | '/roles/crear'
-    | '/roles/eliminar'
-    | '/roles/listar'
-    | '/usuarios/actualizar'
-    | '/usuarios/buscar'
-    | '/usuarios/crear'
-    | '/usuarios/eliminar'
   id:
     | '__root__'
     | '/'
@@ -305,26 +118,9 @@ export interface FileRouteTypes {
     | '/horarios'
     | '/inventario'
     | '/login'
+    | '/panel'
+    | '/peticiones'
     | '/registros'
-    | '/categorias/actualizar'
-    | '/categorias/buscar'
-    | '/categorias/crear'
-    | '/categorias/eliminar'
-    | '/categorias/listar'
-    | '/deportes/actualizar'
-    | '/deportes/buscar'
-    | '/deportes/crear'
-    | '/deportes/eliminar'
-    | '/deportes/listar'
-    | '/roles/actualizar'
-    | '/roles/buscar'
-    | '/roles/crear'
-    | '/roles/eliminar'
-    | '/roles/listar'
-    | '/usuarios/actualizar'
-    | '/usuarios/buscar'
-    | '/usuarios/crear'
-    | '/usuarios/eliminar'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -333,26 +129,9 @@ export interface RootRouteChildren {
   HorariosRoute: typeof HorariosRoute
   InventarioRoute: typeof InventarioRoute
   LoginRoute: typeof LoginRoute
+  PanelRoute: typeof PanelRoute
+  PeticionesRoute: typeof PeticionesRoute
   RegistrosRoute: typeof RegistrosRoute
-  CategoriasActualizarRoute: typeof CategoriasActualizarRoute
-  CategoriasBuscarRoute: typeof CategoriasBuscarRoute
-  CategoriasCrearRoute: typeof CategoriasCrearRoute
-  CategoriasEliminarRoute: typeof CategoriasEliminarRoute
-  CategoriasListarRoute: typeof CategoriasListarRoute
-  DeportesActualizarRoute: typeof DeportesActualizarRoute
-  DeportesBuscarRoute: typeof DeportesBuscarRoute
-  DeportesCrearRoute: typeof DeportesCrearRoute
-  DeportesEliminarRoute: typeof DeportesEliminarRoute
-  DeportesListarRoute: typeof DeportesListarRoute
-  RolesActualizarRoute: typeof RolesActualizarRoute
-  RolesBuscarRoute: typeof RolesBuscarRoute
-  RolesCrearRoute: typeof RolesCrearRoute
-  RolesEliminarRoute: typeof RolesEliminarRoute
-  RolesListarRoute: typeof RolesListarRoute
-  UsuariosActualizarRoute: typeof UsuariosActualizarRoute
-  UsuariosBuscarRoute: typeof UsuariosBuscarRoute
-  UsuariosCrearRoute: typeof UsuariosCrearRoute
-  UsuariosEliminarRoute: typeof UsuariosEliminarRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -362,6 +141,20 @@ declare module '@tanstack/react-router' {
       path: '/registros'
       fullPath: '/registros'
       preLoaderRoute: typeof RegistrosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/peticiones': {
+      id: '/peticiones'
+      path: '/peticiones'
+      fullPath: '/peticiones'
+      preLoaderRoute: typeof PeticionesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/panel': {
+      id: '/panel'
+      path: '/panel'
+      fullPath: '/panel'
+      preLoaderRoute: typeof PanelRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -399,139 +192,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/usuarios/eliminar': {
-      id: '/usuarios/eliminar'
-      path: '/usuarios/eliminar'
-      fullPath: '/usuarios/eliminar'
-      preLoaderRoute: typeof UsuariosEliminarRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/usuarios/crear': {
-      id: '/usuarios/crear'
-      path: '/usuarios/crear'
-      fullPath: '/usuarios/crear'
-      preLoaderRoute: typeof UsuariosCrearRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/usuarios/buscar': {
-      id: '/usuarios/buscar'
-      path: '/usuarios/buscar'
-      fullPath: '/usuarios/buscar'
-      preLoaderRoute: typeof UsuariosBuscarRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/usuarios/actualizar': {
-      id: '/usuarios/actualizar'
-      path: '/usuarios/actualizar'
-      fullPath: '/usuarios/actualizar'
-      preLoaderRoute: typeof UsuariosActualizarRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/roles/listar': {
-      id: '/roles/listar'
-      path: '/roles/listar'
-      fullPath: '/roles/listar'
-      preLoaderRoute: typeof RolesListarRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/roles/eliminar': {
-      id: '/roles/eliminar'
-      path: '/roles/eliminar'
-      fullPath: '/roles/eliminar'
-      preLoaderRoute: typeof RolesEliminarRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/roles/crear': {
-      id: '/roles/crear'
-      path: '/roles/crear'
-      fullPath: '/roles/crear'
-      preLoaderRoute: typeof RolesCrearRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/roles/buscar': {
-      id: '/roles/buscar'
-      path: '/roles/buscar'
-      fullPath: '/roles/buscar'
-      preLoaderRoute: typeof RolesBuscarRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/roles/actualizar': {
-      id: '/roles/actualizar'
-      path: '/roles/actualizar'
-      fullPath: '/roles/actualizar'
-      preLoaderRoute: typeof RolesActualizarRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/deportes/listar': {
-      id: '/deportes/listar'
-      path: '/deportes/listar'
-      fullPath: '/deportes/listar'
-      preLoaderRoute: typeof DeportesListarRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/deportes/eliminar': {
-      id: '/deportes/eliminar'
-      path: '/deportes/eliminar'
-      fullPath: '/deportes/eliminar'
-      preLoaderRoute: typeof DeportesEliminarRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/deportes/crear': {
-      id: '/deportes/crear'
-      path: '/deportes/crear'
-      fullPath: '/deportes/crear'
-      preLoaderRoute: typeof DeportesCrearRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/deportes/buscar': {
-      id: '/deportes/buscar'
-      path: '/deportes/buscar'
-      fullPath: '/deportes/buscar'
-      preLoaderRoute: typeof DeportesBuscarRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/deportes/actualizar': {
-      id: '/deportes/actualizar'
-      path: '/deportes/actualizar'
-      fullPath: '/deportes/actualizar'
-      preLoaderRoute: typeof DeportesActualizarRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/categorias/listar': {
-      id: '/categorias/listar'
-      path: '/categorias/listar'
-      fullPath: '/categorias/listar'
-      preLoaderRoute: typeof CategoriasListarRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/categorias/eliminar': {
-      id: '/categorias/eliminar'
-      path: '/categorias/eliminar'
-      fullPath: '/categorias/eliminar'
-      preLoaderRoute: typeof CategoriasEliminarRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/categorias/crear': {
-      id: '/categorias/crear'
-      path: '/categorias/crear'
-      fullPath: '/categorias/crear'
-      preLoaderRoute: typeof CategoriasCrearRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/categorias/buscar': {
-      id: '/categorias/buscar'
-      path: '/categorias/buscar'
-      fullPath: '/categorias/buscar'
-      preLoaderRoute: typeof CategoriasBuscarRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/categorias/actualizar': {
-      id: '/categorias/actualizar'
-      path: '/categorias/actualizar'
-      fullPath: '/categorias/actualizar'
-      preLoaderRoute: typeof CategoriasActualizarRouteImport
-      parentRoute: typeof rootRouteImport
-    }
   }
 }
 
@@ -541,26 +201,9 @@ const rootRouteChildren: RootRouteChildren = {
   HorariosRoute: HorariosRoute,
   InventarioRoute: InventarioRoute,
   LoginRoute: LoginRoute,
+  PanelRoute: PanelRoute,
+  PeticionesRoute: PeticionesRoute,
   RegistrosRoute: RegistrosRoute,
-  CategoriasActualizarRoute: CategoriasActualizarRoute,
-  CategoriasBuscarRoute: CategoriasBuscarRoute,
-  CategoriasCrearRoute: CategoriasCrearRoute,
-  CategoriasEliminarRoute: CategoriasEliminarRoute,
-  CategoriasListarRoute: CategoriasListarRoute,
-  DeportesActualizarRoute: DeportesActualizarRoute,
-  DeportesBuscarRoute: DeportesBuscarRoute,
-  DeportesCrearRoute: DeportesCrearRoute,
-  DeportesEliminarRoute: DeportesEliminarRoute,
-  DeportesListarRoute: DeportesListarRoute,
-  RolesActualizarRoute: RolesActualizarRoute,
-  RolesBuscarRoute: RolesBuscarRoute,
-  RolesCrearRoute: RolesCrearRoute,
-  RolesEliminarRoute: RolesEliminarRoute,
-  RolesListarRoute: RolesListarRoute,
-  UsuariosActualizarRoute: UsuariosActualizarRoute,
-  UsuariosBuscarRoute: UsuariosBuscarRoute,
-  UsuariosCrearRoute: UsuariosCrearRoute,
-  UsuariosEliminarRoute: UsuariosEliminarRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

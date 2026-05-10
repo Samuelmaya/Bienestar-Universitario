@@ -3,27 +3,18 @@ import { useRef, useState } from "react";
 import logo from "@/assets/logo-upc.png";
 import {
   Home,
-  Package,
-  CalendarCheck,
-  Trophy,
   ClipboardList,
-  Clock,
   LogIn,
   LogOut,
   Menu,
   X,
-  ChevronDown,
-  MapPin,
-  Search,
-  Trash2,
-  Edit,
+  Trophy,
+  Package,
   FolderOpen,
-  List,
   Shield,
   Users,
+  ExternalLink,
 } from "lucide-react";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { SidebarMenuSub, SidebarMenuSubButton, SidebarMenuSubItem } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
 import { useAuth, type Role } from "@/lib/auth";
 import { LoginModal } from "@/components/LoginModal";
@@ -39,39 +30,97 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubButton,
+  SidebarMenuSubItem,
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 
 type NavItem = {
   to: string;
+  search?: Record<string, string>;
   label: string;
   icon: typeof Home;
   roles?: Role[];
   requiresAuth?: boolean;
-  publicOnly?: boolean;
+};
+
+type NavGroup = {
+  label: string;
+  icon: typeof Home;
+  roles?: Role[];
+  items: NavItem[];
 };
 
 const navItems: NavItem[] = [
-  { to: "/", label: "Inicio", icon: Home },
-  { to: "/dashboard", label: "Dashboard", icon: Trophy, roles: ["admin", "entrenador"] },
-  { to: "/inventario", label: "Inventario", icon: Package, roles: ["admin", "utilero"] },
+  { to: "/panel", label: "Inicio", icon: Home, requiresAuth: true },
+  {
+    to: "/panel",
+    search: { seccion: "reservas" },
+    label: "Reservas",
+    icon: ClipboardList,
+    roles: ["administrador"],
+  },
+  {
+    to: "/panel",
+    search: { seccion: "deportes" },
+    label: "Deportes",
+    icon: Trophy,
+    roles: ["administrador", "entrenador"],
+  },
+  {
+    to: "/panel",
+    search: { seccion: "roles" },
+    label: "Roles",
+    icon: Shield,
+    roles: ["administrador"],
+  },
+  {
+    to: "/panel",
+    search: { seccion: "usuarios" },
+    label: "Usuarios",
+    icon: Users,
+    roles: ["administrador"],
+  },
+];
 
-  { to: "/registros", label: "Registros", icon: ClipboardList, roles: ["admin", "entrenador"] },
-  { to: "/horarios", label: "Horarios", icon: Clock, requiresAuth: true },
+const navGroups: NavGroup[] = [
+  {
+    label: "Articulos deportivos",
+    icon: Package,
+    roles: ["administrador", "utilero"],
+    items: [
+      {
+        to: "/panel",
+        search: { seccion: "articulos" },
+        label: "Articulos",
+        icon: Package,
+        roles: ["administrador", "utilero"],
+      },
+      {
+        to: "/panel",
+        search: { seccion: "categorias" },
+        label: "Categorias",
+        icon: FolderOpen,
+        roles: ["administrador", "utilero"],
+      },
+    ],
+  },
 ];
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
   const location = useLocation();
   const { isAuthenticated } = useAuth();
   const isLogin = location.pathname === "/login";
+  const isPanel = location.pathname === "/panel";
 
   if (isLogin) return <>{children}</>;
 
-  if (isAuthenticated) {
+  // El sidebar solo se muestra en /panel (ruta autenticada)
+  if (isAuthenticated && isPanel) {
     return (
       <SidebarProvider>
-        {/* Cambiado: min-h-screen → min-h-svh, agregado overflow-auto */}
         <div className="flex min-h-svh w-full bg-background overflow-auto">
           <AuthenticatedSidebar />
           <SidebarInset className="min-w-0 overflow-auto">
@@ -84,20 +133,62 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
     );
   }
 
+  // Todo lo demás (/, /peticiones, etc.) usa layout público
   return <PublicLayout>{children}</PublicLayout>;
 }
 
 function AuthenticatedSidebar() {
   const { user } = useAuth();
   const location = useLocation();
+  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({});
   if (!user) return null;
 
-  const items = navItems.filter((item) => !item.publicOnly);
+  const items = navItems.filter((item) => {
+    if (item.roles && !item.roles.includes(user.role)) return false;
+    return true;
+  });
+
+  const groups = navGroups.filter((group) => {
+    if (group.roles && !group.roles.includes(user.role)) return false;
+    return true;
+  });
+
+  const isItemActive = (item: NavItem) => {
+    if (location.pathname !== item.to) return false;
+    if (item.search) {
+      const params = new URLSearchParams(location.searchStr);
+      return Object.entries(item.search).every(([k, v]) => params.get(k) === v);
+    }
+    // "Inicio" (/panel without search) should not be active when on /panel?seccion=reservas
+    if (item.to === "/panel" && !item.search) {
+      const params = new URLSearchParams(location.searchStr);
+      return !params.has("seccion");
+    }
+    return true;
+  };
+
+  const isSubActive = (item: NavItem) => {
+    if (location.pathname !== item.to) return false;
+    if (item.search) {
+      const params = new URLSearchParams(location.searchStr);
+      return Object.entries(item.search).every(([k, v]) => params.get(k) === v);
+    }
+    return false;
+  };
+
+  const isGroupOpen = (label: string, hasActive: boolean) => {
+    if (label in openGroups) return openGroups[label];
+    return hasActive;
+  };
+
+  const toggleGroup = (label: string, currentlyOpen: boolean) => {
+    setOpenGroups((prev) => ({ ...prev, [label]: !currentlyOpen }));
+  };
 
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader className="border-b border-sidebar-border">
-        <Link to="/" className="flex items-center gap-2 px-2 py-1.5">
+        <Link to="/panel" className="flex items-center gap-2 px-2 py-1.5">
           <img src={logo} alt="UPC" className="h-9 w-auto shrink-0 brightness-0 invert" />
           <div className="leading-tight group-data-[collapsible=icon]:hidden">
             <p className="text-[10px] uppercase tracking-widest text-white/70">UPC</p>
@@ -112,11 +203,11 @@ function AuthenticatedSidebar() {
             <SidebarMenu>
               {items.map((item) => {
                 const Icon = item.icon;
-                const active = location.pathname === item.to;
+                const active = isItemActive(item);
                 return (
-                  <SidebarMenuItem key={item.to}>
+                  <SidebarMenuItem key={item.label}>
                     <SidebarMenuButton asChild isActive={active} tooltip={item.label}>
-                      <Link to={item.to}>
+                      <Link to={item.to} search={item.search}>
                         <Icon className="h-4 w-4" />
                         <span>{item.label}</span>
                       </Link>
@@ -124,15 +215,54 @@ function AuthenticatedSidebar() {
                   </SidebarMenuItem>
                 );
               })}
-              <UsuariosMenu />
-              <RolesMenu />
-              <CategoriasMenu />
-              <DeportesMenu />
+
+              {groups.map((group) => {
+                const GroupIcon = group.icon;
+                const hasActive = group.items.some((item) => isSubActive(item));
+                const groupOpen = isGroupOpen(group.label, hasActive);
+                return (
+                  <SidebarMenuItem key={group.label}>
+                    <SidebarMenuButton
+                      isActive={hasActive}
+                      tooltip={group.label}
+                      onClick={() => toggleGroup(group.label, groupOpen)}
+                    >
+                      <GroupIcon className="h-4 w-4" />
+                      <span>{group.label}</span>
+                    </SidebarMenuButton>
+                    {groupOpen && (
+                      <SidebarMenuSub>
+                        {group.items.map((item) => {
+                          const Icon = item.icon;
+                          const active = isSubActive(item);
+                          return (
+                            <SidebarMenuSubItem key={item.label}>
+                              <SidebarMenuSubButton asChild isActive={active}>
+                                <Link to={item.to} search={item.search}>
+                                  <Icon className="h-4 w-4" />
+                                  <span>{item.label}</span>
+                                </Link>
+                              </SidebarMenuSubButton>
+                            </SidebarMenuSubItem>
+                          );
+                        })}
+                      </SidebarMenuSub>
+                    )}
+                  </SidebarMenuItem>
+                );
+              })}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter className="border-t border-sidebar-border">
+        <Link
+          to="/"
+          className="flex items-center gap-2 px-2 py-2 rounded-md text-sm font-medium text-white/70 hover:text-white hover:bg-white/10 transition group-data-[collapsible=icon]:justify-center"
+        >
+          <ExternalLink className="h-4 w-4 shrink-0" />
+          <span className="group-data-[collapsible=icon]:hidden">Volver al sitio</span>
+        </Link>
         <div className="flex items-center gap-3 px-2 py-2">
           <div className="h-9 w-9 shrink-0 rounded-full bg-white text-primary flex items-center justify-center text-sm font-bold">
             {user.nombre.charAt(0)}
@@ -144,184 +274,6 @@ function AuthenticatedSidebar() {
         </div>
       </SidebarFooter>
     </Sidebar>
-  );
-}
-
-function UsuariosMenu() {
-  const location = useLocation();
-  const usuariosItems = [
-    { to: "/usuarios/crear", label: "Crear usuario", icon: Users },
-    { to: "/usuarios/buscar", label: "Buscar usuarios", icon: Search },
-    { to: "/usuarios/eliminar", label: "Eliminar usuario", icon: Trash2 },
-    { to: "/usuarios/actualizar", label: "Actualizar usuario", icon: Edit },
-  ] as const;
-  const isOnUsuarios = location.pathname.startsWith("/usuarios");
-  const [open, setOpen] = useState(isOnUsuarios);
-
-  return (
-    <Collapsible open={open} onOpenChange={setOpen} className="group/collapsible">
-      <SidebarMenuItem>
-        <CollapsibleTrigger asChild>
-          <SidebarMenuButton tooltip="Usuarios" isActive={isOnUsuarios}>
-            <Users className="h-4 w-4" />
-            <span>Usuarios</span>
-            <ChevronDown className="ml-auto h-4 w-4 transition-transform group-data-[state=open]/collapsible:rotate-180 group-data-[collapsible=icon]:hidden" />
-          </SidebarMenuButton>
-        </CollapsibleTrigger>
-        <CollapsibleContent>
-          <SidebarMenuSub>
-            {usuariosItems.map((s) => {
-              const SIcon = s.icon;
-              const active = location.pathname === s.to;
-              return (
-                <SidebarMenuSubItem key={s.to}>
-                  <SidebarMenuSubButton asChild isActive={active}>
-                    <Link to={s.to}>
-                      <SIcon className="h-4 w-4" />
-                      <span>{s.label}</span>
-                    </Link>
-                  </SidebarMenuSubButton>
-                </SidebarMenuSubItem>
-              );
-            })}
-          </SidebarMenuSub>
-        </CollapsibleContent>
-      </SidebarMenuItem>
-    </Collapsible>
-  );
-}
-
-function RolesMenu() {
-  const location = useLocation();
-  const rolesItems = [
-    { to: "/roles/crear", label: "Crear rol", icon: Shield },
-    { to: "/roles/buscar", label: "Buscar por ID", icon: Search },
-    { to: "/roles/listar", label: "Listar todos", icon: List },
-    { to: "/roles/actualizar", label: "Actualizar", icon: Edit },
-    { to: "/roles/eliminar", label: "Eliminar", icon: Trash2 },
-  ] as const;
-  const isOnRoles = location.pathname.startsWith("/roles");
-  const [open, setOpen] = useState(isOnRoles);
-
-  return (
-    <Collapsible open={open} onOpenChange={setOpen} className="group/collapsible">
-      <SidebarMenuItem>
-        <CollapsibleTrigger asChild>
-          <SidebarMenuButton tooltip="Roles" isActive={isOnRoles}>
-            <Shield className="h-4 w-4" />
-            <span>Roles</span>
-            <ChevronDown className="ml-auto h-4 w-4 transition-transform group-data-[state=open]/collapsible:rotate-180 group-data-[collapsible=icon]:hidden" />
-          </SidebarMenuButton>
-        </CollapsibleTrigger>
-        <CollapsibleContent>
-          <SidebarMenuSub>
-            {rolesItems.map((s) => {
-              const SIcon = s.icon;
-              const active = location.pathname === s.to;
-              return (
-                <SidebarMenuSubItem key={s.to}>
-                  <SidebarMenuSubButton asChild isActive={active}>
-                    <Link to={s.to}>
-                      <SIcon className="h-4 w-4" />
-                      <span>{s.label}</span>
-                    </Link>
-                  </SidebarMenuSubButton>
-                </SidebarMenuSubItem>
-              );
-            })}
-          </SidebarMenuSub>
-        </CollapsibleContent>
-      </SidebarMenuItem>
-    </Collapsible>
-  );
-}
-
-function CategoriasMenu() {
-  const location = useLocation();
-  const categoriasItems = [
-    { to: "/categorias/crear", label: "Crear categoría", icon: FolderOpen },
-    { to: "/categorias/buscar", label: "Buscar por ID", icon: Search },
-    { to: "/categorias/listar", label: "Listar todas", icon: List },
-    { to: "/categorias/actualizar", label: "Actualizar", icon: Edit },
-    { to: "/categorias/eliminar", label: "Eliminar", icon: Trash2 },
-  ] as const;
-  const isOnCategorias = location.pathname.startsWith("/categorias");
-  const [open, setOpen] = useState(isOnCategorias);
-
-  return (
-    <Collapsible open={open} onOpenChange={setOpen} className="group/collapsible">
-      <SidebarMenuItem>
-        <CollapsibleTrigger asChild>
-          <SidebarMenuButton tooltip="Categorías" isActive={isOnCategorias}>
-            <FolderOpen className="h-4 w-4" />
-            <span>Categorías</span>
-            <ChevronDown className="ml-auto h-4 w-4 transition-transform group-data-[state=open]/collapsible:rotate-180 group-data-[collapsible=icon]:hidden" />
-          </SidebarMenuButton>
-        </CollapsibleTrigger>
-        <CollapsibleContent>
-          <SidebarMenuSub>
-            {categoriasItems.map((s) => {
-              const SIcon = s.icon;
-              const active = location.pathname === s.to;
-              return (
-                <SidebarMenuSubItem key={s.to}>
-                  <SidebarMenuSubButton asChild isActive={active}>
-                    <Link to={s.to}>
-                      <SIcon className="h-4 w-4" />
-                      <span>{s.label}</span>
-                    </Link>
-                  </SidebarMenuSubButton>
-                </SidebarMenuSubItem>
-              );
-            })}
-          </SidebarMenuSub>
-        </CollapsibleContent>
-      </SidebarMenuItem>
-    </Collapsible>
-  );
-}
-
-function DeportesMenu() {
-  const location = useLocation();
-  const deportesItems = [
-    { to: "/deportes/crear", label: "Crear deporte", icon: Trophy },
-    { to: "/deportes/listar", label: "Listar todos", icon: List },
-    { to: "/deportes/actualizar", label: "Actualizar", icon: Edit },
-    { to: "/deportes/eliminar", label: "Eliminar", icon: Trash2 },
-  ] as const;
-  const isOnDeportes = location.pathname.startsWith("/deportes");
-  const [open, setOpen] = useState(isOnDeportes);
-
-  return (
-    <Collapsible open={open} onOpenChange={setOpen} className="group/collapsible">
-      <SidebarMenuItem>
-        <CollapsibleTrigger asChild>
-          <SidebarMenuButton tooltip="Deportes" isActive={isOnDeportes}>
-            <Trophy className="h-4 w-4" />
-            <span>Deportes</span>
-            <ChevronDown className="ml-auto h-4 w-4 transition-transform group-data-[state=open]/collapsible:rotate-180 group-data-[collapsible=icon]:hidden" />
-          </SidebarMenuButton>
-        </CollapsibleTrigger>
-        <CollapsibleContent>
-          <SidebarMenuSub>
-            {deportesItems.map((s) => {
-              const SIcon = s.icon;
-              const active = location.pathname === s.to;
-              return (
-                <SidebarMenuSubItem key={s.to}>
-                  <SidebarMenuSubButton asChild isActive={active}>
-                    <Link to={s.to}>
-                      <SIcon className="h-4 w-4" />
-                      <span>{s.label}</span>
-                    </Link>
-                  </SidebarMenuSubButton>
-                </SidebarMenuSubItem>
-              );
-            })}
-          </SidebarMenuSub>
-        </CollapsibleContent>
-      </SidebarMenuItem>
-    </Collapsible>
   );
 }
 
@@ -355,13 +307,13 @@ function AuthenticatedTopbar() {
 
 function PublicLayout({ children }: { children: React.ReactNode }) {
   const location = useLocation();
+  const { isAuthenticated } = useAuth();
   const [open, setOpen] = useState(false);
   const [loginOpen, setLoginOpen] = useState(false);
   const loginTriggerRef = useRef<HTMLButtonElement | null>(null);
   const [loginTriggerEl, setLoginTriggerEl] = useState<HTMLElement | null>(null);
 
   const visibleItems = navItems.filter((item) => {
-    if (item.publicOnly) return true;
     if (item.roles || item.requiresAuth) return false;
     return true;
   });
@@ -399,17 +351,26 @@ function PublicLayout({ children }: { children: React.ReactNode }) {
           </nav>
 
           <div className="flex items-center gap-2 shrink-0">
-            <button
-              ref={loginTriggerRef}
-              type="button"
-              onClick={() => {
-                setLoginTriggerEl(loginTriggerRef.current);
-                setLoginOpen(true);
-              }}
-              className="hidden sm:inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-sm transition hover:opacity-90"
-            >
-              <LogIn className="h-4 w-4" /> Ingresar
-            </button>
+            {isAuthenticated ? (
+              <Link
+                to="/panel"
+                className="hidden sm:inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-sm transition hover:opacity-90"
+              >
+                Ir al Panel
+              </Link>
+            ) : (
+              <button
+                ref={loginTriggerRef}
+                type="button"
+                onClick={() => {
+                  setLoginTriggerEl(loginTriggerRef.current);
+                  setLoginOpen(true);
+                }}
+                className="hidden sm:inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-sm transition hover:opacity-90"
+              >
+                <LogIn className="h-4 w-4" /> Ingresar
+              </button>
+            )}
             <button
               onClick={() => setOpen((v) => !v)}
               className="lg:hidden inline-flex items-center justify-center rounded-md p-2 text-foreground hover:bg-accent"
@@ -437,17 +398,27 @@ function PublicLayout({ children }: { children: React.ReactNode }) {
                   </Link>
                 );
               })}
-              <button
-                type="button"
-                onClick={() => {
-                  setOpen(false);
-                  setLoginTriggerEl(null);
-                  setLoginOpen(true);
-                }}
-                className="mt-2 inline-flex items-center justify-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground"
-              >
-                <LogIn className="h-4 w-4" /> Ingresar
-              </button>
+              {isAuthenticated ? (
+                <Link
+                  to="/panel"
+                  onClick={() => setOpen(false)}
+                  className="mt-2 inline-flex items-center justify-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground"
+                >
+                  Ir al Panel
+                </Link>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setOpen(false);
+                    setLoginTriggerEl(null);
+                    setLoginOpen(true);
+                  }}
+                  className="mt-2 inline-flex items-center justify-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground"
+                >
+                  <LogIn className="h-4 w-4" /> Ingresar
+                </button>
+              )}
             </nav>
           </div>
         )}
