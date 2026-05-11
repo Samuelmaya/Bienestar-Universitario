@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, Activity, Bell, Sparkles, ClipboardList } from "lucide-react";
+import { ArrowRight, Activity, Bell, Sparkles, ClipboardList, MapPin } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { RequireAuth } from "@/components/RequireAuth";
 import { ReservasGeneral } from "@/components/reservas/ReservasGeneral";
@@ -8,6 +8,7 @@ import { ArticulosGeneral } from "@/components/articulos/ArticulosGeneral";
 import { CategoriasGeneral } from "@/components/categorias/CategoriasGeneral";
 import { RolesGeneral } from "@/components/roles/RolesGeneral";
 import { UsuariosGeneral } from "@/components/usuarios/UsuariosGeneral";
+import { EspaciosGeneral } from "@/components/espacios/EspaciosGeneral";
 
 type PanelSearch = { seccion?: string };
 
@@ -34,6 +35,7 @@ function PanelContent() {
   if (!user) return null;
 
   if (seccion === "reservas" && user.role === "administrador") return <ReservasGeneral />;
+  if (seccion === "espacios" && user.role === "administrador") return <EspaciosGeneral />;
   if (seccion === "deportes" && ["administrador", "entrenador"].includes(user.role)) {
     return <DeportesGeneral />;
   }
@@ -64,6 +66,13 @@ function InicioView() {
             label: "Gestionar reservas",
             desc: "Administra las solicitudes de préstamo",
             icon: ClipboardList,
+          },
+          {
+            to: "/panel" as const,
+            search: { seccion: "espacios" },
+            label: "Escenarios deportivos",
+            desc: "Gestiona espacios y solicitudes de reserva",
+            icon: MapPin,
           },
         ]
       : []),

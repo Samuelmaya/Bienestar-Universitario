@@ -14,10 +14,12 @@ import {
   Shield,
   Users,
   ExternalLink,
+  MapPin,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth, type Role } from "@/lib/auth";
 import { LoginModal } from "@/components/LoginModal";
+
 import {
   Sidebar,
   SidebarContent,
@@ -60,6 +62,13 @@ const navItems: NavItem[] = [
     search: { seccion: "reservas" },
     label: "Reservas",
     icon: ClipboardList,
+    roles: ["administrador"],
+  },
+   {
+    to: "/panel",
+    search: { seccion: "espacios" },
+    label: "Escenarios deportivos",
+    icon: MapPin,
     roles: ["administrador"],
   },
   {
