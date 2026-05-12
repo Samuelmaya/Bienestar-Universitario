@@ -116,7 +116,7 @@ function DashboardPage() {
           <div className="rounded-xl border border-border bg-card p-6 shadow-[var(--shadow-soft)]">
             <div className="flex items-center gap-3 mb-2">
               <Medal className="h-5 w-5 text-primary" />
-              <p className="text-sm font-medium text-muted-foreground">Deportes Disponibles</p>
+              <p className="text-sm font-medium text-muted-foreground">Articulos Disponibles</p>
             </div>
             <p className="text-3xl font-bold text-primary">{stats.totalSports}</p>
             <p className="text-sm text-muted-foreground mt-1">5 en mantenimiento</p>
@@ -192,7 +192,7 @@ function DashboardPage() {
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl font-semibold flex items-center gap-2">
               <Trophy className="h-5 w-5 text-primary" />
-              Deportes Más Reservados
+              Articulos Más Reservados
             </h2>
             <div className="relative w-full max-w-xs">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
