@@ -9,6 +9,8 @@ type Props = {
 };
 
 export function ReservaCard({ peticion: p, onDetalle, onEstado }: Props) {
+  const estadoBloqueado = p.estado === "RECHAZADA" || p.estado === "DEVUELTA";
+
   return (
     <div className="rounded-2xl border border-border bg-card p-5 shadow-[var(--shadow-soft)] transition hover:shadow-[var(--shadow-elegant)]">
       <div className="flex items-start justify-between gap-2 mb-3">
@@ -22,9 +24,7 @@ export function ReservaCard({ peticion: p, onDetalle, onEstado }: Props) {
           {p.estado}
         </span>
       </div>
-      <p className="text-xs text-muted-foreground mb-1 line-clamp-2">
-        {p.descripcion}
-      </p>
+      <p className="text-xs text-muted-foreground mb-1 line-clamp-2">{p.descripcion}</p>
       <div className="flex items-center gap-3 text-xs text-muted-foreground mt-2">
         <span className="flex items-center gap-1">
           <Mail className="h-3 w-3" /> {p.correo}
@@ -59,7 +59,8 @@ export function ReservaCard({ peticion: p, onDetalle, onEstado }: Props) {
         <button
           type="button"
           onClick={onEstado}
-          className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl bg-primary px-3 py-2 text-xs font-medium text-primary-foreground hover:opacity-90 transition"
+          disabled={estadoBloqueado}
+          className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl bg-primary px-3 py-2 text-xs font-medium text-primary-foreground transition disabled:opacity-60 disabled:cursor-not-allowed"
         >
           <RefreshCw className="h-3.5 w-3.5" /> Estado
         </button>

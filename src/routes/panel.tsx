@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, Activity, Bell, Sparkles, ClipboardList, MapPin } from "lucide-react";
+import { ArrowRight, Sparkles, ClipboardList, MapPin } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { RequireAuth } from "@/components/RequireAuth";
 import { ReservasGeneral } from "@/components/reservas/ReservasGeneral";
@@ -50,7 +50,7 @@ function PanelContent() {
   return <InicioView />;
 }
 
-/* ═══════════ INICIO (Dashboard) ═══════════ */
+/* ═══════════ INICIO ═══════════ */
 function InicioView() {
   const { user } = useAuth();
   if (!user) return null;
@@ -76,24 +76,6 @@ function InicioView() {
           },
         ]
       : []),
-  ];
-
-  const proximas = [
-    ["Fútbol Sala — Cancha Central", "Hoy · 4:00 p.m."],
-    ["Voleibol Femenino — Coliseo", "Mañana · 10:00 a.m."],
-    ["Atletismo — Pista Olímpica", "Jueves · 6:30 a.m."],
-    ["Baloncesto Mixto", "Viernes · 5:00 p.m."],
-  ] as const;
-
-  const avisos = [
-    {
-      title: "Renovación de carnés deportivos",
-      desc: "Acércate a Bienestar antes del viernes para renovar tu carné.",
-    },
-    {
-      title: "Torneo interfacultades",
-      desc: "Inscripciones abiertas hasta el 30 de este mes.",
-    },
   ];
 
   return (
@@ -143,39 +125,6 @@ function InicioView() {
           </div>
         </section>
       )}
-
-      <div className="grid gap-6 lg:grid-cols-3">
-        <section className="lg:col-span-2 rounded-2xl border border-border bg-card p-6 shadow-[var(--shadow-soft)]">
-          <h2 className="text-lg font-semibold">Próximas actividades</h2>
-          <ul className="mt-4 divide-y divide-border">
-            {proximas.map(([t, d]) => (
-              <li key={t} className="flex items-center justify-between gap-4 py-3 text-sm">
-                <div className="flex items-center gap-3">
-                  <div className="rounded-lg bg-accent p-2 text-primary">
-                    <Activity className="h-4 w-4" />
-                  </div>
-                  <span className="font-medium">{t}</span>
-                </div>
-                <span className="text-muted-foreground text-xs whitespace-nowrap">{d}</span>
-              </li>
-            ))}
-          </ul>
-        </section>
-        <section className="rounded-2xl border border-border bg-card p-6 shadow-[var(--shadow-soft)]">
-          <div className="flex items-center gap-2">
-            <Bell className="h-5 w-5 text-primary" />
-            <h2 className="text-lg font-semibold">Avisos</h2>
-          </div>
-          <ul className="mt-4 space-y-3">
-            {avisos.map((a) => (
-              <li key={a.title} className="rounded-xl border border-border bg-accent/40 p-3">
-                <p className="text-sm font-semibold">{a.title}</p>
-                <p className="mt-0.5 text-xs text-muted-foreground">{a.desc}</p>
-              </li>
-            ))}
-          </ul>
-        </section>
-      </div>
     </div>
   );
 }

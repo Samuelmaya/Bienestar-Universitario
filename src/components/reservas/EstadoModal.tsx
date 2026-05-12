@@ -1,9 +1,8 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import TextField from "@mui/material/TextField";
 import MenuItem from "@mui/material/MenuItem";
 import { ReusableModal } from "@/shared/reusable-modal/reusable-modal";
 import type { PeticionListItem, EstadoPeticion } from "@/shared/dtos/peticion.dto";
-import { ESTADOS_PETICION } from "@/shared/dtos/peticion.dto";
 import { actualizarEstadoPeticion } from "@/services/peticiones.service";
 
 type Props = {
@@ -17,6 +16,16 @@ export function EstadoModal({ peticion, triggerElement, onClose, onSuccess }: Pr
   const [nuevoEstado, setNuevoEstado] = useState<EstadoPeticion>("APROBADA");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  const estadosDisponibles = useMemo<EstadoPeticion[]>(() => {
+    if (peticion.estado === "PENDIENTE") {
+      return ["APROBADA", "RECHAZADA"];
+    }
+    if (peticion.estado === "APROBADA") {
+      return ["DEVUELTA"];
+    }
+    return [];
+  }, [peticion.estado]);
 
   const inputSx = useMemo(
     () => ({
@@ -50,8 +59,21 @@ export function EstadoModal({ peticion, triggerElement, onClose, onSuccess }: Pr
     [],
   );
 
+  useEffect(() => {
+    if (estadosDisponibles.length === 0) {
+      return;
+    }
+    if (!estadosDisponibles.includes(nuevoEstado)) {
+      setNuevoEstado(estadosDisponibles[0]);
+    }
+  }, [estadosDisponibles, nuevoEstado]);
+
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (estadosDisponibles.length === 0) {
+      setError("Este estado no permite cambios.");
+      return;
+    }
     if (nuevoEstado === peticion.estado) {
       setError("Selecciona un estado diferente al actual.");
       return;
@@ -112,11 +134,11 @@ export function EstadoModal({ peticion, triggerElement, onClose, onSuccess }: Pr
             fullWidth
             value={nuevoEstado}
             onChange={(e) => setNuevoEstado(e.target.value as EstadoPeticion)}
-            disabled={loading}
+            disabled={loading || estadosDisponibles.length === 0}
             sx={inputSx}
             slotProps={{ input: { disableUnderline: true } }}
           >
-            {ESTADOS_PETICION.filter((e) => e !== "PENDIENTE").map((e) => (
+            {estadosDisponibles.map((e) => (
               <MenuItem key={e} value={e}>
                 {e}
               </MenuItem>
@@ -132,7 +154,7 @@ export function EstadoModal({ peticion, triggerElement, onClose, onSuccess }: Pr
           )}
           <button
             type="submit"
-            disabled={loading}
+            disabled={loading || estadosDisponibles.length === 0}
             className="w-full py-[13px] font-medium tracking-wide rounded-full transition-all duration-200 hover:opacity-90 active:scale-[0.98] disabled:opacity-55"
             style={{
               backgroundColor: "#107b42",
