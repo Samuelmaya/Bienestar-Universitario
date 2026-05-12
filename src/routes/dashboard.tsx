@@ -13,7 +13,7 @@ import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Toolti
 export const Route = createFileRoute("/dashboard")({
   head: () => ({ meta: [{ title: "Dashboard — UPC Deportes" }] }),
   component: () => (
-    <RequireAuth roles={["admin", "utilero", "entrenador"]}>
+    <RequireAuth roles={["administrador", "utilero"]}>
       <DashboardPage />
     </RequireAuth>
   ),

@@ -15,6 +15,7 @@ import {
   Users,
   ExternalLink,
   MapPin,
+  LayoutDashboard,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth, type Role } from "@/lib/auth";
@@ -55,8 +56,17 @@ type NavGroup = {
   items: NavItem[];
 };
 
+// Rutas que usan el layout autenticado con sidebar
+const PROTECTED_PATHS = ["/panel", "/dashboard"];
+
 const navItems: NavItem[] = [
   { to: "/panel", label: "Inicio", icon: Home, requiresAuth: true },
+  {
+    to: "/dashboard",
+    label: "Dashboard",
+    icon: LayoutDashboard,
+    roles: ["administrador"],
+  },
   {
     to: "/panel",
     search: { seccion: "reservas" },
@@ -64,7 +74,7 @@ const navItems: NavItem[] = [
     icon: ClipboardList,
     roles: ["administrador"],
   },
-   {
+  {
     to: "/panel",
     search: { seccion: "espacios" },
     label: "Escenarios deportivos",
@@ -122,12 +132,11 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   const location = useLocation();
   const { isAuthenticated } = useAuth();
   const isLogin = location.pathname === "/login";
-  const isPanel = location.pathname === "/panel";
+  const isProtected = PROTECTED_PATHS.includes(location.pathname);
 
   if (isLogin) return <>{children}</>;
 
-  // El sidebar solo se muestra en /panel (ruta autenticada)
-  if (isAuthenticated && isPanel) {
+  if (isAuthenticated && isProtected) {
     return (
       <SidebarProvider>
         <div className="flex min-h-svh w-full bg-background overflow-auto">
@@ -142,7 +151,6 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
     );
   }
 
-  // Todo lo demás (/, /peticiones, etc.) usa layout público
   return <PublicLayout>{children}</PublicLayout>;
 }
 
@@ -168,7 +176,6 @@ function AuthenticatedSidebar() {
       const params = new URLSearchParams(location.searchStr);
       return Object.entries(item.search).every(([k, v]) => params.get(k) === v);
     }
-    // "Inicio" (/panel without search) should not be active when on /panel?seccion=reservas
     if (item.to === "/panel" && !item.search) {
       const params = new URLSearchParams(location.searchStr);
       return !params.has("seccion");
