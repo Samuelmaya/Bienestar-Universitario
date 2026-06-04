@@ -1,15 +1,19 @@
-import { useState, useRef } from "react";
-import { ChevronLeft, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
-
+import { useState, useRef, useEffect } from "react";
+import { CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
+import { supabase } from "@/shared/services/supabase";
+import { crearFichaEstudiante } from "@/shared/services/student.service";
+import { listarDeportes } from "@/shared/services/deportes.service";
+import type { Deporte } from "@/shared/dtos/deporte.dto";
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 interface Estudiante {
+  id_estudiante: number; // 👈 agregar
   nombre: string;
-  tipo_documento: "RC" | "TI" | "CC" | "CE" | "PA";
+  tipo_documento: "RC" | "TI" | "CC" | "CE" | "PEP"; // quitar "PA"
   sexo: "M" | "F";
   fecha_nacimiento: string;
   lugar_nacimiento: string;
-  estado_civil: "SOLTERO" | "CASADO" | "UNION_LIBRE" | "DIVORCIADO" | "VIUDO";
+  estado_civil: "SOLTERO" | "CASADO" | "UNION LIBRE" | "VIUDO"; // 👈 sin DIVORCIADO, espacio en UNION LIBRE
   direccion_residencial: string;
   barrio: string;
   num_celular: string;
@@ -18,16 +22,16 @@ interface Estudiante {
 
 interface InformacionAcademica {
   nom_colegio: string;
-  jornada_colegio: "MAÑANA" | "TARDE" | "NOCHE" | "COMPLETA";
+  jornada_colegio: "MAÑANA" | "TARDE" | "JORNADA UNICA"; // 👈 quitar NOCHE, COMPLETA
   anio_promocion: number;
   carrera: string;
-  jornada_uni: "MAÑANA" | "TARDE" | "NOCHE" | "COMPLETA";
+  jornada_uni: "MAÑANA" | "TARDE" | "UNICA" | "NOCTURNA"; // 👈 valores correctos
   promedio: number;
-  permanencia: "ACTIVO" | "INACTIVO" | "SUSPENDIDO";
+  permanencia: "ACTIVO" | "INACTIVO" | "SUSPENDIDO" | "TRANSFERIDO"; // 👈 agregar TRANSFERIDO
 }
 
 interface DatosGenerales {
-  nivel_deportivo: "NINGUNO" | "LOCAL" | "REGIONAL" | "NACIONAL" | "INTERNACIONAL";
+  nivel_deportivo: "NINGUNO" | "RECREATIVO" | "COMPETITIVO"; // 👈 solo estos 3
   torneo_participado: string;
   club_perteneciente: string;
   peso: number;
@@ -44,12 +48,12 @@ interface DatosFamiliares {
   nom_madre: string;
   dir_madre: string;
   ciudad_madre: string;
-  cel_madre: string;
+  cel_madre: number | undefined; // 👈 cambiar "" por undefined
   ocup_madre: string;
   nom_padre: string;
   dir_padre: string;
   ciudad_padre: string;
-  cel_padre: string;
+  cel_padre: number | undefined; // 👈 cambiar "" por undefined
   ocup_padre: string;
   observaciones: string;
 }
@@ -91,26 +95,56 @@ interface InscripcionViewProps {
 
 // named export (usado desde inscripcion.tsx)
 export function InscripcionView({ onVolver }: InscripcionViewProps) {
+  // Al inicio del componente, agrega estos estados:
+
   const [mostrarModal, setMostrarModal] = useState(true);
   const [aceptoTerminos, setAceptoTerminos] = useState(false);
   const [paso, setPaso] = useState(0);
 
+  const [deportes, setDeportes] = useState<Deporte[]>([]);
+
+  useEffect(() => {
+    listarDeportes()
+      .then(setDeportes)
+      .catch(() => {});
+  }, []);
+
   const [estudiante, setEstudiante] = useState<Estudiante>({
-    nombre: "", tipo_documento: "CC", sexo: "M",
-    fecha_nacimiento: "", lugar_nacimiento: "",
-    estado_civil: "SOLTERO", direccion_residencial: "",
-    barrio: "", num_celular: "", email: "",
+    id_estudiante: 0, // 👈 agregar
+    nombre: "",
+    tipo_documento: "CC",
+    sexo: "M",
+    fecha_nacimiento: "",
+    lugar_nacimiento: "",
+    estado_civil: "SOLTERO",
+    direccion_residencial: "",
+    barrio: "",
+    num_celular: "",
+    email: "",
   });
 
   const [academica, setAcademica] = useState<InformacionAcademica>({
-    nom_colegio: "", jornada_colegio: "MAÑANA", anio_promocion: 2024,
-    carrera: "", jornada_uni: "MAÑANA", promedio: 3.5, permanencia: "ACTIVO",
+    nom_colegio: "",
+    jornada_colegio: "MAÑANA",
+    anio_promocion: 2024,
+    carrera: "",
+    jornada_uni: "MAÑANA",
+    promedio: 3.5,
+    permanencia: "ACTIVO",
   });
 
   const [generales, setGenerales] = useState<DatosGenerales>({
-    nivel_deportivo: "NINGUNO", torneo_participado: "", club_perteneciente: "",
-    peso: 0, estatura: 0, enfermedad_padecida: "", eps: "", rh: "O+",
-    trabaja_estudiante: false, lugar_trabajo: "", cargo_de_trabajo: "",
+    nivel_deportivo: "NINGUNO",
+    torneo_participado: "",
+    club_perteneciente: "",
+    peso: 0,
+    estatura: 0,
+    enfermedad_padecida: "",
+    eps: "",
+    rh: "O+",
+    trabaja_estudiante: false,
+    lugar_trabajo: "",
+    cargo_de_trabajo: "",
   });
 
   const [inscripcion, setInscripcion] = useState<InscripcionInfo>({
@@ -119,14 +153,25 @@ export function InscripcionView({ onVolver }: InscripcionViewProps) {
   });
 
   const [familiares, setFamiliares] = useState<DatosFamiliares>({
-    nom_madre: "", dir_madre: "", ciudad_madre: "", cel_madre: "", ocup_madre: "",
-    nom_padre: "", dir_padre: "", ciudad_padre: "", cel_padre: "", ocup_padre: "",
+    nom_madre: "",
+    dir_madre: "",
+    ciudad_madre: "",
+    cel_madre: undefined, // 👈
+    ocup_madre: "",
+    nom_padre: "",
+    dir_padre: "",
+    ciudad_padre: "",
+    cel_padre: undefined, // 👈
+    ocup_padre: "",
     observaciones: "",
   });
 
   const [documentos, setDocumentos] = useState<Documentos>({
-    horario: null, cedula: null, valoracion_medica: null,
-    valoracion_odontologica: null, valoracion_psicologica: null,
+    horario: null,
+    cedula: null,
+    valoracion_medica: null,
+    valoracion_odontologica: null,
+    valoracion_psicologica: null,
     foto_3x4: null,
   });
 
@@ -149,18 +194,84 @@ export function InscripcionView({ onVolver }: InscripcionViewProps) {
   ];
 
   const actualizarDoc = (key: keyof Documentos, file: File | null) => {
-    setDocumentos(prev => ({ ...prev, [key]: file }));
+    setDocumentos((prev) => ({ ...prev, [key]: file }));
   };
 
-  const todosDocsCargados = Object.values(documentos).every(v => v !== null);
+  const todosDocsCargados = Object.values(documentos).every((v) => v !== null);
 
-  const handleEnviar = () => {
-    setEnviado(true);
+  const [cargando, setCargando] = useState(false);
+  const [errorEnvio, setErrorEnvio] = useState<string | null>(null);
+  const subirArchivo = async (file: File): Promise<string> => {
+    const extension = file.name.split(".").pop();
+    const nombreUnico = `${estudiante.id_estudiante}/${Date.now()}.${extension}`;
+
+    const { error } = await supabase.storage
+      .from("documentos-estudiantes")
+      .upload(nombreUnico, file, { upsert: true });
+
+    if (error) throw new Error(`Error subiendo ${file.name}: ${error.message}`);
+
+    const { data } = supabase.storage.from("documentos-estudiantes").getPublicUrl(nombreUnico);
+
+    return data.publicUrl;
+  };
+  const handleEnviar = async () => {
+    setCargando(true);
+    setErrorEnvio(null);
+
+    try {
+      const docsPayload = [
+        {
+          tipo_documento: "HORARIO_CLASES" as const,
+          nombre_archivo: documentos.horario!.name,
+          url_archivo: await subirArchivo(documentos.horario!),
+        },
+        {
+          tipo_documento: "DOCUMENTO_IDENTIDAD" as const,
+          nombre_archivo: documentos.cedula!.name,
+          url_archivo: await subirArchivo(documentos.cedula!),
+        },
+        {
+          tipo_documento: "VALORACION_MEDICA" as const,
+          nombre_archivo: documentos.valoracion_medica!.name,
+          url_archivo: await subirArchivo(documentos.valoracion_medica!),
+        },
+        {
+          tipo_documento: "VALORACION_ODONTOLOGICA" as const,
+          nombre_archivo: documentos.valoracion_odontologica!.name,
+          url_archivo: await subirArchivo(documentos.valoracion_odontologica!),
+        },
+        {
+          tipo_documento: "VALORACION_PSICOLOGICA" as const,
+          nombre_archivo: documentos.valoracion_psicologica!.name,
+          url_archivo: await subirArchivo(documentos.valoracion_psicologica!),
+        },
+        {
+          tipo_documento: "FOTO_ESTUDIANTE" as const,
+          nombre_archivo: documentos.foto_3x4!.name,
+          url_archivo: await subirArchivo(documentos.foto_3x4!),
+        },
+      ];
+
+      await crearFichaEstudiante({
+        estudiante,
+        informacion_academica: academica,
+        datos_generales: generales,
+        datos_familiares: familiares,
+        inscripcion,
+        documentos: docsPayload,
+      });
+
+      setEnviado(true);
+    } catch (err: any) {
+      setErrorEnvio(err.message ?? "Error al enviar la inscripción");
+    } finally {
+      setCargando(false);
+    }
   };
 
   return (
     <div className="min-h-screen bg-muted">
-
       {/* Modal de términos */}
       {mostrarModal && (
         <div className="fixed inset-0 z-50 bg-black/55 backdrop-blur-sm flex items-center justify-center p-4">
@@ -181,12 +292,16 @@ export function InscripcionView({ onVolver }: InscripcionViewProps) {
             {/* Modal Body */}
             <div className="overflow-y-auto flex-1 p-7">
               <div className="text-center font-bold text-primary mb-6 pb-4 border-b-2 border-accent/30">
-                INFORMACIÓN PARA LOS PRACTICANTES DE LOS GRUPOS DEPORTIVOS<br />
+                INFORMACIÓN PARA LOS PRACTICANTES DE LOS GRUPOS DEPORTIVOS
+                <br />
                 DE LA UNIVERSIDAD POPULAR DEL CESAR
               </div>
 
               {terminos.map((t, i) => (
-                <div key={i} className="flex gap-3 p-3 rounded-lg mb-2 bg-muted border-l-4 border-secondary hover:bg-secondary/10 transition-colors">
+                <div
+                  key={i}
+                  className="flex gap-3 p-3 rounded-lg mb-2 bg-muted border-l-4 border-secondary hover:bg-secondary/10 transition-colors"
+                >
                   <span className="flex-shrink-0 w-5 h-5 bg-secondary text-white rounded-full flex items-center justify-center text-xs font-bold">
                     {i + 1}
                   </span>
@@ -197,7 +312,9 @@ export function InscripcionView({ onVolver }: InscripcionViewProps) {
               <div className="mt-6 p-5 border-2 border-dashed border-secondary/30 rounded-lg text-center bg-secondary/10">
                 <p className="text-xs text-muted-foreground italic mb-1">Firmado por</p>
                 <strong className="text-primary text-sm block">RICARDO MOVILLA ANDRADE</strong>
-                <span className="text-xs text-muted-foreground">Jefe Sección Deportes y Recreación</span>
+                <span className="text-xs text-muted-foreground">
+                  Jefe Sección Deportes y Recreación
+                </span>
               </div>
 
               <label className="flex items-center gap-3 mt-6 p-3 rounded-lg bg-secondary/10 cursor-pointer border-2 border-transparent hover:border-secondary transition-colors">
@@ -273,9 +390,15 @@ export function InscripcionView({ onVolver }: InscripcionViewProps) {
                     >
                       {i < paso ? <CheckCircle2 className="h-4 w-4" /> : i + 1}
                     </div>
-                    <span className={`text-xs font-semibold text-center leading-tight whitespace-nowrap ${
-                      i === paso ? "text-primary" : i < paso ? "text-primary" : "text-muted-foreground"
-                    }`}>
+                    <span
+                      className={`text-xs font-semibold text-center leading-tight whitespace-nowrap ${
+                        i === paso
+                          ? "text-primary"
+                          : i < paso
+                            ? "text-primary"
+                            : "text-muted-foreground"
+                      }`}
+                    >
                       {p.label}
                     </span>
                   </div>
@@ -297,15 +420,26 @@ export function InscripcionView({ onVolver }: InscripcionViewProps) {
                 <div className="space-y-5">
                   <div>
                     <label className="block text-xs font-bold text-primary uppercase tracking-wide mb-2">
+                      Número de Documento
+                    </label>
+                    <input
+                      type="number"
+                      value={estudiante.id_estudiante || ""}
+                      onChange={(e) =>
+                        setEstudiante({ ...estudiante, id_estudiante: parseInt(e.target.value) })
+                      }
+                      className="w-full px-3 py-2 border-2 border-secondary/30 rounded-lg bg-muted text-foreground focus:border-primary focus:bg-white focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-primary uppercase tracking-wide mb-2">
                       Nombre Completo
                     </label>
                     <input
                       type="text"
                       placeholder="Nombre y apellidos"
                       value={estudiante.nombre}
-                      onChange={(e) =>
-                        setEstudiante({ ...estudiante, nombre: e.target.value })
-                      }
+                      onChange={(e) => setEstudiante({ ...estudiante, nombre: e.target.value })}
                       className="w-full px-3 py-2 border-2 border-secondary/30 rounded-lg bg-muted text-foreground focus:border-primary focus:bg-white focus:ring-2 focus:ring-primary/20 outline-none transition-all"
                     />
                   </div>
@@ -328,7 +462,6 @@ export function InscripcionView({ onVolver }: InscripcionViewProps) {
                         <option value="TI">Tarjeta de Identidad</option>
                         <option value="RC">Registro Civil</option>
                         <option value="CE">Cédula Extranjería</option>
-                        <option value="PA">Pasaporte</option>
                       </select>
                     </div>
                     <div>
@@ -398,8 +531,7 @@ export function InscripcionView({ onVolver }: InscripcionViewProps) {
                     >
                       <option value="SOLTERO">Soltero/a</option>
                       <option value="CASADO">Casado/a</option>
-                      <option value="UNION_LIBRE">Unión Libre</option>
-                      <option value="DIVORCIADO">Divorciado/a</option>
+                      <option value="UNION LIBRE">Unión Libre</option>
                       <option value="VIUDO">Viudo/a</option>
                     </select>
                   </div>
@@ -429,9 +561,7 @@ export function InscripcionView({ onVolver }: InscripcionViewProps) {
                         type="text"
                         placeholder="Nombre del barrio"
                         value={estudiante.barrio}
-                        onChange={(e) =>
-                          setEstudiante({ ...estudiante, barrio: e.target.value })
-                        }
+                        onChange={(e) => setEstudiante({ ...estudiante, barrio: e.target.value })}
                         className="w-full px-3 py-2 border-2 border-secondary/30 rounded-lg bg-muted text-foreground focus:border-primary focus:bg-white focus:ring-2 focus:ring-primary/20 outline-none transition-all"
                       />
                     </div>
@@ -462,9 +592,7 @@ export function InscripcionView({ onVolver }: InscripcionViewProps) {
                         type="email"
                         placeholder="correo@ejemplo.com"
                         value={estudiante.email}
-                        onChange={(e) =>
-                          setEstudiante({ ...estudiante, email: e.target.value })
-                        }
+                        onChange={(e) => setEstudiante({ ...estudiante, email: e.target.value })}
                         className="w-full px-3 py-2 border-2 border-secondary/30 rounded-lg bg-muted text-foreground focus:border-primary focus:bg-white focus:ring-2 focus:ring-primary/20 outline-none transition-all"
                       />
                     </div>
@@ -525,8 +653,7 @@ export function InscripcionView({ onVolver }: InscripcionViewProps) {
                       >
                         <option value="MAÑANA">Mañana</option>
                         <option value="TARDE">Tarde</option>
-                        <option value="NOCHE">Noche</option>
-                        <option value="COMPLETA">Jornada Completa</option>
+                        <option value="JORNADA UNICA">Jornada Única</option>
                       </select>
                     </div>
                   </div>
@@ -557,9 +684,7 @@ export function InscripcionView({ onVolver }: InscripcionViewProps) {
                         type="text"
                         placeholder="Nombre de la carrera"
                         value={academica.carrera}
-                        onChange={(e) =>
-                          setAcademica({ ...academica, carrera: e.target.value })
-                        }
+                        onChange={(e) => setAcademica({ ...academica, carrera: e.target.value })}
                         className="w-full px-3 py-2 border-2 border-secondary/30 rounded-lg bg-muted text-foreground focus:border-primary focus:bg-white focus:ring-2 focus:ring-primary/20 outline-none transition-all"
                       />
                     </div>
@@ -579,8 +704,8 @@ export function InscripcionView({ onVolver }: InscripcionViewProps) {
                       >
                         <option value="MAÑANA">Mañana</option>
                         <option value="TARDE">Tarde</option>
-                        <option value="NOCHE">Noche</option>
-                        <option value="COMPLETA">Jornada Completa</option>
+                        <option value="UNICA">Jornada Única</option>
+                        <option value="NOCTURNA">Nocturna</option>
                       </select>
                     </div>
                   </div>
@@ -621,6 +746,7 @@ export function InscripcionView({ onVolver }: InscripcionViewProps) {
                         <option value="ACTIVO">Activo</option>
                         <option value="INACTIVO">Inactivo</option>
                         <option value="SUSPENDIDO">Suspendido</option>
+                        <option value="TRANSFERIDO">Transferido</option>
                       </select>
                     </div>
                   </div>
@@ -670,10 +796,8 @@ export function InscripcionView({ onVolver }: InscripcionViewProps) {
                         className="w-full px-3 py-2 border-2 border-secondary/30 rounded-lg bg-muted text-foreground focus:border-primary focus:bg-white focus:ring-2 focus:ring-primary/20 outline-none transition-all"
                       >
                         <option value="NINGUNO">Ninguno</option>
-                        <option value="LOCAL">Local</option>
-                        <option value="REGIONAL">Regional</option>
-                        <option value="NACIONAL">Nacional</option>
-                        <option value="INTERNACIONAL">Internacional</option>
+                        <option value="RECREATIVO">Recreativo</option>
+                        <option value="COMPETITIVO">Competitivo</option>
                       </select>
                     </div>
                     <div>
@@ -726,11 +850,11 @@ export function InscripcionView({ onVolver }: InscripcionViewProps) {
                         }
                         className="w-full px-3 py-2 border-2 border-secondary/30 rounded-lg bg-muted text-foreground focus:border-primary focus:bg-white focus:ring-2 focus:ring-primary/20 outline-none transition-all"
                       >
-                        <option value={1}>Fútbol</option>
-                        <option value={2}>Baloncesto</option>
-                        <option value={3}>Vóley</option>
-                        <option value={4}>Tenis</option>
-                        <option value={5}>Atletismo</option>
+                        {deportes.map((d) => (
+                          <option key={d.cod_deporte} value={d.cod_deporte}>
+                            {d.nom_deporte}
+                          </option>
+                        ))}
                       </select>
                     </div>
                   </div>
@@ -775,18 +899,14 @@ export function InscripcionView({ onVolver }: InscripcionViewProps) {
                       </label>
                       <select
                         value={generales.rh}
-                        onChange={(e) =>
-                          setGenerales({ ...generales, rh: e.target.value as any })
-                        }
+                        onChange={(e) => setGenerales({ ...generales, rh: e.target.value as any })}
                         className="w-full px-3 py-2 border-2 border-secondary/30 rounded-lg bg-muted text-foreground focus:border-primary focus:bg-white focus:ring-2 focus:ring-primary/20 outline-none transition-all"
                       >
-                        {["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"].map(
-                          (r) => (
-                            <option key={r} value={r}>
-                              {r}
-                            </option>
-                          )
-                        )}
+                        {["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"].map((r) => (
+                          <option key={r} value={r}>
+                            {r}
+                          </option>
+                        ))}
                       </select>
                     </div>
                   </div>
@@ -799,9 +919,7 @@ export function InscripcionView({ onVolver }: InscripcionViewProps) {
                         type="text"
                         placeholder="Nombre de la EPS"
                         value={generales.eps}
-                        onChange={(e) =>
-                          setGenerales({ ...generales, eps: e.target.value })
-                        }
+                        onChange={(e) => setGenerales({ ...generales, eps: e.target.value })}
                         className="w-full px-3 py-2 border-2 border-secondary/30 rounded-lg bg-muted text-foreground focus:border-primary focus:bg-white focus:ring-2 focus:ring-primary/20 outline-none transition-all"
                       />
                     </div>
@@ -941,13 +1059,13 @@ export function InscripcionView({ onVolver }: InscripcionViewProps) {
                           Celular
                         </label>
                         <input
-                          type="tel"
+                          type="number"
                           placeholder="3XX XXX XXXX"
                           value={familiares.cel_madre}
                           onChange={(e) =>
                             setFamiliares({
                               ...familiares,
-                              cel_madre: e.target.value,
+                              cel_madre: e.target.value ? Number(e.target.value) : undefined,
                             })
                           }
                           className="w-full px-3 py-2 border-2 border-secondary/30 rounded-lg bg-white text-foreground focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"
@@ -1035,13 +1153,13 @@ export function InscripcionView({ onVolver }: InscripcionViewProps) {
                           Celular
                         </label>
                         <input
-                          type="tel"
+                          type="number"
                           placeholder="3XX XXX XXXX"
                           value={familiares.cel_padre}
                           onChange={(e) =>
                             setFamiliares({
                               ...familiares,
-                              cel_padre: e.target.value,
+                              cel_padre: e.target.value ? Number(e.target.value) : undefined,
                             })
                           }
                           className="w-full px-3 py-2 border-2 border-secondary/30 rounded-lg bg-white text-foreground focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"
@@ -1146,7 +1264,8 @@ export function InscripcionView({ onVolver }: InscripcionViewProps) {
                 <div>
                   <h3 className="text-white font-bold text-lg">Carga de Documentos</h3>
                   <p className="text-sm text-white/70 mt-1">
-                    Todos los documentos son obligatorios en formato PDF, excepto la foto 3x4 que debe ser JPG o PNG.
+                    Todos los documentos son obligatorios en formato PDF, excepto la foto 3x4 que
+                    debe ser JPG o PNG.
                   </p>
                 </div>
               </div>
@@ -1194,21 +1313,19 @@ export function InscripcionView({ onVolver }: InscripcionViewProps) {
                         type="file"
                         accept={doc.accept}
                         ref={fileRefs[doc.key]}
-                        onChange={(e) =>
-                          actualizarDoc(doc.key, e.target.files?.[0] ?? null)
-                        }
+                        onChange={(e) => actualizarDoc(doc.key, e.target.files?.[0] ?? null)}
                         className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
                       />
-                      <div className={`inline-flex px-3 py-1 rounded-full text-xs font-semibold mb-2 ${
-                        documentos[doc.key]
-                          ? "bg-primary/10 text-primary"
-                          : "bg-muted/70 text-muted-foreground"
-                      }`}>
+                      <div
+                        className={`inline-flex px-3 py-1 rounded-full text-xs font-semibold mb-2 ${
+                          documentos[doc.key]
+                            ? "bg-primary/10 text-primary"
+                            : "bg-muted/70 text-muted-foreground"
+                        }`}
+                      >
                         {documentos[doc.key] ? "Cargado" : "Pendiente"}
                       </div>
-                      <div className="font-bold text-sm text-primary mb-1">
-                        {doc.label}
-                      </div>
+                      <div className="font-bold text-sm text-primary mb-1">{doc.label}</div>
                       <div className="text-xs text-muted-foreground">
                         {documentos[doc.key]
                           ? `✓ ${documentos[doc.key]!.name.substring(0, 22)}${
@@ -1236,12 +1353,25 @@ export function InscripcionView({ onVolver }: InscripcionViewProps) {
                   >
                     ← Anterior
                   </button>
+                  {errorEnvio && (
+                    <div className="mb-4 p-4 rounded-lg bg-red-50 border border-red-200 flex items-start gap-3">
+                      <AlertCircle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
+                      <p className="text-sm text-red-700">{errorEnvio}</p>
+                    </div>
+                  )}
+
                   <button
-                    disabled={!todosDocsCargados}
+                    disabled={!todosDocsCargados || cargando}
                     onClick={handleEnviar}
-                    className="px-6 py-2 text-sm font-semibold text-primary-foreground bg-accent text-accent-foreground rounded-lg hover:bg-accent/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    className="px-6 py-2 text-sm font-semibold text-primary-foreground bg-accent rounded-lg hover:bg-accent/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
                   >
-                    Enviar Inscripción 
+                    {cargando ? (
+                      <>
+                        <Loader2 className="h-4 w-4 animate-spin" /> Enviando...
+                      </>
+                    ) : (
+                      "Enviar Inscripción"
+                    )}
                   </button>
                 </div>
               </div>
@@ -1254,13 +1384,10 @@ export function InscripcionView({ onVolver }: InscripcionViewProps) {
               <div className="p-10">
                 <div className="bg-secondary/10 border-2 border-secondary/30 rounded-2xl p-8 text-center mb-8">
                   <CheckCircle2 className="mx-auto h-12 w-12 text-primary mb-4" />
-                  <h3 className="text-3xl font-bold text-primary mb-2">
-                    Inscripción Enviada
-                  </h3>
+                  <h3 className="text-3xl font-bold text-primary mb-2">Inscripción Enviada</h3>
                   <p className="text-muted-foreground italic">
-                    Tu solicitud ha sido recibida exitosamente. El equipo de la
-                    Sección de Deportes y Recreación la revisará y se comunicará
-                    contigo pronto.
+                    Tu solicitud ha sido recibida exitosamente. El equipo de la Sección de Deportes
+                    y Recreación la revisará y se comunicará contigo pronto.
                   </p>
 
                   <div className="mt-6 space-y-2 text-left">
@@ -1281,7 +1408,11 @@ export function InscripcionView({ onVolver }: InscripcionViewProps) {
                     </div>
                     <div className="p-3 bg-white rounded-lg border border-secondary/20">
                       <p className="text-sm text-slate-700">
-                        Documentos cargados: <strong>{Object.values(documentos).filter((file) => file !== null).length} / {Object.keys(documentos).length}</strong>
+                        Documentos cargados:{" "}
+                        <strong>
+                          {Object.values(documentos).filter((file) => file !== null).length} /{" "}
+                          {Object.keys(documentos).length}
+                        </strong>
                       </p>
                     </div>
                   </div>
