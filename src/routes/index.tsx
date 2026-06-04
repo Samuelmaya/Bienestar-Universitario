@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import {
   CalendarPlus,
   Trophy,
@@ -10,6 +10,7 @@ import hero from "@/assets/hero-deportes.jpg";
 import { useAuth } from "@/lib/auth";
 import { useRef, useState } from "react";
 import { LoginModal } from "@/components/LoginModal";
+import { InscripcionQuickAccess } from "@/components/inscripcion/InscripcionView";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -29,6 +30,7 @@ function PublicHome() {
   const { isAuthenticated } = useAuth();
   const [loginOpen, setLoginOpen] = useState(false);
   const triggerRef = useRef<HTMLButtonElement | null>(null);
+  const navigate = useNavigate();
 
   return (
     <>
@@ -78,6 +80,11 @@ function PublicHome() {
                 Iniciar sesion
               </button>
             )}
+
+            {/* Acceso rápido a la inscripción deportiva */}
+            <InscripcionQuickAccess
+              onClick={() => navigate({ to: "/inscripcion" })}
+            />
           </div>
         </div>
       </section>

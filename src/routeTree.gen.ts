@@ -14,6 +14,7 @@ import { Route as PeticionesRouteImport } from './routes/peticiones'
 import { Route as PanelRouteImport } from './routes/panel'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as InventarioRouteImport } from './routes/inventario'
+import { Route as InscripcionRouteImport } from './routes/inscripcion'
 import { Route as HorariosRouteImport } from './routes/horarios'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
@@ -43,6 +44,11 @@ const InventarioRoute = InventarioRouteImport.update({
   path: '/inventario',
   getParentRoute: () => rootRouteImport,
 } as any)
+const InscripcionRoute = InscripcionRouteImport.update({
+  id: '/inscripcion',
+  path: '/inscripcion',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const HorariosRoute = HorariosRouteImport.update({
   id: '/horarios',
   path: '/horarios',
@@ -63,6 +69,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/horarios': typeof HorariosRoute
+  '/inscripcion': typeof InscripcionRoute
   '/inventario': typeof InventarioRoute
   '/login': typeof LoginRoute
   '/panel': typeof PanelRoute
@@ -73,6 +80,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/horarios': typeof HorariosRoute
+  '/inscripcion': typeof InscripcionRoute
   '/inventario': typeof InventarioRoute
   '/login': typeof LoginRoute
   '/panel': typeof PanelRoute
@@ -84,6 +92,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/horarios': typeof HorariosRoute
+  '/inscripcion': typeof InscripcionRoute
   '/inventario': typeof InventarioRoute
   '/login': typeof LoginRoute
   '/panel': typeof PanelRoute
@@ -96,6 +105,7 @@ export interface FileRouteTypes {
     | '/'
     | '/dashboard'
     | '/horarios'
+    | '/inscripcion'
     | '/inventario'
     | '/login'
     | '/panel'
@@ -106,6 +116,7 @@ export interface FileRouteTypes {
     | '/'
     | '/dashboard'
     | '/horarios'
+    | '/inscripcion'
     | '/inventario'
     | '/login'
     | '/panel'
@@ -116,6 +127,7 @@ export interface FileRouteTypes {
     | '/'
     | '/dashboard'
     | '/horarios'
+    | '/inscripcion'
     | '/inventario'
     | '/login'
     | '/panel'
@@ -127,6 +139,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DashboardRoute: typeof DashboardRoute
   HorariosRoute: typeof HorariosRoute
+  InscripcionRoute: typeof InscripcionRoute
   InventarioRoute: typeof InventarioRoute
   LoginRoute: typeof LoginRoute
   PanelRoute: typeof PanelRoute
@@ -171,6 +184,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof InventarioRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/inscripcion': {
+      id: '/inscripcion'
+      path: '/inscripcion'
+      fullPath: '/inscripcion'
+      preLoaderRoute: typeof InscripcionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/horarios': {
       id: '/horarios'
       path: '/horarios'
@@ -199,6 +219,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DashboardRoute: DashboardRoute,
   HorariosRoute: HorariosRoute,
+  InscripcionRoute: InscripcionRoute,
   InventarioRoute: InventarioRoute,
   LoginRoute: LoginRoute,
   PanelRoute: PanelRoute,
