@@ -60,6 +60,7 @@ interface Documentos {
   valoracion_medica: File | null;
   valoracion_odontologica: File | null;
   valoracion_psicologica: File | null;
+  foto_3x4: File | null;
 }
 
 // ─── Datos del modal de términos ─────────────────────────────────────────────
@@ -116,6 +117,7 @@ export function InscripcionView({ onVolver }: InscripcionViewProps) {
   const [documentos, setDocumentos] = useState<Documentos>({
     horario: null, cedula: null, valoracion_medica: null,
     valoracion_odontologica: null, valoracion_psicologica: null,
+    foto_3x4: null,
   });
 
   const [enviado, setEnviado] = useState(false);
@@ -125,6 +127,7 @@ export function InscripcionView({ onVolver }: InscripcionViewProps) {
     valoracion_medica: useRef<HTMLInputElement>(null),
     valoracion_odontologica: useRef<HTMLInputElement>(null),
     valoracion_psicologica: useRef<HTMLInputElement>(null),
+    foto_3x4: useRef<HTMLInputElement>(null),
   };
 
   const pasos = [
@@ -275,9 +278,6 @@ export function InscripcionView({ onVolver }: InscripcionViewProps) {
           {paso === 0 && !enviado && (
             <div className="bg-white rounded-3xl shadow-sm overflow-hidden mb-4">
               <div className="bg-gradient-to-r from-primary to-secondary p-6 flex items-center gap-4">
-                <div className="w-11 h-11 bg-white/15 rounded-lg flex items-center justify-center text-sm font-semibold uppercase tracking-wide">
-                  P1
-                </div>
                 <div>
                   <h3 className="text-white font-bold text-lg">Datos Personales</h3>
                   <p className="text-sm text-white/70 mt-1">Información básica del estudiante</p>
@@ -477,9 +477,6 @@ export function InscripcionView({ onVolver }: InscripcionViewProps) {
           {paso === 1 && !enviado && (
             <div className="bg-white rounded-3xl shadow-sm overflow-hidden mb-4">
               <div className="bg-gradient-to-r from-primary to-secondary p-6 flex items-center gap-4">
-                <div className="w-11 h-11 bg-white/15 rounded-lg flex items-center justify-center text-sm font-semibold uppercase tracking-wide">
-                  P2
-                </div>
                 <div>
                   <h3 className="text-white font-bold text-lg">Información Académica</h3>
                   <p className="text-sm text-white/70 mt-1">Datos sobre tu formación académica</p>
@@ -640,9 +637,6 @@ export function InscripcionView({ onVolver }: InscripcionViewProps) {
           {paso === 2 && !enviado && (
             <div className="bg-white rounded-3xl shadow-sm overflow-hidden mb-4">
               <div className="bg-gradient-to-r from-primary to-secondary p-6 flex items-center gap-4">
-                <div className="w-11 h-11 bg-white/15 rounded-lg flex items-center justify-center text-sm font-semibold uppercase tracking-wide">
-                  P3
-                </div>
                 <div>
                   <h3 className="text-white font-bold text-lg">Datos Generales</h3>
                   <p className="text-sm text-white/70 mt-1">Información deportiva y de salud</p>
@@ -1118,31 +1112,42 @@ export function InscripcionView({ onVolver }: InscripcionViewProps) {
                 </div>
                 <div>
                   <h3 className="text-white font-bold text-lg">Carga de Documentos</h3>
-                  <p className="text-sm text-white/70 mt-1">Todos los documentos son obligatorios en formato PDF</p>
+                  <p className="text-sm text-white/70 mt-1">
+                    Todos los documentos son obligatorios en formato PDF, excepto la foto 3x4 que debe ser JPG o PNG.
+                  </p>
                 </div>
               </div>
               <div className="p-7">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
                   {(
                     [
-                      { key: "horario", label: "Horario de Clases" },
+                      { key: "horario", label: "Horario de Clases", accept: ".pdf" },
                       {
                         key: "cedula",
                         label: "Cédula / Documento de ID",
+                        accept: ".pdf",
                       },
                       {
                         key: "valoracion_medica",
                         label: "Control Valoración Médica",
+                        accept: ".pdf",
                       },
                       {
                         key: "valoracion_odontologica",
                         label: "Control Valoración Odontológica",
+                        accept: ".pdf",
                       },
                       {
                         key: "valoracion_psicologica",
                         label: "Control Valoración Psicológica",
+                        accept: ".pdf",
                       },
-                    ] as { key: keyof Documentos; label: string }[]
+                      {
+                        key: "foto_3x4",
+                        label: "Foto 3x4 del Estudiante",
+                        accept: "image/png,image/jpeg",
+                      },
+                    ] as Array<{ key: keyof Documentos; label: string; accept: string }>
                   ).map((doc) => (
                     <div
                       key={doc.key}
@@ -1154,7 +1159,7 @@ export function InscripcionView({ onVolver }: InscripcionViewProps) {
                     >
                       <input
                         type="file"
-                        accept=".pdf"
+                        accept={doc.accept}
                         ref={fileRefs[doc.key]}
                         onChange={(e) =>
                           actualizarDoc(doc.key, e.target.files?.[0] ?? null)
@@ -1243,7 +1248,7 @@ export function InscripcionView({ onVolver }: InscripcionViewProps) {
                     </div>
                     <div className="p-3 bg-white rounded-lg border border-secondary/20">
                       <p className="text-sm text-slate-700">
-                        Documentos cargados: <strong>5 / 5</strong>
+                        Documentos cargados: <strong>{Object.values(documentos).filter((file) => file !== null).length} / {Object.keys(documentos).length}</strong>
                       </p>
                     </div>
                   </div>
@@ -1274,18 +1279,9 @@ export function InscripcionQuickAccess({ onClick }: { onClick: () => void }) {
   return (
     <button
       onClick={onClick}
-      className="inline-flex items-center gap-3 bg-gradient-to-r from-primary to-secondary text-white px-6 py-3 rounded-xl font-bold text-sm shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all"
+      className="inline-flex items-center gap-2 rounded-md border border-white/40 bg-white/10 px-5 py-3 font-semibold text-white backdrop-blur transition hover:bg-white/20"
     >
-      <span className="w-9 h-9 bg-white/20 rounded-lg flex items-center justify-center text-xs font-semibold uppercase tracking-wide">
-        DEP
-      </span>
-      <div className="text-left">
-        <div className="text-xs opacity-80 font-medium">Sección Deportes</div>
-        <div className="text-sm font-bold">Inscripción Deportiva</div>
-      </div>
-      <span className="bg-accent text-accent-foreground text-xs font-bold px-2 py-1 rounded-full ml-2">
-        NUEVO
-      </span>
+      Inscripción deportiva
     </button>
   );
 }
