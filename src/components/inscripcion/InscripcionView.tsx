@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { ChevronLeft, Upload, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
+import { ChevronLeft, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -128,11 +128,11 @@ export function InscripcionView({ onVolver }: InscripcionViewProps) {
   };
 
   const pasos = [
-    { label: "Datos Personales", icon: "👤" },
-    { label: "Info Académica", icon: "🎓" },
-    { label: "Datos Generales", icon: "⚽" },
-    { label: "Datos Familiares", icon: "👨‍👩‍👧" },
-    { label: "Documentos", icon: "📄" },
+    { label: "Datos Personales" },
+    { label: "Info Académica" },
+    { label: "Datos Generales" },
+    { label: "Datos Familiares" },
+    { label: "Documentos" },
   ];
 
   const actualizarDoc = (key: keyof Documentos, file: File | null) => {
@@ -154,8 +154,8 @@ export function InscripcionView({ onVolver }: InscripcionViewProps) {
           <div className="bg-white rounded-3xl w-full max-w-2xl max-h-[88vh] flex flex-col shadow-2xl overflow-hidden animate-in fade-in duration-300">
             {/* Modal Header */}
             <div className="bg-gradient-to-r from-primary to-secondary p-7 flex items-center gap-4 flex-shrink-0">
-              <div className="w-11 h-11 bg-white/15 rounded-lg flex items-center justify-center text-xl">
-                📋
+              <div className="w-11 h-11 bg-white/15 rounded-lg flex items-center justify-center text-xs font-semibold uppercase tracking-wide">
+                TÉRMINOS
               </div>
               <div>
                 <h3 className="text-white font-bold text-lg">Información Importante</h3>
@@ -258,7 +258,7 @@ export function InscripcionView({ onVolver }: InscripcionViewProps) {
                             : "bg-secondary/30 text-muted-foreground"
                       }`}
                     >
-                      {i < paso ? "✓" : p.icon}
+                      {i < paso ? <CheckCircle2 className="h-4 w-4" /> : i + 1}
                     </div>
                     <span className={`text-xs font-semibold text-center leading-tight whitespace-nowrap ${
                       i === paso ? "text-primary" : i < paso ? "text-primary" : "text-muted-foreground"
@@ -275,8 +275,8 @@ export function InscripcionView({ onVolver }: InscripcionViewProps) {
           {paso === 0 && !enviado && (
             <div className="bg-white rounded-3xl shadow-sm overflow-hidden mb-4">
               <div className="bg-gradient-to-r from-primary to-secondary p-6 flex items-center gap-4">
-                <div className="w-11 h-11 bg-white/15 rounded-lg flex items-center justify-center text-2xl">
-                  👤
+                <div className="w-11 h-11 bg-white/15 rounded-lg flex items-center justify-center text-sm font-semibold uppercase tracking-wide">
+                  P1
                 </div>
                 <div>
                   <h3 className="text-white font-bold text-lg">Datos Personales</h3>
@@ -477,8 +477,8 @@ export function InscripcionView({ onVolver }: InscripcionViewProps) {
           {paso === 1 && !enviado && (
             <div className="bg-white rounded-3xl shadow-sm overflow-hidden mb-4">
               <div className="bg-gradient-to-r from-primary to-secondary p-6 flex items-center gap-4">
-                <div className="w-11 h-11 bg-white/15 rounded-lg flex items-center justify-center text-2xl">
-                  🎓
+                <div className="w-11 h-11 bg-white/15 rounded-lg flex items-center justify-center text-sm font-semibold uppercase tracking-wide">
+                  P2
                 </div>
                 <div>
                   <h3 className="text-white font-bold text-lg">Información Académica</h3>
@@ -640,8 +640,8 @@ export function InscripcionView({ onVolver }: InscripcionViewProps) {
           {paso === 2 && !enviado && (
             <div className="bg-white rounded-3xl shadow-sm overflow-hidden mb-4">
               <div className="bg-gradient-to-r from-primary to-secondary p-6 flex items-center gap-4">
-                <div className="w-11 h-11 bg-white/15 rounded-lg flex items-center justify-center text-2xl">
-                  ⚽
+                <div className="w-11 h-11 bg-white/15 rounded-lg flex items-center justify-center text-sm font-semibold uppercase tracking-wide">
+                  P3
                 </div>
                 <div>
                   <h3 className="text-white font-bold text-lg">Datos Generales</h3>
@@ -876,8 +876,8 @@ export function InscripcionView({ onVolver }: InscripcionViewProps) {
           {paso === 3 && !enviado && (
             <div className="bg-white rounded-3xl shadow-sm overflow-hidden mb-4">
               <div className="bg-gradient-to-r from-primary to-secondary p-6 flex items-center gap-4">
-                <div className="w-11 h-11 bg-white/15 rounded-lg flex items-center justify-center text-2xl">
-                  👨‍👩‍👧
+                <div className="w-11 h-11 bg-white/15 rounded-lg flex items-center justify-center text-sm font-semibold uppercase tracking-wide">
+                  P4
                 </div>
                 <div>
                   <h3 className="text-white font-bold text-lg">Datos Familiares</h3>
@@ -1113,8 +1113,8 @@ export function InscripcionView({ onVolver }: InscripcionViewProps) {
           {paso === 4 && !enviado && (
             <div className="bg-white rounded-3xl shadow-sm overflow-hidden mb-4">
               <div className="bg-gradient-to-r from-primary to-secondary p-6 flex items-center gap-4">
-                <div className="w-11 h-11 bg-white/15 rounded-lg flex items-center justify-center text-2xl">
-                  📄
+                <div className="w-11 h-11 bg-white/15 rounded-lg flex items-center justify-center text-sm font-semibold uppercase tracking-wide">
+                  P5
                 </div>
                 <div>
                   <h3 className="text-white font-bold text-lg">Carga de Documentos</h3>
@@ -1125,28 +1125,24 @@ export function InscripcionView({ onVolver }: InscripcionViewProps) {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
                   {(
                     [
-                      { key: "horario", label: "Horario de Clases", icon: "🗓️" },
+                      { key: "horario", label: "Horario de Clases" },
                       {
                         key: "cedula",
                         label: "Cédula / Documento de ID",
-                        icon: "🪪",
                       },
                       {
                         key: "valoracion_medica",
                         label: "Control Valoración Médica",
-                        icon: "🩺",
                       },
                       {
                         key: "valoracion_odontologica",
                         label: "Control Valoración Odontológica",
-                        icon: "🦷",
                       },
                       {
                         key: "valoracion_psicologica",
                         label: "Control Valoración Psicológica",
-                        icon: "🧠",
                       },
-                    ] as { key: keyof Documentos; label: string; icon: string }[]
+                    ] as { key: keyof Documentos; label: string }[]
                   ).map((doc) => (
                     <div
                       key={doc.key}
@@ -1165,8 +1161,12 @@ export function InscripcionView({ onVolver }: InscripcionViewProps) {
                         }
                         className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
                       />
-                      <div className="text-3xl mb-2">
-                        {documentos[doc.key] ? "✅" : doc.icon}
+                      <div className={`inline-flex px-3 py-1 rounded-full text-xs font-semibold mb-2 ${
+                        documentos[doc.key]
+                          ? "bg-primary/10 text-primary"
+                          : "bg-muted/70 text-muted-foreground"
+                      }`}>
+                        {documentos[doc.key] ? "Cargado" : "Pendiente"}
                       </div>
                       <div className="font-bold text-sm text-primary mb-1">
                         {doc.label}
@@ -1215,9 +1215,9 @@ export function InscripcionView({ onVolver }: InscripcionViewProps) {
             <div className="bg-white rounded-3xl shadow-sm overflow-hidden mb-4">
               <div className="p-10">
                 <div className="bg-secondary/10 border-2 border-secondary/30 rounded-2xl p-8 text-center mb-8">
-                  <div className="text-6xl mb-4">🏆</div>
+                  <CheckCircle2 className="mx-auto h-12 w-12 text-primary mb-4" />
                   <h3 className="text-3xl font-bold text-primary mb-2">
-                    ¡Inscripción Enviada!
+                    Inscripción Enviada
                   </h3>
                   <p className="text-muted-foreground italic">
                     Tu solicitud ha sido recibida exitosamente. El equipo de la
@@ -1226,31 +1226,25 @@ export function InscripcionView({ onVolver }: InscripcionViewProps) {
                   </p>
 
                   <div className="mt-6 space-y-2 text-left">
-                    <div className="flex items-center gap-3 p-3 bg-white rounded-lg">
-                      <span className="text-2xl">👤</span>
-                      <span className="text-sm">
-                        Datos personales:{" "}
-                        <strong>{estudiante.nombre || "Registrado"}</strong>
-                      </span>
+                    <div className="p-3 bg-white rounded-lg border border-secondary/20">
+                      <p className="text-sm text-slate-700">
+                        Datos personales: <strong>{estudiante.nombre || "Registrado"}</strong>
+                      </p>
                     </div>
-                    <div className="flex items-center gap-3 p-3 bg-white rounded-lg">
-                      <span className="text-2xl">🎓</span>
-                      <span className="text-sm">
+                    <div className="p-3 bg-white rounded-lg border border-secondary/20">
+                      <p className="text-sm text-slate-700">
                         Carrera: <strong>{academica.carrera || "Registrada"}</strong>
-                      </span>
+                      </p>
                     </div>
-                    <div className="flex items-center gap-3 p-3 bg-white rounded-lg">
-                      <span className="text-2xl">⚽</span>
-                      <span className="text-sm">
-                        Nivel deportivo:{" "}
-                        <strong>{generales.nivel_deportivo}</strong>
-                      </span>
+                    <div className="p-3 bg-white rounded-lg border border-secondary/20">
+                      <p className="text-sm text-slate-700">
+                        Nivel deportivo: <strong>{generales.nivel_deportivo}</strong>
+                      </p>
                     </div>
-                    <div className="flex items-center gap-3 p-3 bg-white rounded-lg">
-                      <span className="text-2xl">📄</span>
-                      <span className="text-sm">
+                    <div className="p-3 bg-white rounded-lg border border-secondary/20">
+                      <p className="text-sm text-slate-700">
                         Documentos cargados: <strong>5 / 5</strong>
-                      </span>
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -1282,8 +1276,8 @@ export function InscripcionQuickAccess({ onClick }: { onClick: () => void }) {
       onClick={onClick}
       className="inline-flex items-center gap-3 bg-gradient-to-r from-primary to-secondary text-white px-6 py-3 rounded-xl font-bold text-sm shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all"
     >
-      <span className="w-9 h-9 bg-white/20 rounded-lg flex items-center justify-center text-lg">
-        ⚽
+      <span className="w-9 h-9 bg-white/20 rounded-lg flex items-center justify-center text-xs font-semibold uppercase tracking-wide">
+        DEP
       </span>
       <div className="text-left">
         <div className="text-xs opacity-80 font-medium">Sección Deportes</div>
