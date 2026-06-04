@@ -63,6 +63,11 @@ interface Documentos {
   foto_3x4: File | null;
 }
 
+interface InscripcionInfo {
+  cod_deporte: number;
+  estado: "PENDIENTE" | "APROBADA" | "RECHAZADA";
+}
+
 // ─── Datos del modal de términos ─────────────────────────────────────────────
 
 const terminos = [
@@ -106,6 +111,11 @@ export function InscripcionView({ onVolver }: InscripcionViewProps) {
     nivel_deportivo: "NINGUNO", torneo_participado: "", club_perteneciente: "",
     peso: 0, estatura: 0, enfermedad_padecida: "", eps: "", rh: "O+",
     trabaja_estudiante: false, lugar_trabajo: "", cargo_de_trabajo: "",
+  });
+
+  const [inscripcion, setInscripcion] = useState<InscripcionInfo>({
+    cod_deporte: 1,
+    estado: "PENDIENTE",
   });
 
   const [familiares, setFamiliares] = useState<DatosFamiliares>({
@@ -700,6 +710,29 @@ export function InscripcionView({ onVolver }: InscripcionViewProps) {
                       }
                       className="w-full px-3 py-2 border-2 border-secondary/30 rounded-lg bg-muted text-foreground focus:border-primary focus:bg-white focus:ring-2 focus:ring-primary/20 outline-none transition-all"
                     />
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-bold text-primary uppercase tracking-wide mb-2">
+                        Deporte
+                      </label>
+                      <select
+                        value={inscripcion.cod_deporte}
+                        onChange={(e) =>
+                          setInscripcion({
+                            ...inscripcion,
+                            cod_deporte: parseInt(e.target.value, 10),
+                          })
+                        }
+                        className="w-full px-3 py-2 border-2 border-secondary/30 rounded-lg bg-muted text-foreground focus:border-primary focus:bg-white focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                      >
+                        <option value={1}>Fútbol</option>
+                        <option value={2}>Baloncesto</option>
+                        <option value={3}>Vóley</option>
+                        <option value={4}>Tenis</option>
+                        <option value={5}>Atletismo</option>
+                      </select>
+                    </div>
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div>

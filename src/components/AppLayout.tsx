@@ -76,6 +76,13 @@ const navItems: NavItem[] = [
   },
   {
     to: "/panel",
+    search: { seccion: "inscripciones" },
+    label: "Inscripciones",
+    icon: Users,
+    roles: ["administrador"],
+  },
+  {
+    to: "/panel",
     search: { seccion: "espacios" },
     label: "Escenarios deportivos",
     icon: MapPin,

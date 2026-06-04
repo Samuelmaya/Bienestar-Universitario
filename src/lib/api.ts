@@ -188,6 +188,74 @@ export const articlesApi = {
     }),
 };
 
+export interface InscripcionItem {
+  id_inscripcion: number;
+  nombre: string;
+  tipo_documento: string;
+  documento: string;
+  sexo: string;
+  fecha_nacimiento: string;
+  lugar_nacimiento: string;
+  estado_civil: string;
+  direccion_residencial: string;
+  barrio: string;
+  num_celular: string;
+  email: string;
+  deporte: string;
+  fecha_inscripcion: string;
+  estado: string;
+  datos_academicos: {
+    nom_colegio: string;
+    jornada_colegio: string;
+    anio_promocion: number;
+    carrera: string;
+    jornada_uni: string;
+    promedio: number;
+    permanencia: string;
+  };
+  datos_generales: {
+    nivel_deportivo: string;
+    torneo_participado: string;
+    club_perteneciente: string;
+    peso: number;
+    estatura: number;
+    enfermedad_padecida: string;
+    eps: string;
+    rh: string;
+    trabaja_estudiante: boolean;
+    lugar_trabajo: string;
+    cargo_de_trabajo: string;
+  };
+  datos_familiares: {
+    nom_madre: string;
+    dir_madre: string;
+    ciudad_madre: string;
+    cel_madre: string;
+    ocup_madre: string;
+    nom_padre: string;
+    dir_padre: string;
+    ciudad_padre: string;
+    cel_padre: string;
+    ocup_padre: string;
+    observaciones: string;
+  };
+  documentos: {
+    horario: string;
+    cedula: string;
+    valoracion_medica: string;
+    valoracion_odontologica: string;
+    valoracion_psicologica: string;
+    foto_3x4: string;
+  };
+}
+
+export const inscripcionesApi = {
+  list: () => request<InscripcionItem[]>("/inscripciones"),
+
+  get: (id_inscripcion: number) =>
+    request<InscripcionItem>(`/inscripciones/${id_inscripcion}`),
+};
+
 // API de Roles
 export interface Role {
   id: number;

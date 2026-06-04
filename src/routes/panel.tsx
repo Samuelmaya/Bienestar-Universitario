@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, Sparkles, ClipboardList, MapPin } from "lucide-react";
+import { ArrowRight, Sparkles, ClipboardList, MapPin, Users } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { RequireAuth } from "@/components/RequireAuth";
 import { ReservasGeneral } from "@/components/reservas/ReservasGeneral";
@@ -9,6 +9,7 @@ import { CategoriasGeneral } from "@/components/categorias/CategoriasGeneral";
 import { RolesGeneral } from "@/components/roles/RolesGeneral";
 import { UsuariosGeneral } from "@/components/usuarios/UsuariosGeneral";
 import { EspaciosGeneral } from "@/components/espacios/EspaciosGeneral";
+import { InscripcionesGeneral } from "@/components/inscripcion/InscripcionesGeneral";
 
 type PanelSearch = { seccion?: string };
 
@@ -35,6 +36,7 @@ function PanelContent() {
   if (!user) return null;
 
   if (seccion === "reservas" && user.role === "administrador") return <ReservasGeneral />;
+  if (seccion === "inscripciones" && user.role === "administrador") return <InscripcionesGeneral />;
   if (seccion === "espacios" && user.role === "administrador") return <EspaciosGeneral />;
   if (seccion === "deportes" && ["administrador", "entrenador"].includes(user.role)) {
     return <DeportesGeneral />;
@@ -66,6 +68,13 @@ function InicioView() {
             label: "Gestionar reservas",
             desc: "Administra las solicitudes de préstamo",
             icon: ClipboardList,
+          },
+          {
+            to: "/panel" as const,
+            search: { seccion: "inscripciones" },
+            label: "Ver inscripciones",
+            desc: "Visualiza las inscripciones de los estudiantes",
+            icon: Users,
           },
           {
             to: "/panel" as const,
