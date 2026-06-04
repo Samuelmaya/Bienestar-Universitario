@@ -16,6 +16,7 @@ import {
   ExternalLink,
   MapPin,
   LayoutDashboard,
+  CalendarRange,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth, type Role } from "@/lib/auth";
@@ -79,6 +80,13 @@ const navItems: NavItem[] = [
     search: { seccion: "inscripciones" },
     label: "Inscripciones",
     icon: Users,
+    roles: ["administrador"],
+  },
+  {
+    to: "/panel",
+    search: { seccion: "vacacionales" },
+    label: "Inscripción vacacional",
+    icon: CalendarRange,
     roles: ["administrador"],
   },
   {

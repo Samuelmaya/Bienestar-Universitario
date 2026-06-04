@@ -10,6 +10,7 @@ import { RolesGeneral } from "@/components/roles/RolesGeneral";
 import { UsuariosGeneral } from "@/components/usuarios/UsuariosGeneral";
 import { EspaciosGeneral } from "@/components/espacios/EspaciosGeneral";
 import { InscripcionesGeneral } from "@/components/inscripcion/InscripcionesGeneral";
+import { VacacionalesAdminView } from "@/components/vacacionales/VacacionalesAdminView";
 
 type PanelSearch = { seccion?: string };
 
@@ -37,6 +38,7 @@ function PanelContent() {
 
   if (seccion === "reservas" && user.role === "administrador") return <ReservasGeneral />;
   if (seccion === "inscripciones" && user.role === "administrador") return <InscripcionesGeneral />;
+  if (seccion === "vacacionales" && user.role === "administrador") return <VacacionalesAdminView />;
   if (seccion === "espacios" && user.role === "administrador") return <EspaciosGeneral />;
   if (seccion === "deportes" && ["administrador", "entrenador"].includes(user.role)) {
     return <DeportesGeneral />;

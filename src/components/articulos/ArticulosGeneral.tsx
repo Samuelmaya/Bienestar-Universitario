@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Package, Plus, Search, AlertCircle, Loader2, CheckCircle2 } from "lucide-react";
 import type { ArticuloDeportivo } from "@/shared/dtos/articulo.dto";
 import { listarArticulos } from "@/shared/services/articulos.service";
+import { obtenerConfigVacacional, toggleConfigVacacional } from "@/services/vacacional.service";
 import { ArticuloCard } from "./ArticuloCard";
 import { CrearArticuloModal } from "./CrearArticuloModal";
 import { EditarArticuloModal } from "./EditarArticuloModal";
@@ -13,6 +14,10 @@ export function ArticulosGeneral() {
   const [error, setError] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
   const [search, setSearch] = useState("");
+
+  // ── Toggle vacacional ──
+  const [vacacionalActivo, setVacacionalActivo] = useState<boolean | null>(null);
+  const [toggleLoading, setToggleLoading] = useState(false);
 
   const [crearOpen, setCrearOpen] = useState(false);
   const [crearTriggerEl, setCrearTriggerEl] = useState<HTMLElement | null>(null);
@@ -36,6 +41,10 @@ export function ArticulosGeneral() {
 
   useEffect(() => {
     loadArticulos();
+    // Cargar estado actual del toggle vacacional
+    obtenerConfigVacacional()
+      .then((c) => setVacacionalActivo(c.activo))
+      .catch(() => setVacacionalActivo(false));
   }, []);
 
   const filtered = useMemo(() => {
@@ -73,6 +82,25 @@ export function ArticulosGeneral() {
     setTimeout(() => setSuccessMsg(""), 4000);
   };
 
+  const handleToggleVacacional = async () => {
+    if (toggleLoading) return;
+    setToggleLoading(true);
+    try {
+      const updated = await toggleConfigVacacional();
+      setVacacionalActivo(updated.activo);
+      setSuccessMsg(
+        updated.activo
+          ? "Inscripción vacacional activada."
+          : "Inscripción vacacional desactivada.",
+      );
+      setTimeout(() => setSuccessMsg(""), 4000);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Error al cambiar el estado.");
+    } finally {
+      setToggleLoading(false);
+    }
+  };
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-6">
@@ -80,16 +108,44 @@ export function ArticulosGeneral() {
           <h1 className="text-2xl font-bold">Articulos deportivos</h1>
           <p className="text-sm text-muted-foreground">Administra el inventario deportivo.</p>
         </div>
-        <button
-          type="button"
-          onClick={(e) => {
-            setCrearTriggerEl(e.currentTarget);
-            setCrearOpen(true);
-          }}
-          className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-xs font-medium text-primary-foreground hover:opacity-90"
-        >
-          <Plus className="h-4 w-4" /> Nuevo articulo
-        </button>
+        <div className="flex items-center gap-3 flex-wrap">
+          {/* Toggle inscripción vacacional */}
+          <div className="flex items-center gap-2 rounded-full border border-border bg-background px-3 py-1.5">
+            <span className="text-xs font-medium text-muted-foreground whitespace-nowrap">
+              Inscripción vacacional
+            </span>
+            <button
+              type="button"
+              role="switch"
+              aria-checked={vacacionalActivo ?? false}
+              disabled={toggleLoading || vacacionalActivo === null}
+              onClick={handleToggleVacacional}
+              className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors focus:outline-none focus:ring-2 focus:ring-primary/30 disabled:opacity-60 disabled:cursor-not-allowed ${
+                vacacionalActivo ? "bg-primary" : "bg-muted-foreground/30"
+              }`}
+            >
+              <span
+                className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow-sm transition-transform ${
+                  vacacionalActivo ? "translate-x-4" : "translate-x-0"
+                }`}
+              />
+            </button>
+            {toggleLoading && (
+              <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" />
+            )}
+          </div>
+
+          <button
+            type="button"
+            onClick={(e) => {
+              setCrearTriggerEl(e.currentTarget);
+              setCrearOpen(true);
+            }}
+            className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-xs font-medium text-primary-foreground hover:opacity-90"
+          >
+            <Plus className="h-4 w-4" /> Nuevo articulo
+          </button>
+        </div>
       </div>
 
       <div className="mb-6 flex items-center gap-2">

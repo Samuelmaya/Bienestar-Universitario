@@ -5,12 +5,14 @@ import {
   Activity,
   Users,
   ArrowRight,
+  ClipboardCheck,
 } from "lucide-react";
 import hero from "@/assets/hero-deportes.jpg";
 import { useAuth } from "@/lib/auth";
 import { useRef, useState } from "react";
 import { LoginModal } from "@/components/LoginModal";
 import { InscripcionQuickAccess } from "@/components/inscripcion/InscripcionView";
+import { useVacacionalConfig } from "@/hooks/useVacacionalConfig";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -31,6 +33,7 @@ function PublicHome() {
   const [loginOpen, setLoginOpen] = useState(false);
   const triggerRef = useRef<HTMLButtonElement | null>(null);
   const navigate = useNavigate();
+  const { activo: vacacionalActivo } = useVacacionalConfig();
 
   return (
     <>
@@ -81,10 +84,21 @@ function PublicHome() {
               </button>
             )}
 
-            {/* Acceso rápido a la inscripción deportiva */}
+            {/* Inscripción deportiva universitaria — siempre visible */}
             <InscripcionQuickAccess
               onClick={() => navigate({ to: "/inscripcion" })}
             />
+
+            {/* CTA Inscripción vacacional — visible solo si activo */}
+            {vacacionalActivo && (
+              <Link
+                to="/vacacionales"
+                className="inline-flex items-center gap-2 rounded-md border border-white/40 bg-white/10 px-5 py-3 font-semibold text-white backdrop-blur transition hover:bg-white/20"
+              >
+                <ClipboardCheck className="h-4 w-4" />
+                Vacacionales
+              </Link>
+            )}
           </div>
         </div>
       </section>
