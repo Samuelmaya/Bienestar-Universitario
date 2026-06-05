@@ -13,6 +13,7 @@ import {
   Loader2,
 } from "lucide-react";
 import { PageHeader } from "@/components/PageHeader";
+import { RequireAuth } from "@/components/RequireAuth";
 import { ReusableModal } from "@/shared/reusable-modal/reusable-modal";
 import TextField from "@mui/material/TextField";
 import type {
@@ -41,7 +42,11 @@ export const Route = createFileRoute("/peticiones")({
       },
     ],
   }),
-  component: PeticionesPage,
+  component: () => (
+    <RequireAuth>
+      <PeticionesPage />
+    </RequireAuth>
+  ),
 });
 
 type Tab = "productos" | "escenarios";

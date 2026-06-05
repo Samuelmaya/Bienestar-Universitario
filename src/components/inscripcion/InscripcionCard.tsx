@@ -3,7 +3,7 @@ import type { InscripcionItem } from "@/lib/api";
 
 type Props = {
   inscripcion: InscripcionItem;
-  onDetalle: () => void;
+  onDetalle: (e: React.MouseEvent<HTMLButtonElement>) => void;
 };
 
 export function InscripcionCard({ inscripcion, onDetalle }: Props) {
@@ -33,7 +33,7 @@ export function InscripcionCard({ inscripcion, onDetalle }: Props) {
         </div>
         <button
           type="button"
-          onClick={onDetalle}
+          onClick={(e) => onDetalle(e)}
           className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition hover:bg-primary/90"
         >
           <Eye className="h-4 w-4" /> Ver detalles

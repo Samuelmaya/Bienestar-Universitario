@@ -127,20 +127,125 @@ const sampleInscripciones: InscripcionItem[] = [
   },
 ];
 
+import { listarPerfiles, obtenerFichaEstudiante } from "@/shared/services/student.service";
+import type { StudentProfile } from "@/shared/dtos/student.dto";
+
+function mapProfileToInscripcionItem(profile: StudentProfile): InscripcionItem {
+  const est = profile.estudiante;
+  const acad = profile.informacion_academica;
+  const gen = profile.datos_generales;
+  const fam = profile.datos_familiares;
+  const insc = profile.inscripcion;
+
+  const docMap: Record<string, string> = {
+    horario: "",
+    cedula: "",
+    valoracion_medica: "",
+    valoracion_odontologica: "",
+    valoracion_psicologica: "",
+    foto_3x4: "",
+  };
+
+  if (Array.isArray(profile.documentos)) {
+    profile.documentos.forEach((d) => {
+      const downloadUrl = d.download_url || d.url_archivo || "";
+      if (d.tipo_documento === "HORARIO_CLASES") docMap.horario = downloadUrl;
+      if (d.tipo_documento === "DOCUMENTO_IDENTIDAD") docMap.cedula = downloadUrl;
+      if (d.tipo_documento === "VALORACION_MEDICA") docMap.valoracion_medica = downloadUrl;
+      if (d.tipo_documento === "VALORACION_ODONTOLOGICA") docMap.valoracion_odontologica = downloadUrl;
+      if (d.tipo_documento === "VALORACION_PSICOLOGICA") docMap.valoracion_psicologica = downloadUrl;
+      if (d.tipo_documento === "FOTO_ESTUDIANTE") docMap.foto_3x4 = downloadUrl;
+    });
+  }
+
+  return {
+    id_inscripcion: insc?.id_inscripcion ?? est.id_estudiante,
+    nombre: est.nombre,
+    tipo_documento: est.tipo_documento,
+    documento: String(est.id_estudiante),
+    sexo: est.sexo,
+    fecha_nacimiento: est.fecha_nacimiento,
+    lugar_nacimiento: est.lugar_nacimiento ?? "",
+    estado_civil: est.estado_civil ?? "SOLTERO",
+    direccion_residencial: est.direccion_residencial ?? "",
+    barrio: est.barrio ?? "",
+    num_celular: est.num_celular ?? "",
+    email: est.email ?? "",
+    deporte: insc?.nombre_deporte ?? "Sin asignar",
+    fecha_inscripcion: insc?.fecha ?? new Date().toISOString().split("T")[0],
+    estado: insc?.estado ?? "PENDIENTE",
+    datos_academicos: {
+      nom_colegio: acad.nom_colegio ?? "",
+      jornada_colegio: acad.jornada_colegio ?? "MAÑANA",
+      anio_promocion: acad.anio_promocion ?? 0,
+      carrera: acad.carrera ?? "",
+      jornada_uni: acad.jornada_uni ?? "MAÑANA",
+      promedio: acad.promedio ?? 0,
+      permanencia: acad.permanencia ?? "ACTIVO",
+    },
+    datos_generales: {
+      nivel_deportivo: gen.nivel_deportivo ?? "NINGUNO",
+      torneo_participado: gen.torneo_participado ?? "",
+      club_perteneciente: gen.club_perteneciente ?? "",
+      peso: gen.peso ?? 0,
+      estatura: gen.estatura ?? 0,
+      enfermedad_padecida: gen.enfermedad_padecida ?? "",
+      eps: gen.eps ?? "",
+      rh: gen.rh ?? "O+",
+      trabaja_estudiante: !!gen.trabaja_estudiante,
+      lugar_trabajo: gen.lugar_trabajo ?? "",
+      cargo_de_trabajo: gen.cargo_de_trabajo ?? "",
+    },
+    datos_familiares: {
+      nom_madre: fam.nom_madre ?? "",
+      dir_madre: fam.dir_madre ?? "",
+      ciudad_madre: fam.ciudad_madre ?? "",
+      cel_madre: String(fam.cel_madre ?? ""),
+      ocup_madre: fam.ocup_madre ?? "",
+      nom_padre: fam.nom_padre ?? "",
+      dir_padre: fam.dir_padre ?? "",
+      ciudad_padre: fam.ciudad_padre ?? "",
+      cel_padre: String(fam.cel_padre ?? ""),
+      ocup_padre: fam.ocup_padre ?? "",
+      observaciones: fam.observaciones ?? "",
+    },
+    documentos: docMap as any,
+  };
+}
+
 export function InscripcionesGeneral() {
   const [inscripciones, setInscripciones] = useState<InscripcionItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [selectedInscripcion, setSelectedInscripcion] = useState<InscripcionItem | null>(null);
+  const [triggerElement, setTriggerElement] = useState<HTMLElement | null>(null);
 
   useEffect(() => {
     setLoading(true);
-    inscripcionesApi
-      .list()
-      .then((data) => {
-        setInscripciones(data.length > 0 ? data : sampleInscripciones);
-        if (data.length === 0) {
-          setError("No se encontraron inscripciones reales. Se muestran registros de ejemplo.");
+    listarPerfiles()
+      .then(async (basicList) => {
+        try {
+          const details = await Promise.all(
+            basicList.map(async (basic) => {
+              try {
+                const profile = await obtenerFichaEstudiante(basic.id_estudiante);
+                return mapProfileToInscripcionItem(profile);
+              } catch (err) {
+                console.error(`Error al obtener ficha de ${basic.id_estudiante}:`, err);
+                return null;
+              }
+            })
+          );
+          const valid = details.filter((d): d is InscripcionItem => d !== null);
+          setInscripciones(valid.length > 0 ? valid : sampleInscripciones);
+          if (valid.length === 0) {
+            setError("No se encontraron inscripciones reales. Se muestran registros de ejemplo.");
+          } else {
+            setError("");
+          }
+        } catch (err: any) {
+          setInscripciones(sampleInscripciones);
+          setError(`Error al procesar perfiles: ${err.message || err}`);
         }
       })
       .catch((err) => {
@@ -193,7 +298,10 @@ export function InscripcionesGeneral() {
             <InscripcionCard
               key={inscripcion.id_inscripcion}
               inscripcion={inscripcion}
-              onDetalle={() => setSelectedInscripcion(inscripcion)}
+              onDetalle={(e) => {
+                setTriggerElement(e.currentTarget);
+                setSelectedInscripcion(inscripcion);
+              }}
             />
           ))}
         </div>
@@ -202,7 +310,11 @@ export function InscripcionesGeneral() {
       {selectedInscripcion && (
         <InscripcionDetailModal
           inscripcion={selectedInscripcion}
-          onClose={() => setSelectedInscripcion(null)}
+          triggerElement={triggerElement}
+          onClose={() => {
+            setSelectedInscripcion(null);
+            setTriggerElement(null);
+          }}
         />
       )}
     </div>

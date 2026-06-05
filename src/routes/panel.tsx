@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, Sparkles, ClipboardList, MapPin, Users } from "lucide-react";
+import { ArrowRight, Sparkles, ClipboardList, MapPin, Users, CalendarPlus } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { RequireAuth } from "@/components/RequireAuth";
 import { ReservasGeneral } from "@/components/reservas/ReservasGeneral";
@@ -70,6 +70,13 @@ function InicioView() {
             label: "Gestionar reservas",
             desc: "Administra las solicitudes de préstamo",
             icon: ClipboardList,
+          },
+          {
+            to: "/peticiones" as const,
+            search: undefined,
+            label: "Nueva reserva",
+            desc: "Registra una nueva solicitud de implementos o escenario",
+            icon: CalendarPlus,
           },
           {
             to: "/panel" as const,

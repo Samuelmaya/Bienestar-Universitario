@@ -4,6 +4,8 @@ import { supabase } from "@/shared/services/supabase";
 import { crearFichaEstudiante } from "@/shared/services/student.service";
 import { listarDeportes } from "@/shared/services/deportes.service";
 import type { Deporte } from "@/shared/dtos/deporte.dto";
+import { LocationPicker } from "@/components/inscripcion/LocationPicker";
+import { AddressBuilder } from "@/components/inscripcion/AddressBuilder";
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 interface Estudiante {
@@ -100,22 +102,28 @@ export function InscripcionView({ onVolver }: InscripcionViewProps) {
   const [mostrarModal, setMostrarModal] = useState(true);
   const [aceptoTerminos, setAceptoTerminos] = useState(false);
   const [paso, setPaso] = useState(0);
+  const [erroresPaso, setErroresPaso] = useState<Record<string, string>>({});
 
   const [deportes, setDeportes] = useState<Deporte[]>([]);
 
   useEffect(() => {
     listarDeportes()
-      .then(setDeportes)
+      .then((data) => {
+        setDeportes(data);
+        if (data.length > 0) {
+          setInscripcion((prev) => ({ ...prev, cod_deporte: data[0].cod_deporte }));
+        }
+      })
       .catch(() => {});
   }, []);
 
   const [estudiante, setEstudiante] = useState<Estudiante>({
-    id_estudiante: 0, // 👈 agregar
+    id_estudiante: 0,
     nombre: "",
     tipo_documento: "CC",
     sexo: "M",
     fecha_nacimiento: "",
-    lugar_nacimiento: "",
+    lugar_nacimiento: "Valledupar, Cesar",
     estado_civil: "SOLTERO",
     direccion_residencial: "",
     barrio: "",
@@ -148,20 +156,20 @@ export function InscripcionView({ onVolver }: InscripcionViewProps) {
   });
 
   const [inscripcion, setInscripcion] = useState<InscripcionInfo>({
-    cod_deporte: 1,
+    cod_deporte: 0,
     estado: "PENDIENTE",
   });
 
   const [familiares, setFamiliares] = useState<DatosFamiliares>({
     nom_madre: "",
     dir_madre: "",
-    ciudad_madre: "",
-    cel_madre: undefined, // 👈
+    ciudad_madre: "Valledupar, Cesar",
+    cel_madre: undefined,
     ocup_madre: "",
     nom_padre: "",
     dir_padre: "",
-    ciudad_padre: "",
-    cel_padre: undefined, // 👈
+    ciudad_padre: "Valledupar, Cesar",
+    cel_padre: undefined,
     ocup_padre: "",
     observaciones: "",
   });
@@ -423,12 +431,18 @@ export function InscripcionView({ onVolver }: InscripcionViewProps) {
                       Número de Documento
                     </label>
                     <input
-                      type="number"
+                      type="text"
+                      inputMode="numeric"
+                      pattern="[0-9]*"
                       value={estudiante.id_estudiante || ""}
-                      onChange={(e) =>
-                        setEstudiante({ ...estudiante, id_estudiante: parseInt(e.target.value) })
-                      }
-                      className="w-full px-3 py-2 border-2 border-secondary/30 rounded-lg bg-muted text-foreground focus:border-primary focus:bg-white focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                      onKeyDown={(e) => {
+                        if (!/[0-9]|Backspace|Delete|ArrowLeft|ArrowRight|Tab/.test(e.key)) e.preventDefault();
+                      }}
+                      onChange={(e) => {
+                        const val = e.target.value.replace(/\D/g, "");
+                        setEstudiante({ ...estudiante, id_estudiante: val ? parseInt(val) : 0 });
+                      }}
+                      className={`w-full px-3 py-2 border-2 rounded-lg bg-muted text-foreground outline-none transition-all ${erroresPaso.id_estudiante ? "border-red-400" : "border-secondary/30 focus:border-primary focus:bg-white focus:ring-2 focus:ring-primary/20"}`}
                     />
                   </div>
                   <div>
@@ -483,7 +497,7 @@ export function InscripcionView({ onVolver }: InscripcionViewProps) {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-xs font-bold text-primary uppercase tracking-wide mb-2">
-                        Fecha de Nacimiento
+                        Fecha de Nacimiento <span className="text-red-500">*</span>
                       </label>
                       <input
                         type="date"
@@ -494,26 +508,24 @@ export function InscripcionView({ onVolver }: InscripcionViewProps) {
                             fecha_nacimiento: e.target.value,
                           })
                         }
-                        className="w-full px-3 py-2 border-2 border-secondary/30 rounded-lg bg-muted text-foreground focus:border-primary focus:bg-white focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                        className={`w-full px-3 py-2 border-2 rounded-lg bg-muted text-foreground outline-none transition-all ${erroresPaso.fecha_nacimiento ? "border-red-400" : "border-secondary/30 focus:border-primary focus:bg-white focus:ring-2 focus:ring-primary/20"}`}
                       />
+                      {erroresPaso.fecha_nacimiento && (
+                        <p className="mt-1 text-xs text-red-500">{erroresPaso.fecha_nacimiento}</p>
+                      )}
                     </div>
-                    <div>
-                      <label className="block text-xs font-bold text-primary uppercase tracking-wide mb-2">
-                        Lugar de Nacimiento
-                      </label>
-                      <input
-                        type="text"
-                        placeholder="Ciudad de nacimiento"
-                        value={estudiante.lugar_nacimiento}
-                        onChange={(e) =>
-                          setEstudiante({
-                            ...estudiante,
-                            lugar_nacimiento: e.target.value,
-                          })
-                        }
-                        className="w-full px-3 py-2 border-2 border-secondary/30 rounded-lg bg-muted text-foreground focus:border-primary focus:bg-white focus:ring-2 focus:ring-primary/20 outline-none transition-all"
-                      />
-                    </div>
+                  </div>
+                  <div>
+                    <LocationPicker
+                      label="Lugar de Nacimiento"
+                      required
+                      value={estudiante.lugar_nacimiento}
+                      hasError={!!erroresPaso.lugar_nacimiento}
+                      onChange={(v) => setEstudiante({ ...estudiante, lugar_nacimiento: v })}
+                    />
+                    {erroresPaso.lugar_nacimiento && (
+                      <p className="mt-1 text-xs text-red-500">{erroresPaso.lugar_nacimiento}</p>
+                    )}
                   </div>
                   <div>
                     <label className="block text-xs font-bold text-primary uppercase tracking-wide mb-2">
@@ -535,36 +547,32 @@ export function InscripcionView({ onVolver }: InscripcionViewProps) {
                       <option value="VIUDO">Viudo/a</option>
                     </select>
                   </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-xs font-bold text-primary uppercase tracking-wide mb-2">
-                        Dirección Residencial
-                      </label>
-                      <input
-                        type="text"
-                        placeholder="Calle / Carrera / Avenida"
-                        value={estudiante.direccion_residencial}
-                        onChange={(e) =>
-                          setEstudiante({
-                            ...estudiante,
-                            direccion_residencial: e.target.value,
-                          })
-                        }
-                        className="w-full px-3 py-2 border-2 border-secondary/30 rounded-lg bg-muted text-foreground focus:border-primary focus:bg-white focus:ring-2 focus:ring-primary/20 outline-none transition-all"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-bold text-primary uppercase tracking-wide mb-2">
-                        Barrio
-                      </label>
-                      <input
-                        type="text"
-                        placeholder="Nombre del barrio"
-                        value={estudiante.barrio}
-                        onChange={(e) => setEstudiante({ ...estudiante, barrio: e.target.value })}
-                        className="w-full px-3 py-2 border-2 border-secondary/30 rounded-lg bg-muted text-foreground focus:border-primary focus:bg-white focus:ring-2 focus:ring-primary/20 outline-none transition-all"
-                      />
-                    </div>
+                  <div>
+                    <AddressBuilder
+                      label="Dirección Residencial"
+                      required
+                      value={estudiante.direccion_residencial}
+                      hasError={!!erroresPaso.direccion_residencial}
+                      onChange={(v) => setEstudiante({ ...estudiante, direccion_residencial: v })}
+                    />
+                    {erroresPaso.direccion_residencial && (
+                      <p className="mt-1 text-xs text-red-500">{erroresPaso.direccion_residencial}</p>
+                    )}
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-primary uppercase tracking-wide mb-2">
+                      Barrio <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Nombre del barrio"
+                      value={estudiante.barrio}
+                      onChange={(e) => setEstudiante({ ...estudiante, barrio: e.target.value })}
+                      className={`w-full px-3 py-2 border-2 rounded-lg bg-muted text-foreground outline-none transition-all ${erroresPaso.barrio ? "border-red-400" : "border-secondary/30 focus:border-primary focus:bg-white focus:ring-2 focus:ring-primary/20"}`}
+                    />
+                    {erroresPaso.barrio && (
+                      <p className="mt-1 text-xs text-red-500">{erroresPaso.barrio}</p>
+                    )}
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
@@ -573,15 +581,18 @@ export function InscripcionView({ onVolver }: InscripcionViewProps) {
                       </label>
                       <input
                         type="tel"
+                        inputMode="numeric"
                         placeholder="3XX XXX XXXX"
+                        maxLength={10}
                         value={estudiante.num_celular}
-                        onChange={(e) =>
-                          setEstudiante({
-                            ...estudiante,
-                            num_celular: e.target.value,
-                          })
-                        }
-                        className="w-full px-3 py-2 border-2 border-secondary/30 rounded-lg bg-muted text-foreground focus:border-primary focus:bg-white focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                        onKeyDown={(e) => {
+                          if (!/[0-9]|Backspace|Delete|ArrowLeft|ArrowRight|Tab/.test(e.key)) e.preventDefault();
+                        }}
+                        onChange={(e) => {
+                          const val = e.target.value.replace(/\D/g, "").slice(0, 10);
+                          setEstudiante({ ...estudiante, num_celular: val });
+                        }}
+                        className={`w-full px-3 py-2 border-2 rounded-lg bg-muted text-foreground outline-none transition-all ${erroresPaso.num_celular ? "border-red-400" : "border-secondary/30 focus:border-primary focus:bg-white focus:ring-2 focus:ring-primary/20"}`}
                       />
                     </div>
                     <div>
@@ -601,7 +612,19 @@ export function InscripcionView({ onVolver }: InscripcionViewProps) {
                 <div className="flex justify-between items-center mt-7 pt-5 border-t border-secondary/20">
                   <span className="text-xs text-muted-foreground">Paso 1 de 5</span>
                   <button
-                    onClick={() => setPaso(1)}
+                    onClick={() => {
+                      const errs: Record<string, string> = {};
+                      if (!estudiante.id_estudiante) errs.id_estudiante = "El número de documento es obligatorio.";
+                      if (!estudiante.nombre.trim()) errs.nombre = "El nombre es obligatorio.";
+                      if (!estudiante.fecha_nacimiento) errs.fecha_nacimiento = "La fecha de nacimiento es obligatoria.";
+                      if (!estudiante.lugar_nacimiento) errs.lugar_nacimiento = "El lugar de nacimiento es obligatorio.";
+                      if (!estudiante.direccion_residencial) errs.direccion_residencial = "La dirección es obligatoria.";
+                      if (!estudiante.barrio.trim()) errs.barrio = "El barrio es obligatorio.";
+                      if (!estudiante.num_celular.trim()) errs.num_celular = "El celular es obligatorio.";
+                      if (!estudiante.email.trim()) errs.email = "El correo es obligatorio.";
+                      setErroresPaso(errs);
+                      if (Object.keys(errs).length === 0) setPaso(1);
+                    }}
                     className="px-6 py-2 text-sm font-semibold text-primary-foreground bg-primary rounded-lg hover:bg-primary/90 transition-colors"
                   >
                     Siguiente →
@@ -753,13 +776,20 @@ export function InscripcionView({ onVolver }: InscripcionViewProps) {
                 </div>
                 <div className="flex justify-between items-center mt-7 pt-5 border-t border-secondary/20">
                   <button
-                    onClick={() => setPaso(0)}
+                    onClick={() => { setErroresPaso({}); setPaso(0); }}
                     className="px-6 py-2 text-sm font-semibold text-primary border-2 border-secondary/30 rounded-lg hover:bg-secondary/5 transition-colors"
                   >
                     ← Anterior
                   </button>
                   <button
-                    onClick={() => setPaso(2)}
+                    onClick={() => {
+                      const errs: Record<string, string> = {};
+                      if (!academica.nom_colegio.trim()) errs.nom_colegio = "El nombre del colegio es obligatorio.";
+                      if (!academica.carrera.trim()) errs.carrera = "La carrera universitaria es obligatoria.";
+                      if (!academica.promedio || academica.promedio <= 0) errs.promedio = "El promedio debe ser mayor a 0.";
+                      setErroresPaso(errs);
+                      if (Object.keys(errs).length === 0) setPaso(2);
+                    }}
                     className="px-6 py-2 text-sm font-semibold text-primary-foreground bg-primary rounded-lg hover:bg-primary/90 transition-colors"
                   >
                     Siguiente →
@@ -1001,13 +1031,21 @@ export function InscripcionView({ onVolver }: InscripcionViewProps) {
                 </div>
                 <div className="flex justify-between items-center mt-7 pt-5 border-t border-secondary/20">
                   <button
-                    onClick={() => setPaso(1)}
+                    onClick={() => { setErroresPaso({}); setPaso(1); }}
                     className="px-6 py-2 text-sm font-semibold text-primary border-2 border-secondary/30 rounded-lg hover:bg-secondary/5 transition-colors"
                   >
                     ← Anterior
                   </button>
                   <button
-                    onClick={() => setPaso(3)}
+                    onClick={() => {
+                      const errs: Record<string, string> = {};
+                      if (!generales.peso || generales.peso <= 0) errs.peso = "El peso es obligatorio.";
+                      if (!generales.estatura || generales.estatura <= 0) errs.estatura = "La estatura es obligatoria.";
+                      if (!generales.eps.trim()) errs.eps = "La EPS es obligatoria.";
+                      if (!inscripcion.cod_deporte || inscripcion.cod_deporte === 0) errs.cod_deporte = "Selecciona un deporte.";
+                      setErroresPaso(errs);
+                      if (Object.keys(errs).length === 0) setPaso(3);
+                    }}
                     className="px-6 py-2 text-sm font-semibold text-primary-foreground bg-primary rounded-lg hover:bg-primary/90 transition-colors"
                   >
                     Siguiente →
@@ -1059,51 +1097,50 @@ export function InscripcionView({ onVolver }: InscripcionViewProps) {
                           Celular
                         </label>
                         <input
-                          type="number"
+                          type="tel"
+                          inputMode="numeric"
                           placeholder="3XX XXX XXXX"
-                          value={familiares.cel_madre}
-                          onChange={(e) =>
-                            setFamiliares({
-                              ...familiares,
-                              cel_madre: e.target.value ? Number(e.target.value) : undefined,
-                            })
-                          }
-                          className="w-full px-3 py-2 border-2 border-secondary/30 rounded-lg bg-white text-foreground focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                          maxLength={10}
+                          value={familiares.cel_madre ?? ""}
+                          onKeyDown={(e) => {
+                            if (!/[0-9]|Backspace|Delete|ArrowLeft|ArrowRight|Tab/.test(e.key)) e.preventDefault();
+                          }}
+                          onChange={(e) => {
+                            const val = e.target.value.replace(/\D/g, "").slice(0, 10);
+                            setFamiliares({ ...familiares, cel_madre: val ? Number(val) : undefined });
+                          }}
+                          className={`w-full px-3 py-2 border-2 rounded-lg bg-white text-foreground outline-none transition-all ${erroresPaso.cel_madre ? "border-red-400" : "border-secondary/30 focus:border-primary focus:ring-2 focus:ring-primary/20"}`}
                         />
+                        {erroresPaso.cel_madre && (
+                          <p className="mt-1 text-xs text-red-500">{erroresPaso.cel_madre}</p>
+                        )}
                       </div>
                       <div>
                         <label className="block text-xs font-bold text-primary uppercase tracking-wide mb-2">
-                          Dirección
+                          Dirección <span className="text-red-500">*</span>
                         </label>
-                        <input
-                          type="text"
-                          placeholder="Dirección"
+                        <AddressBuilder
                           value={familiares.dir_madre}
-                          onChange={(e) =>
-                            setFamiliares({
-                              ...familiares,
-                              dir_madre: e.target.value,
-                            })
-                          }
-                          className="w-full px-3 py-2 border-2 border-secondary/30 rounded-lg bg-white text-foreground focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                          hasError={!!erroresPaso.dir_madre}
+                          bgClass="bg-white"
+                          onChange={(v) => setFamiliares({ ...familiares, dir_madre: v })}
                         />
+                        {erroresPaso.dir_madre && (
+                          <p className="mt-1 text-xs text-red-500">{erroresPaso.dir_madre}</p>
+                        )}
                       </div>
-                      <div>
-                        <label className="block text-xs font-bold text-primary uppercase tracking-wide mb-2">
-                          Ciudad
-                        </label>
-                        <input
-                          type="text"
-                          placeholder="Ciudad"
+                      <div className="sm:col-span-2">
+                        <LocationPicker
+                          label="Ciudad"
+                          required
                           value={familiares.ciudad_madre}
-                          onChange={(e) =>
-                            setFamiliares({
-                              ...familiares,
-                              ciudad_madre: e.target.value,
-                            })
-                          }
-                          className="w-full px-3 py-2 border-2 border-secondary/30 rounded-lg bg-white text-foreground focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                          hasError={!!erroresPaso.ciudad_madre}
+                          bgClass="bg-white"
+                          onChange={(v) => setFamiliares({ ...familiares, ciudad_madre: v })}
                         />
+                        {erroresPaso.ciudad_madre && (
+                          <p className="mt-1 text-xs text-red-500">{erroresPaso.ciudad_madre}</p>
+                        )}
                       </div>
                       <div className="sm:col-span-2">
                         <label className="block text-xs font-bold text-primary uppercase tracking-wide mb-2">
@@ -1150,54 +1187,48 @@ export function InscripcionView({ onVolver }: InscripcionViewProps) {
                       </div>
                       <div>
                         <label className="block text-xs font-bold text-primary uppercase tracking-wide mb-2">
-                          Celular
+                          Celular <span className="text-red-500">*</span>
                         </label>
                         <input
-                          type="number"
+                          type="tel"
+                          inputMode="numeric"
                           placeholder="3XX XXX XXXX"
-                          value={familiares.cel_padre}
-                          onChange={(e) =>
-                            setFamiliares({
-                              ...familiares,
-                              cel_padre: e.target.value ? Number(e.target.value) : undefined,
-                            })
-                          }
-                          className="w-full px-3 py-2 border-2 border-secondary/30 rounded-lg bg-white text-foreground focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                          maxLength={10}
+                          value={familiares.cel_padre ?? ""}
+                          onKeyDown={(e) => { if (!/[0-9]|Backspace|Delete|ArrowLeft|ArrowRight|Tab/.test(e.key)) e.preventDefault(); }}
+                          onChange={(e) => { const v = e.target.value.replace(/[^0-9]/g, "").slice(0, 10); setFamiliares({ ...familiares, cel_padre: v ? Number(v) : undefined }); }}
+                          className={`w-full px-3 py-2 border-2 rounded-lg bg-white text-foreground outline-none transition-all ${erroresPaso.cel_padre ? "border-red-400" : "border-secondary/30 focus:border-primary focus:ring-2 focus:ring-primary/20"}`}
                         />
+                        {erroresPaso.cel_padre && (
+                          <p className="mt-1 text-xs text-red-500">{erroresPaso.cel_padre}</p>
+                        )}
                       </div>
                       <div>
                         <label className="block text-xs font-bold text-primary uppercase tracking-wide mb-2">
-                          Dirección
+                          Dirección <span className="text-red-500">*</span>
                         </label>
-                        <input
-                          type="text"
-                          placeholder="Dirección"
+                        <AddressBuilder
                           value={familiares.dir_padre}
-                          onChange={(e) =>
-                            setFamiliares({
-                              ...familiares,
-                              dir_padre: e.target.value,
-                            })
-                          }
-                          className="w-full px-3 py-2 border-2 border-secondary/30 rounded-lg bg-white text-foreground focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                          hasError={!!erroresPaso.dir_padre}
+                          bgClass="bg-white"
+                          onChange={(v) => setFamiliares({ ...familiares, dir_padre: v })}
                         />
+                        {erroresPaso.dir_padre && (
+                          <p className="mt-1 text-xs text-red-500">{erroresPaso.dir_padre}</p>
+                        )}
                       </div>
-                      <div>
-                        <label className="block text-xs font-bold text-primary uppercase tracking-wide mb-2">
-                          Ciudad
-                        </label>
-                        <input
-                          type="text"
-                          placeholder="Ciudad"
+                      <div className="sm:col-span-2">
+                        <LocationPicker
+                          label="Ciudad"
+                          required
                           value={familiares.ciudad_padre}
-                          onChange={(e) =>
-                            setFamiliares({
-                              ...familiares,
-                              ciudad_padre: e.target.value,
-                            })
-                          }
-                          className="w-full px-3 py-2 border-2 border-secondary/30 rounded-lg bg-white text-foreground focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                          hasError={!!erroresPaso.ciudad_padre}
+                          bgClass="bg-white"
+                          onChange={(v) => setFamiliares({ ...familiares, ciudad_padre: v })}
                         />
+                        {erroresPaso.ciudad_padre && (
+                          <p className="mt-1 text-xs text-red-500">{erroresPaso.ciudad_padre}</p>
+                        )}
                       </div>
                       <div className="sm:col-span-2">
                         <label className="block text-xs font-bold text-primary uppercase tracking-wide mb-2">
@@ -1238,13 +1269,25 @@ export function InscripcionView({ onVolver }: InscripcionViewProps) {
                 </div>
                 <div className="flex justify-between items-center mt-7 pt-5 border-t border-secondary/20">
                   <button
-                    onClick={() => setPaso(2)}
+                    onClick={() => { setErroresPaso({}); setPaso(2); }}
                     className="px-6 py-2 text-sm font-semibold text-primary border-2 border-secondary/30 rounded-lg hover:bg-secondary/5 transition-colors"
                   >
                     ← Anterior
                   </button>
                   <button
-                    onClick={() => setPaso(4)}
+                    onClick={() => {
+                      const errs: Record<string, string> = {};
+                      if (!familiares.nom_madre.trim()) errs.nom_madre = "El nombre de la madre es obligatorio.";
+                      if (!familiares.dir_madre) errs.dir_madre = "La dirección de la madre es obligatoria.";
+                      if (!familiares.cel_madre) errs.cel_madre = "El celular de la madre es obligatorio.";
+                      if (!familiares.ocup_madre.trim()) errs.ocup_madre = "La ocupación de la madre es obligatoria.";
+                      if (!familiares.nom_padre.trim()) errs.nom_padre = "El nombre del padre es obligatorio.";
+                      if (!familiares.dir_padre) errs.dir_padre = "La dirección del padre es obligatoria.";
+                      if (!familiares.cel_padre) errs.cel_padre = "El celular del padre es obligatorio.";
+                      if (!familiares.ocup_padre.trim()) errs.ocup_padre = "La ocupación del padre es obligatoria.";
+                      setErroresPaso(errs);
+                      if (Object.keys(errs).length === 0) setPaso(4);
+                    }}
                     className="px-6 py-2 text-sm font-semibold text-primary-foreground bg-primary rounded-lg hover:bg-primary/90 transition-colors"
                   >
                     Siguiente →
@@ -1363,7 +1406,7 @@ export function InscripcionView({ onVolver }: InscripcionViewProps) {
                   <button
                     disabled={!todosDocsCargados || cargando}
                     onClick={handleEnviar}
-                    className="px-6 py-2 text-sm font-semibold text-primary-foreground bg-accent rounded-lg hover:bg-accent/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
+                    className="px-6 py-2 text-sm font-semibold text-primary-foreground rounded-lg transition-colors flex items-center gap-2 disabled:cursor-not-allowed bg-primary hover:bg-primary/90 disabled:bg-primary/40"
                   >
                     {cargando ? (
                       <>

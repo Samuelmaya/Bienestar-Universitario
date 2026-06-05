@@ -94,12 +94,37 @@ export interface StudentResponse {
 }
 
 export interface StudentProfile {
-  estudiante: Record<string, unknown>;
-  informacion_academica: Record<string, unknown>;
-  datos_generales: Record<string, unknown>;
-  datos_familiares: Record<string, unknown>;
-  inscripcion: Record<string, unknown>;
-  documentos: Record<string, unknown>[];
+  estudiante: StudentInfo & { barrio?: string; estado_civil?: string };
+  informacion_academica: AcademicInfo & { anio_promocion?: number };
+  datos_generales: GeneralInfo;
+  datos_familiares: FamilyInfo;
+  inscripcion: {
+    id_inscripcion: number;
+    fecha: string;
+    estado: string;
+    cod_deporte: number;
+    nombre_deporte: string;
+  } | null;
+  inscripciones: {
+    id_inscripcion: number;
+    id_estudiante: number;
+    cod_deporte: number;
+    fecha: string;
+    estado: string;
+    deporte?: {
+      cod_deporte: number;
+      nom_deporte: string;
+    };
+  }[];
+  documentos: {
+    id_documento: number;
+    id_estudiante: number;
+    tipo_documento: string;
+    nombre_archivo: string;
+    url_archivo: string;
+    fecha_carga: string;
+    download_url: string;
+  }[];
 }
 
 export interface StudentOperationResponse {

@@ -36,6 +36,10 @@ export async function listarEstudiantes(): Promise<StudentResponse[]> {
   return request<StudentResponse[]>("/students");
 }
 
+export async function listarPerfiles(): Promise<StudentResponse[]> {
+  return request<StudentResponse[]>("/students/profile");
+}
+
 export async function obtenerEstudiante(id_estudiante: number): Promise<StudentResponse> {
   return request<StudentResponse>(`/students/${id_estudiante}`);
 }

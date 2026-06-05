@@ -3,12 +3,13 @@ import type { InscripcionItem } from "@/lib/api";
 
 type Props = {
   inscripcion: InscripcionItem;
+  triggerElement: HTMLElement | null;
   onClose: () => void;
 };
 
-export function InscripcionDetailModal({ inscripcion, onClose }: Props) {
+export function InscripcionDetailModal({ inscripcion, triggerElement, onClose }: Props) {
   return (
-    <ReusableModal onClose={onClose} maxWidth="840px">
+    <ReusableModal triggerElement={triggerElement} onClose={onClose} maxWidth="840px">
       <div className="space-y-6">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
           <div>
@@ -151,9 +152,25 @@ export function InscripcionDetailModal({ inscripcion, onClose }: Props) {
           <h3 className="text-sm font-semibold">Documentos enviados</h3>
           <div className="mt-4 grid gap-3 sm:grid-cols-2">
             {Object.entries(inscripcion.documentos).map(([label, value]) => (
-              <div key={label} className="rounded-2xl bg-white/80 p-3 text-sm">
-                <p className="font-semibold capitalize">{label.replaceAll("_", " ")}</p>
-                <p className="mt-1 text-muted-foreground">{value || "No cargado"}</p>
+              <div key={label} className="rounded-2xl bg-white/80 p-3 text-sm flex justify-between items-center gap-2">
+                <div>
+                  <p className="font-semibold capitalize text-xs text-foreground">{label.replaceAll("_", " ")}</p>
+                  <p className="mt-1 text-xs text-muted-foreground truncate max-w-[200px]">
+                    {value ? "Archivo cargado" : "No cargado"}
+                  </p>
+                </div>
+                {value ? (
+                  <a
+                    href={value}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center rounded-lg bg-primary/10 px-3 py-1.5 text-xs font-semibold text-primary hover:bg-primary/20 transition-colors"
+                  >
+                    Ver archivo
+                  </a>
+                ) : (
+                  <span className="text-xs text-muted-foreground/50 font-medium">--</span>
+                )}
               </div>
             ))}
           </div>

@@ -17,6 +17,7 @@ import {
   MapPin,
   LayoutDashboard,
   CalendarRange,
+  CalendarPlus,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth, type Role } from "@/lib/auth";
@@ -58,7 +59,7 @@ type NavGroup = {
 };
 
 // Rutas que usan el layout autenticado con sidebar
-const PROTECTED_PATHS = ["/panel", "/dashboard"];
+const PROTECTED_PATHS = ["/panel", "/dashboard", "/peticiones"];
 
 const navItems: NavItem[] = [
   { to: "/panel", label: "Inicio", icon: Home, requiresAuth: true },
@@ -73,6 +74,12 @@ const navItems: NavItem[] = [
     search: { seccion: "reservas" },
     label: "Reservas",
     icon: ClipboardList,
+    roles: ["administrador"],
+  },
+  {
+    to: "/peticiones",
+    label: "Nueva reserva",
+    icon: CalendarPlus,
     roles: ["administrador"],
   },
   {

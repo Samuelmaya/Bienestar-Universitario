@@ -1,6 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import {
-  CalendarPlus,
   Trophy,
   Activity,
   Users,
@@ -58,13 +57,6 @@ function PublicHome() {
             los horarios del area de Bienestar Deportivo de la UPC.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
-            <Link
-              to="/peticiones"
-              className="inline-flex items-center gap-2 rounded-md bg-white px-5 py-3 font-semibold text-primary shadow transition hover:bg-white/90"
-            >
-              <CalendarPlus className="h-4 w-4" />
-              Reservar
-            </Link>
 
             {isAuthenticated ? (
               <Link
@@ -95,8 +87,7 @@ function PublicHome() {
                 to="/vacacionales"
                 className="inline-flex items-center gap-2 rounded-md border border-white/40 bg-white/10 px-5 py-3 font-semibold text-white backdrop-blur transition hover:bg-white/20"
               >
-                <ClipboardCheck className="h-4 w-4" />
-                Vacacionales
+                Inscripción Vacacionales <ArrowRight className="h-4 w-4" />
               </Link>
             )}
           </div>
