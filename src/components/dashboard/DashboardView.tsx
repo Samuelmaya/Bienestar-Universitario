@@ -19,7 +19,7 @@ import ReactECharts from "echarts-for-react";
 import { Sparklines, SparklinesLine } from "react-sparklines";
 import { obtenerDashboard } from "@/services/dashboard.service";
 import type { DashboardResponse } from "@/shared/dtos/dashboard.dto";
-
+import { ExportButtons } from "@/components/ui/Exportbuttons";
 /* ═══════════ Paletas ═══════════ */
 
 const COLORS_INVENTARIO = ["#16a34a", "#84cc16", "#65a30d"];
@@ -628,8 +628,23 @@ export function DashboardView() {
   };
 
   return (
-    <div className="space-y-6">
-      {/* ── Stat Cards ── */}
+  <div className="space-y-6">
+ 
+    /* Header con título y botones de exportación *\/
+    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+      <div>
+        <h2 className="text-xl font-bold tracking-tight text-foreground">
+          Dashboard deportivo
+        </h2>
+        <p className="text-xs text-muted-foreground mt-0.5">
+          Resumen general del sistema
+        </p>
+      </div>
+      <ExportButtons />
+    </div>
+ 
+    {/* ── Stat Cards ── *\/}
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">      {/* ── Stat Cards ── */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
         <motion.div
           className="lg:col-span-2"

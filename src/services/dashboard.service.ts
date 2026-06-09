@@ -20,3 +20,15 @@ export async function obtenerDashboard(): Promise<DashboardResponse> {
 
   return response.json();
 }
+
+export async function exportarDashboard(format: "excel" | "pdf"): Promise<Blob> {
+  const response = await authFetch(`${API_BASE}/dashboard/export?format=${format}`, {
+    method: "GET",
+  });
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({}));
+    throw new Error(error.detail || `Error ${response.status}`);
+  }
+
+  return response.blob();
+}

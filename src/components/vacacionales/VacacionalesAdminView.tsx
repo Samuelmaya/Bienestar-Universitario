@@ -19,7 +19,6 @@ import {
   toggleConfigVacacional,
 } from "@/services/vacacional.service";
 import type { VacacionalInscripcion } from "@/shared/dtos/vacacional.dto";
-
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function formatFecha(iso: string) {
@@ -29,6 +28,8 @@ function formatFecha(iso: string) {
     day: "numeric",
   });
 }
+
+
 
 // ─── Componente ───────────────────────────────────────────────────────────────
 
@@ -113,6 +114,8 @@ export function VacacionalesAdminView() {
       setDeleteId(null);
     }
   };
+
+
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -271,7 +274,7 @@ export function VacacionalesAdminView() {
                     </td>
                     <td className="px-4 py-3 hidden lg:table-cell text-xs">
                       <span className="inline-flex items-center rounded-full bg-primary/10 px-2 py-0.5 text-primary font-medium">
-                        #{inscripcion.disciplina_deportiva_id}
+                        {inscripcion.deporte.nom_deporte}
                       </span>
                     </td>
                     <td className="px-4 py-3 hidden lg:table-cell text-xs text-muted-foreground">
