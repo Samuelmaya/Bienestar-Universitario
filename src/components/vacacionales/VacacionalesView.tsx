@@ -417,10 +417,20 @@ export function VacacionalesView({ onVolver }: VacacionalesViewProps) {
                     <input
                       ref={fileRef}
                       type="file"
-                      accept="image/*,.pdf"
+                      accept="image/*"
                       className="hidden"
                       onChange={(e) => {
                         const file = e.target.files?.[0] ?? null;
+                        if (file && !file.type.startsWith("image/")) {
+                          setComprobante(null);
+                          if (fileRef.current) fileRef.current.value = "";
+                          setErrors((prev) => ({
+                            ...prev,
+                            comprobante: "Solo se permiten archivos de imagen.",
+                          }));
+                          return;
+                        }
+
                         setComprobante(file);
                         setErrors((prev) => ({ ...prev, comprobante: "" }));
                       }}
@@ -452,7 +462,7 @@ export function VacacionalesView({ onVolver }: VacacionalesViewProps) {
                             Haz clic para seleccionar un archivo
                           </p>
                           <p className="text-xs text-muted-foreground">
-                            Formatos aceptados: imagen o PDF
+                            Formatos aceptados: solo imágenes
                           </p>
                         </>
                       )}
