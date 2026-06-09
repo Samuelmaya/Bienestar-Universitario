@@ -118,3 +118,20 @@ export async function obtenerVacacional(id: number): Promise<VacacionalInscripci
 export async function eliminarVacacional(id: number): Promise<void> {
   await request<void>(`/vacacionales/${id}`, { method: "DELETE" });
 }
+
+/**
+ * GET /vacacionales/cupos
+ * Consulta el conteo de inscritos por disciplina deportiva.
+ * Endpoint público (no requiere token).
+ */
+export async function obtenerCuposVacacional(): Promise<Record<number, number>> {
+  const response = await authFetch(`${API_BASE}/vacacionales/cupos`);
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({}));
+    throw new Error(error.detail || `Error ${response.status}`);
+  }
+  const data: Record<string, number> = await response.json();
+  return Object.fromEntries(
+    Object.entries(data).map(([k, v]) => [Number(k), v])
+  );
+}

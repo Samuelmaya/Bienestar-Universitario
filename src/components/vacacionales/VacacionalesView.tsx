@@ -1,14 +1,10 @@
 import { useEffect, useRef, useState } from "react";
+import { CheckCircle2, AlertCircle, Loader2, Upload, X, CalendarRange, Trophy } from "lucide-react";
 import {
-  CheckCircle2,
-  AlertCircle,
-  Loader2,
-  Upload,
-  X,
-  CalendarRange,
-  Trophy,
-} from "lucide-react";
-import { obtenerConfigVacacional, crearInscripcionVacacional } from "@/services/vacacional.service";
+  obtenerConfigVacacional,
+  crearInscripcionVacacional,
+  obtenerCuposVacacional,
+} from "@/services/vacacional.service";
 import { listarDeportes } from "@/shared/services/deportes.service";
 import type { Deporte } from "@/shared/dtos/deporte.dto";
 import {
@@ -46,7 +42,28 @@ interface VacacionalesViewProps {
 }
 
 export function VacacionalesView({ onVolver }: VacacionalesViewProps) {
-  // Estado de config
+  const [cupos, setCupos] = useState<Record<number, number>>({});
+  useEffect(() => {
+    obtenerConfigVacacional()
+      .then((c) => setFormularioActivo(c.activo))
+      .catch(() => setFormularioActivo(false))
+      .finally(() => setConfigLoading(false));
+
+    listarDeportes()
+      .then((data) => {
+        setDeportes(data);
+        if (data.length > 0) {
+          setForm((prev) => ({ ...prev, disciplina_deportiva_id: data[0].cod_deporte }));
+        }
+      })
+      .catch(() => {})
+      .finally(() => setDeportesLoading(false));
+
+    obtenerCuposVacacional()
+      .then(setCupos)
+      .catch(() => {}); // silencioso: si falla, no bloqueamos el formulario
+  }, []);
+  // Estado de config}
   const [configLoading, setConfigLoading] = useState(true);
   const [formularioActivo, setFormularioActivo] = useState<boolean | null>(null);
 
@@ -84,22 +101,26 @@ export function VacacionalesView({ onVolver }: VacacionalesViewProps) {
   }, []);
 
   // ── Comprobante necesario ──
-  const necesitaComprobante =
-    form.informacion_referencia !== REFERENCIA_SIN_COMPROBANTE;
+  const necesitaComprobante = form.informacion_referencia !== REFERENCIA_SIN_COMPROBANTE;
 
   // ── Validación cliente ──
   const validar = (): boolean => {
     const e: Record<string, string> = {};
 
     if (!form.nombre_completo.trim()) e.nombre_completo = "El nombre completo es requerido.";
-    if (!validarEdad(form.edad))
-      e.edad = "La edad debe ser un número entre 1 y 14.";
-    if (!form.numero_documento.trim())
-      e.numero_documento = "El número de documento es requerido.";
+    if (!validarEdad(form.edad)) e.edad = "La edad debe ser un número entre 1 y 14.";
+    if (!form.numero_documento.trim()) e.numero_documento = "El número de documento es requerido.";
     if (!validarTelefono(form.telefono))
       e.telefono = "El teléfono debe tener exactamente 10 dígitos.";
-    if (!form.disciplina_deportiva_id)
+    if (!form.disciplina_deportiva_id) {
       e.disciplina_deportiva_id = "Selecciona una disciplina deportiva.";
+    } else {
+      const deporte = deportes.find((d) => d.cod_deporte === form.disciplina_deportiva_id);
+      const inscritos = cupos[form.disciplina_deportiva_id] ?? 0;
+      if (deporte?.cupo_maximo != null && inscritos >= deporte.cupo_maximo) {
+        e.disciplina_deportiva_id = "Esta disciplina ya no tiene cupos disponibles.";
+      }
+    }
     if (necesitaComprobante && !comprobante)
       e.comprobante = "El comprobante de pago de la póliza de seguro es requerido.";
 
@@ -120,9 +141,7 @@ export function VacacionalesView({ onVolver }: VacacionalesViewProps) {
       });
       setEnviado(true);
     } catch (err) {
-      setServerError(
-        err instanceof Error ? err.message : "Error al enviar el formulario.",
-      );
+      setServerError(err instanceof Error ? err.message : "Error al enviar el formulario.");
     } finally {
       setSending(false);
     }
@@ -161,9 +180,8 @@ export function VacacionalesView({ onVolver }: VacacionalesViewProps) {
               El formulario no está disponible
             </p>
             <p className="text-sm text-muted-foreground mb-6">
-              Las inscripciones vacacionales no se encuentran activas en este
-              momento. Intenta de nuevo más tarde o consulta con el área de
-              Bienestar Deportivo.
+              Las inscripciones vacacionales no se encuentran activas en este momento. Intenta de
+              nuevo más tarde o consulta con el área de Bienestar Deportivo.
             </p>
             {onVolver && (
               <button
@@ -190,12 +208,10 @@ export function VacacionalesView({ onVolver }: VacacionalesViewProps) {
             <CheckCircle2 className="h-16 w-16 text-white mx-auto" />
           </div>
           <div className="p-8">
-            <h2 className="text-2xl font-bold text-primary mb-2">
-              ¡Inscripción enviada!
-            </h2>
+            <h2 className="text-2xl font-bold text-primary mb-2">¡Inscripción enviada!</h2>
             <p className="text-muted-foreground text-sm mb-6">
-              Tu inscripción vacacional fue registrada exitosamente. El área de
-              Bienestar Deportivo se pondrá en contacto contigo pronto.
+              Tu inscripción vacacional fue registrada exitosamente. El área de Bienestar Deportivo
+              se pondrá en contacto contigo pronto.
             </p>
             {onVolver && (
               <button
@@ -217,16 +233,13 @@ export function VacacionalesView({ onVolver }: VacacionalesViewProps) {
   return (
     <div className="min-h-screen bg-muted">
       <div className="max-w-2xl mx-auto px-4 py-12 pb-16">
-
         {/* Encabezado */}
         <div className="text-center mb-10">
           <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-primary mb-4">
             <Trophy className="h-3.5 w-3.5" />
             Bienestar Deportivo UPC
           </div>
-          <h1 className="text-4xl font-bold text-primary mb-2">
-            Inscripción Vacacional
-          </h1>
+          <h1 className="text-4xl font-bold text-primary mb-2">Inscripción Vacacional</h1>
           <p className="text-muted-foreground">
             Completa el formulario para inscribirte a los cursos vacacionales.
           </p>
@@ -265,7 +278,9 @@ export function VacacionalesView({ onVolver }: VacacionalesViewProps) {
                 <div>
                   <label className="block text-xs font-bold text-primary uppercase tracking-wide mb-2">
                     Edad <span className="text-destructive">*</span>{" "}
-                    <span className="font-normal text-muted-foreground normal-case tracking-normal">(máx. 14 años)</span>
+                    <span className="font-normal text-muted-foreground normal-case tracking-normal">
+                      (máx. 14 años)
+                    </span>
                   </label>
                   <input
                     type="number"
@@ -276,9 +291,7 @@ export function VacacionalesView({ onVolver }: VacacionalesViewProps) {
                     onChange={(e) => update("edad", parseInt(e.target.value, 10) || 0)}
                     className="w-full px-3 py-2 border-2 border-secondary/30 rounded-lg bg-muted text-foreground focus:border-primary focus:bg-white focus:ring-2 focus:ring-primary/20 outline-none transition-all"
                   />
-                  {errors.edad && (
-                    <p className="text-xs text-destructive mt-1">{errors.edad}</p>
-                  )}
+                  {errors.edad && <p className="text-xs text-destructive mt-1">{errors.edad}</p>}
                 </div>
                 <div>
                   <label className="block text-xs font-bold text-primary uppercase tracking-wide mb-2">
@@ -301,16 +314,16 @@ export function VacacionalesView({ onVolver }: VacacionalesViewProps) {
               <div>
                 <label className="block text-xs font-bold text-primary uppercase tracking-wide mb-2">
                   Teléfono <span className="text-destructive">*</span>{" "}
-                  <span className="font-normal text-muted-foreground normal-case tracking-normal">(exactamente 10 dígitos)</span>
+                  <span className="font-normal text-muted-foreground normal-case tracking-normal">
+                    (exactamente 10 dígitos)
+                  </span>
                 </label>
                 <input
                   type="tel"
                   placeholder="3XX XXX XXXX"
                   value={form.telefono}
                   maxLength={10}
-                  onChange={(e) =>
-                    update("telefono", e.target.value.replace(/\D/g, ""))
-                  }
+                  onChange={(e) => update("telefono", e.target.value.replace(/\D/g, ""))}
                   className="w-full px-3 py-2 border-2 border-secondary/30 rounded-lg bg-muted text-foreground focus:border-primary focus:bg-white focus:ring-2 focus:ring-primary/20 outline-none transition-all"
                 />
                 {errors.telefono && (
@@ -325,9 +338,7 @@ export function VacacionalesView({ onVolver }: VacacionalesViewProps) {
                 </label>
                 <select
                   value={form.informacion_referencia}
-                  onChange={(e) =>
-                    update("informacion_referencia", e.target.value)
-                  }
+                  onChange={(e) => update("informacion_referencia", e.target.value)}
                   className="w-full px-3 py-2 border-2 border-secondary/30 rounded-lg bg-muted text-foreground focus:border-primary focus:bg-white focus:ring-2 focus:ring-primary/20 outline-none transition-all"
                 >
                   {INFORMACION_REFERENCIA_OPTIONS.map((ref) => (
@@ -355,18 +366,28 @@ export function VacacionalesView({ onVolver }: VacacionalesViewProps) {
                     }
                     className="w-full px-3 py-2 border-2 border-secondary/30 rounded-lg bg-muted text-foreground focus:border-primary focus:bg-white focus:ring-2 focus:ring-primary/20 outline-none transition-all"
                   >
-                    {deportes.map((d) => (
-                      <option key={d.cod_deporte} value={d.cod_deporte}>
-                        {d.nom_deporte}
-                        {d.cupo_maximo ? ` (cupo máx. ${d.cupo_maximo})` : ""}
-                      </option>
-                    ))}
+                    {deportes
+                      .filter((d) => {
+                        const inscritos = cupos[d.cod_deporte] ?? 0;
+                        return d.cupo_maximo == null || inscritos < d.cupo_maximo;
+                      })
+                      .map((d) => {
+                        const inscritos = cupos[d.cod_deporte] ?? 0;
+                        const disponibles =
+                          d.cupo_maximo != null ? d.cupo_maximo - inscritos : null;
+                        return (
+                          <option key={d.cod_deporte} value={d.cod_deporte}>
+                            {d.nom_deporte}
+                            {disponibles != null
+                              ? ` (${disponibles} cupo${disponibles === 1 ? "" : "s"} disponible${disponibles === 1 ? "" : "s"})`
+                              : ""}
+                          </option>
+                        );
+                      })}
                   </select>
                 )}
                 {errors.disciplina_deportiva_id && (
-                  <p className="text-xs text-destructive mt-1">
-                    {errors.disciplina_deportiva_id}
-                  </p>
+                  <p className="text-xs text-destructive mt-1">{errors.disciplina_deportiva_id}</p>
                 )}
               </div>
 
@@ -378,8 +399,8 @@ export function VacacionalesView({ onVolver }: VacacionalesViewProps) {
                     <span className="text-destructive">*</span>
                   </label>
                   <p className="text-xs text-muted-foreground mb-3">
-                    Adjunta el comprobante de pago de la póliza de seguro requerido para
-                    participar en los cursos vacacionales.
+                    Adjunta el comprobante de pago de la póliza de seguro requerido para participar
+                    en los cursos vacacionales.
                   </p>
 
                   {/* Zona de carga */}
@@ -408,9 +429,7 @@ export function VacacionalesView({ onVolver }: VacacionalesViewProps) {
                       {comprobante ? (
                         <>
                           <CheckCircle2 className="h-8 w-8 text-primary" />
-                          <p className="text-sm font-semibold text-primary">
-                            {comprobante.name}
-                          </p>
+                          <p className="text-sm font-semibold text-primary">{comprobante.name}</p>
                           <p className="text-xs text-muted-foreground">
                             {(comprobante.size / 1024).toFixed(1)} KB
                           </p>
@@ -450,8 +469,8 @@ export function VacacionalesView({ onVolver }: VacacionalesViewProps) {
                 <div className="flex items-start gap-3 rounded-xl bg-green-500/10 border border-green-500/20 p-4">
                   <CheckCircle2 className="h-5 w-5 text-green-600 shrink-0 mt-0.5" />
                   <p className="text-sm text-green-700">
-                    Como <strong>Hijo de Funcionario</strong>, no se requiere comprobante
-                    de pago de póliza de seguro.
+                    Como <strong>Hijo de Funcionario</strong>, no se requiere comprobante de pago de
+                    póliza de seguro.
                   </p>
                 </div>
               )}
