@@ -6,6 +6,10 @@ export type VacacionalConfig = {
   created_at: string;
   updated_at: string;
 };
+export type deporte ={
+  cod_deporte: number;
+  nom_deporte: string;
+}
 
 // ─── Enum de referencia ───────────────────────────────────────────────────────
 
@@ -53,6 +57,7 @@ export type VacacionalInscripcion = {
   comprobante_url: string | null;
   comprobante_file_id: string | null;
   disciplina_deportiva_id: number;
+  deporte:deporte;
   created_at: string;
   updated_at: string;
 };
