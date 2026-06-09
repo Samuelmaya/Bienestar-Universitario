@@ -3,15 +3,21 @@ const medals = [
     id: 1,
     estudiante: "Harold Solano",
     disciplina: "Taekwondo",
+    fecha: "2026-06-09",
     evento: "Panamericanos 2026",
+    ciudad_evento: "Bogotá",
     modalidad: "INDIVIDUAL",
+    tipo_medalla: "ORO",
   },
   {
     id: 2,
     estudiante: "María Gómez",
     disciplina: "Fútbol",
+    fecha: "2026-05-20",
     evento: "Torneo UPC",
+    ciudad_evento: "Valledupar",
     modalidad: "GRUPAL",
+    tipo_medalla: "PLATA",
   },
 ];
 
@@ -35,7 +41,19 @@ export default function MedalTable() {
           </th>
 
           <th className="px-6 py-4 text-sm font-semibold text-gray-600">
+            FECHA
+          </th>
+
+          <th className="px-6 py-4 text-sm font-semibold text-gray-600">
             EVENTO
+          </th>
+
+          <th className="px-6 py-4 text-sm font-semibold text-gray-600">
+            CIUDAD
+          </th>
+
+          <th className="px-6 py-4 text-sm font-semibold text-gray-600">
+            MEDALLA
           </th>
 
           <th className="px-6 py-4 text-sm font-semibold text-gray-600">
@@ -69,7 +87,32 @@ export default function MedalTable() {
             </td>
 
             <td className="px-6 py-4 text-sm text-gray-700">
+              {medal.fecha}
+            </td>
+
+            <td className="px-6 py-4 text-sm text-gray-700">
               {medal.evento}
+            </td>
+
+            <td className="px-6 py-4 text-sm text-gray-700">
+              {medal.ciudad_evento}
+            </td>
+
+            <td className="px-6 py-4">
+              <span
+                className={`
+                  px-3 py-1 rounded-full text-xs font-medium
+                  ${
+                    medal.tipo_medalla === "ORO"
+                      ? "bg-yellow-100 text-yellow-700"
+                      : medal.tipo_medalla === "PLATA"
+                      ? "bg-gray-200 text-gray-700"
+                      : "bg-orange-100 text-orange-700"
+                  }
+                `}
+              >
+                {medal.tipo_medalla}
+              </span>
             </td>
 
             <td className="px-6 py-4">
