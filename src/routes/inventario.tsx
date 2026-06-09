@@ -24,7 +24,6 @@ export const Route = createFileRoute("/inventario")({
   head: () => ({ meta: [{ title: "Inventario Deportivo — UPC" }] }),
   component: ProtectedInventario,
 });
-
 function ProtectedInventario() {
   return (
     <RequireAuth>
