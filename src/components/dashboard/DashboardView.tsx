@@ -629,8 +629,7 @@ export function DashboardView() {
 
   return (
   <div className="space-y-6">
- 
-    /* Header con título y botones de exportación *\/
+
     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
       <div>
         <h2 className="text-xl font-bold tracking-tight text-foreground">
