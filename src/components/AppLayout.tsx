@@ -9,6 +9,7 @@ import {
   Menu,
   X,
   Trophy,
+  Medal,
   Package,
   FolderOpen,
   Shield,
@@ -59,7 +60,7 @@ type NavGroup = {
 };
 
 // Rutas que usan el layout autenticado con sidebar
-const PROTECTED_PATHS = ["/panel", "/dashboard", "/peticiones"];
+const PROTECTED_PATHS = ["/panel", "/dashboard", "/peticiones", "/medallas"];
 
 const navItems: NavItem[] = [
   { to: "/panel", label: "Inicio", icon: Home, requiresAuth: true },
@@ -110,6 +111,14 @@ const navItems: NavItem[] = [
     icon: Trophy,
     roles: ["administrador", "entrenador"],
   },
+
+  {
+  to: "/medallas",
+  label: "Medallas",
+  icon: Medal,
+  roles: ["administrador"],
+},
+
   {
     to: "/panel",
     search: { seccion: "roles" },

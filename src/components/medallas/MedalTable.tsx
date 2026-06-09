@@ -1,38 +1,137 @@
+const medals = [
+  {
+    id: 1,
+    estudiante: "Harold Solano",
+    disciplina: "Taekwondo",
+    evento: "Panamericanos 2026",
+    modalidad: "INDIVIDUAL",
+  },
+  {
+    id: 2,
+    estudiante: "María Gómez",
+    disciplina: "Fútbol",
+    evento: "Torneo UPC",
+    modalidad: "GRUPAL",
+  },
+];
+
 export default function MedalTable() {
   return (
-    <div className="bg-white rounded shadow p-4">
-      <table className="w-full border-collapse">
-        <thead>
-          <tr className="border-b">
-            <th className="text-left p-2">Estudiante</th>
-            <th className="text-left p-2">Disciplina</th>
-            <th className="text-left p-2">Evento</th>
-            <th className="text-left p-2">Ciudad</th>
-            <th className="text-left p-2">Modalidad</th>
-            <th className="text-left p-2">Acciones</th>
-          </tr>
-        </thead>
+    <table className="w-full">
 
-        <tbody>
-          <tr className="border-b">
-            <td className="p-2">Juan Pérez</td>
-            <td className="p-2">Taekwondo</td>
-            <td className="p-2">Juegos Nacionales</td>
-            <td className="p-2">Bogotá</td>
-            <td className="p-2">INDIVIDUAL</td>
+      <thead className="bg-gray-50 border-b">
+        <tr className="text-left">
 
-            <td className="p-2 flex gap-2">
-              <button className="bg-yellow-500 text-white px-3 py-1 rounded">
-                Editar
-              </button>
+          <th className="px-6 py-4 text-sm font-semibold text-gray-600">
+            ID
+          </th>
 
-              <button className="bg-red-600 text-white px-3 py-1 rounded">
-                Eliminar
-              </button>
+          <th className="px-6 py-4 text-sm font-semibold text-gray-600">
+            ESTUDIANTE
+          </th>
+
+          <th className="px-6 py-4 text-sm font-semibold text-gray-600">
+            DISCIPLINA
+          </th>
+
+          <th className="px-6 py-4 text-sm font-semibold text-gray-600">
+            EVENTO
+          </th>
+
+          <th className="px-6 py-4 text-sm font-semibold text-gray-600">
+            MODALIDAD
+          </th>
+
+          <th className="px-6 py-4 text-right text-sm font-semibold text-gray-600">
+            ACCIONES
+          </th>
+
+        </tr>
+      </thead>
+
+      <tbody>
+        {medals.map((medal) => (
+          <tr
+            key={medal.id}
+            className="border-b last:border-none hover:bg-gray-50 transition"
+          >
+
+            <td className="px-6 py-4 text-sm text-gray-700">
+              #{medal.id}
             </td>
+
+            <td className="px-6 py-4 font-medium text-gray-900">
+              {medal.estudiante}
+            </td>
+
+            <td className="px-6 py-4 text-sm text-gray-700">
+              {medal.disciplina}
+            </td>
+
+            <td className="px-6 py-4 text-sm text-gray-700">
+              {medal.evento}
+            </td>
+
+            <td className="px-6 py-4">
+              <span
+                className="
+                  bg-green-100
+                  text-green-700
+                  px-3
+                  py-1
+                  rounded-full
+                  text-xs
+                  font-medium
+                "
+              >
+                {medal.modalidad}
+              </span>
+            </td>
+
+            <td className="px-6 py-4">
+              <div className="flex justify-end gap-2">
+
+                <button
+                  className="
+                    border
+                    border-green-500
+                    text-green-700
+                    px-4
+                    py-1.5
+                    rounded-xl
+                    text-sm
+                    font-medium
+                    hover:bg-green-50
+                    transition
+                  "
+                >
+                  Editar
+                </button>
+
+                <button
+                  className="
+                    border
+                    border-red-300
+                    text-red-500
+                    px-4
+                    py-1.5
+                    rounded-xl
+                    text-sm
+                    font-medium
+                    hover:bg-red-50
+                    transition
+                  "
+                >
+                  Eliminar
+                </button>
+
+              </div>
+            </td>
+
           </tr>
-        </tbody>
-      </table>
-    </div>
+        ))}
+      </tbody>
+
+    </table>
   );
 }

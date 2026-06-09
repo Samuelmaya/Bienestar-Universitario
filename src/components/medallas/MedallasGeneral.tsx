@@ -2,18 +2,51 @@ import MedalTable from "./MedalTable";
 
 export function MedallasGeneral() {
   return (
-    <div className="p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">
-          Gestión de Medallas
-        </h1>
+    <div className="w-full px-6 py-8">
+      
+      {/* HEADER */}
+      <div className="flex items-start justify-between mb-8">
+        <div>
+          <h1 className="text-[48px] font-bold tracking-tight text-black">
+            Gestión de Premios
+          </h1>
 
-        <button className="bg-blue-600 text-white px-4 py-2 rounded-lg">
-          Nueva Medalla
+          <p className="text-[20px] text-gray-600 mt-2">
+            Administra las medallas y logros deportivos de los estudiantes.
+          </p>
+        </div>
+
+        <button
+          className="
+            bg-[#008236]
+            hover:bg-[#006d2d]
+            text-white
+            px-8
+            py-4
+            rounded-2xl
+            font-semibold
+            text-lg
+            transition
+            shadow-sm
+          "
+        >
+          + Nueva medalla
         </button>
       </div>
 
-      <MedalTable />
+      {/* TABLA */}
+      <div
+        className="
+          bg-white
+          border
+          border-gray-200
+          rounded-[30px]
+          overflow-hidden
+          shadow-sm
+        "
+      >
+        <MedalTable />
+      </div>
     </div>
   );
 }
