@@ -141,7 +141,10 @@ export function VacacionalesView({ onVolver }: VacacionalesViewProps) {
       });
       setEnviado(true);
     } catch (err) {
-      setServerError(err instanceof Error ? err.message : "Error al enviar el formulario.");
+      const mensaje = err instanceof Error ? err.message : "";
+      if (mensaje.includes("Documento ya registrado")) {
+        setServerError(mensaje);
+      }
     } finally {
       setSending(false);
     }
