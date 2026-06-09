@@ -32,7 +32,7 @@ export function ArticuloCard({ articulo, onEdit, onDelete }: Props) {
       <div className="grid grid-cols-2 gap-2 text-xs text-muted-foreground">
         <span>Cantidad: {articulo.cantidad}</span>
         <span>Dañados: {articulo.dañados}</span>
-        <span>Categoria: {articulo.id_categoria}</span>
+        <span>Categoria: {articulo.categoria?.nombre || "Sin categoria"}</span>
       </div>
 
       <div className="flex gap-2 mt-4 pt-3 border-t border-border">

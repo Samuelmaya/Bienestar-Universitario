@@ -85,7 +85,14 @@ export function EditarArticuloModal({ articulo, triggerElement, onClose, onUpdat
         id_categoria: Number(form.id_categoria),
         estado: form.estado,
       });
-      onUpdated(updated);
+
+      const categoriaEncontrada = categorias.find(
+        (c) => c.id_categoria === Number(form.id_categoria),
+      );
+      onUpdated({
+        ...updated,
+        categoria: categoriaEncontrada ? { nombre: categoriaEncontrada.nombre } : undefined,
+      });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error actualizando articulo");
     } finally {

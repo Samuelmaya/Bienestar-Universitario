@@ -7,14 +7,16 @@ import { ArticuloCard } from "./ArticuloCard";
 import { CrearArticuloModal } from "./CrearArticuloModal";
 import { EditarArticuloModal } from "./EditarArticuloModal";
 import { EliminarArticuloModal } from "./EliminarArticuloModal";
-
+import { listarCategorias } from "@/shared/services/categorias.service";
+import type { CategoriaArticulo } from "@/shared/dtos/categoria.dto";
 export function ArticulosGeneral() {
   const [articulos, setArticulos] = useState<ArticuloDeportivo[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
   const [search, setSearch] = useState("");
-
+  const [categorias, setCategorias] = useState<CategoriaArticulo[]>([]);
+  const [categoriaFiltro, setCategoriaFiltro] = useState<number | null>(null);
   // ── Toggle vacacional ──
   const [vacacionalActivo, setVacacionalActivo] = useState<boolean | null>(null);
   const [toggleLoading, setToggleLoading] = useState(false);
@@ -42,19 +44,28 @@ export function ArticulosGeneral() {
   useEffect(() => {
     loadArticulos();
     // Cargar estado actual del toggle vacacional
+    listarCategorias()
+      .then(setCategorias)
+      .catch(() => {});
     obtenerConfigVacacional()
       .then((c) => setVacacionalActivo(c.activo))
       .catch(() => setVacacionalActivo(false));
   }, []);
 
   const filtered = useMemo(() => {
-    if (!search.trim()) return articulos;
-    const query = search.toLowerCase();
-    return articulos.filter(
-      (a) =>
-        a.nombre.toLowerCase().includes(query) || a.observaciones?.toLowerCase().includes(query),
-    );
-  }, [search, articulos]);
+    let result = articulos;
+    if (categoriaFiltro !== null) {
+      result = result.filter((a) => a.id_categoria === categoriaFiltro);
+    }
+    if (search.trim()) {
+      const query = search.toLowerCase();
+      result = result.filter(
+        (a) =>
+          a.nombre.toLowerCase().includes(query) || a.observaciones?.toLowerCase().includes(query),
+      );
+    }
+    return result;
+  }, [search, categoriaFiltro, articulos]);
 
   const handleCreated = (articulo: ArticuloDeportivo) => {
     setArticulos((prev) => [articulo, ...prev]);
@@ -89,9 +100,7 @@ export function ArticulosGeneral() {
       const updated = await toggleConfigVacacional();
       setVacacionalActivo(updated.activo);
       setSuccessMsg(
-        updated.activo
-          ? "Inscripción vacacional activada."
-          : "Inscripción vacacional desactivada.",
+        updated.activo ? "Inscripción vacacional activada." : "Inscripción vacacional desactivada.",
       );
       setTimeout(() => setSuccessMsg(""), 4000);
     } catch (err) {
@@ -130,9 +139,7 @@ export function ArticulosGeneral() {
                 }`}
               />
             </button>
-            {toggleLoading && (
-              <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" />
-            )}
+            {toggleLoading && <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" />}
           </div>
 
           <button
@@ -147,7 +154,6 @@ export function ArticulosGeneral() {
           </button>
         </div>
       </div>
-
       <div className="mb-6 flex items-center gap-2">
         <div className="relative flex-1 max-w-sm">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -158,6 +164,22 @@ export function ArticulosGeneral() {
             className="w-full rounded-full border border-border bg-background px-4 py-2 pl-9 text-xs"
           />
         </div>
+        {categorias.length > 0 && (
+          <select
+            value={categoriaFiltro ?? ""}
+            onChange={(e) =>
+              setCategoriaFiltro(e.target.value === "" ? null : Number(e.target.value))
+            }
+            className="rounded-full border border-border bg-background px-4 py-2 text-xs"
+          >
+            <option value="">Todas las categorías</option>
+            {categorias.map((cat) => (
+              <option key={cat.id_categoria} value={cat.id_categoria}>
+                {cat.nombre}
+              </option>
+            ))}
+          </select>
+        )}
       </div>
 
       {successMsg && (
