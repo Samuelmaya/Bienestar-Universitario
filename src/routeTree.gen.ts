@@ -13,6 +13,7 @@ import { Route as VacacionalesRouteImport } from './routes/vacacionales'
 import { Route as RegistrosRouteImport } from './routes/registros'
 import { Route as PeticionesRouteImport } from './routes/peticiones'
 import { Route as PanelRouteImport } from './routes/panel'
+import { Route as MedallasRouteImport } from './routes/medallas'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as InventarioRouteImport } from './routes/inventario'
 import { Route as InscripcionRouteImport } from './routes/inscripcion'
@@ -38,6 +39,11 @@ const PeticionesRoute = PeticionesRouteImport.update({
 const PanelRoute = PanelRouteImport.update({
   id: '/panel',
   path: '/panel',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MedallasRoute = MedallasRouteImport.update({
+  id: '/medallas',
+  path: '/medallas',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -78,6 +84,7 @@ export interface FileRoutesByFullPath {
   '/inscripcion': typeof InscripcionRoute
   '/inventario': typeof InventarioRoute
   '/login': typeof LoginRoute
+  '/medallas': typeof MedallasRoute
   '/panel': typeof PanelRoute
   '/peticiones': typeof PeticionesRoute
   '/registros': typeof RegistrosRoute
@@ -90,6 +97,7 @@ export interface FileRoutesByTo {
   '/inscripcion': typeof InscripcionRoute
   '/inventario': typeof InventarioRoute
   '/login': typeof LoginRoute
+  '/medallas': typeof MedallasRoute
   '/panel': typeof PanelRoute
   '/peticiones': typeof PeticionesRoute
   '/registros': typeof RegistrosRoute
@@ -103,6 +111,7 @@ export interface FileRoutesById {
   '/inscripcion': typeof InscripcionRoute
   '/inventario': typeof InventarioRoute
   '/login': typeof LoginRoute
+  '/medallas': typeof MedallasRoute
   '/panel': typeof PanelRoute
   '/peticiones': typeof PeticionesRoute
   '/registros': typeof RegistrosRoute
@@ -117,6 +126,7 @@ export interface FileRouteTypes {
     | '/inscripcion'
     | '/inventario'
     | '/login'
+    | '/medallas'
     | '/panel'
     | '/peticiones'
     | '/registros'
@@ -129,6 +139,7 @@ export interface FileRouteTypes {
     | '/inscripcion'
     | '/inventario'
     | '/login'
+    | '/medallas'
     | '/panel'
     | '/peticiones'
     | '/registros'
@@ -141,6 +152,7 @@ export interface FileRouteTypes {
     | '/inscripcion'
     | '/inventario'
     | '/login'
+    | '/medallas'
     | '/panel'
     | '/peticiones'
     | '/registros'
@@ -154,6 +166,7 @@ export interface RootRouteChildren {
   InscripcionRoute: typeof InscripcionRoute
   InventarioRoute: typeof InventarioRoute
   LoginRoute: typeof LoginRoute
+  MedallasRoute: typeof MedallasRoute
   PanelRoute: typeof PanelRoute
   PeticionesRoute: typeof PeticionesRoute
   RegistrosRoute: typeof RegistrosRoute
@@ -188,6 +201,13 @@ declare module '@tanstack/react-router' {
       path: '/panel'
       fullPath: '/panel'
       preLoaderRoute: typeof PanelRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/medallas': {
+      id: '/medallas'
+      path: '/medallas'
+      fullPath: '/medallas'
+      preLoaderRoute: typeof MedallasRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -242,6 +262,7 @@ const rootRouteChildren: RootRouteChildren = {
   InscripcionRoute: InscripcionRoute,
   InventarioRoute: InventarioRoute,
   LoginRoute: LoginRoute,
+  MedallasRoute: MedallasRoute,
   PanelRoute: PanelRoute,
   PeticionesRoute: PeticionesRoute,
   RegistrosRoute: RegistrosRoute,
