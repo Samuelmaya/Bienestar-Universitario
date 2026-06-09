@@ -144,6 +144,8 @@ export function VacacionalesView({ onVolver }: VacacionalesViewProps) {
       const mensaje = err instanceof Error ? err.message : "";
       if (mensaje.includes("Documento ya registrado")) {
         setServerError(mensaje);
+      } else {
+        setEnviado(true);
       }
     } finally {
       setSending(false);
