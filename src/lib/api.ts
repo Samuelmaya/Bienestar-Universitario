@@ -296,3 +296,73 @@ export const rolesApi = {
       method: "DELETE",
     }),
 };
+
+//API de Medallas
+
+export interface Medalla {
+  id_medalla: number;
+  nombre_estudiante: string;
+  carrera: string;
+  disciplina: string;
+  fecha: string;
+  evento: string;
+  ciudad_evento: string;
+  modalidad: string;
+  tipo_medalla: string;
+}
+
+export interface MedallaCreate {
+  nombre_estudiante: string;
+  carrera: string;
+  disciplina: string;
+  fecha: string;
+  evento: string;
+  ciudad_evento: string;
+  modalidad: string;
+  tipo_medalla: string;
+}
+
+export interface MedallaUpdate {
+  nombre_estudiante?: string;
+  carrera?: string;
+  disciplina?: string;
+  fecha?: string;
+  evento?: string;
+  ciudad_evento?: string;
+  modalidad?: string;
+  tipo_medalla?: string;
+}
+
+export const medallasApi = {
+  list: () =>
+    request<Medalla[]>("/medals"),
+
+  get: (id_medalla: number) =>
+    request<Medalla>(`/medals/${id_medalla}`),
+
+  create: (data: MedallaCreate) =>
+    request<Medalla>("/medals", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+
+  update: (
+    id_medalla: number,
+    data: MedallaUpdate,
+  ) =>
+    request<Medalla>(
+      `/medals/${id_medalla}`,
+      {
+        method: "PATCH",
+        body: JSON.stringify(data),
+      },
+    ),
+
+  delete: (id_medalla: number) =>
+    request<void>(
+      `/medals/${id_medalla}`,
+      {
+        method: "DELETE",
+      },
+    ),
+};
