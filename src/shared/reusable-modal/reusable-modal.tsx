@@ -701,25 +701,30 @@ export function ReusableModal({
   };
 
   return (
-    <div
-      ref={overlayRef}
-      className="fixed inset-0 z-50 flex items-center justify-center"
-      style={{ backgroundColor: "rgba(0, 0, 0, 0)" }}
-    >
-      <div
-        ref={modalRef}
-        className="relative shadow-2xl"
-        style={{ backgroundColor, boxSizing: "border-box", overflow: "hidden" }}
-      >
+   <div
+  ref={overlayRef}
+  className="fixed inset-0 z-50 flex items-center justify-center"
+  style={{ backgroundColor: "rgba(0, 0, 0, 0)", pointerEvents: "none" }}  // 👈
+>
+  <div
+    ref={modalRef}
+    className="relative shadow-2xl"
+    style={{ backgroundColor, boxSizing: "border-box", overflow: "hidden", pointerEvents: "auto" }}  // 👈
+  >
+        {/* ── Drag handle — pointerEvents only on the visual pill, not the full bar ── */}
         {!isExpanded && (
           <div
-            className="absolute top-0 left-0 right-0 h-10 flex items-start justify-center pt-3 z-30 cursor-grab active:cursor-grabbing"
-            style={{ touchAction: "none" }}
-            onPointerDown={onDragStart}
+            className="absolute top-0 left-0 right-0 h-6 flex items-start justify-center pt-1.5 z-30"
+            style={{ pointerEvents: "none" }}
           >
             <div
-              className="w-12 h-1.5 rounded-full"
-              style={{ backgroundColor: "rgba(0, 0, 0, 0.15)" }}
+              className="w-12 h-1.5 rounded-full cursor-grab active:cursor-grabbing"
+              style={{
+                backgroundColor: "rgba(0, 0, 0, 0.15)",
+                pointerEvents: "auto",
+                touchAction: "none",
+              }}
+              onPointerDown={onDragStart}
             />
           </div>
         )}
